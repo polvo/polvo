@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.12 - ?
+ * Fixing `Toaster.reset` when using Toaster as lib, initializing it with the
+options hash.
+
 ## 0.6.11 - 12/29/2012
  * Listening for changes also in vendors
  * Adding autorun mode (-a) [closing[#56](https://github.com/serpentem/coffee-toaster/pull/56)] • Thanks to [Giacomo Trezzi](https://github.com/G3z)
