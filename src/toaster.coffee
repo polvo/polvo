@@ -1,4 +1,5 @@
-exports.run=()-> new Toaster
+exports.run=(basedir, options = null, skip_initial_build = false)->
+  new Toaster basedir, options, skip_initial_build
 
 #<< toaster/toast
 #<< toaster/cli
@@ -14,10 +15,18 @@ exports.Toaster = class Toaster
   exec = (require "child_process").exec
   colors = require 'colors'
 
+  @basedir = null
+  @options = null
+  @skip_initial_build = false
+
   # variable - before filter container
   before_build: null
 
   constructor:( basedir, options = null, skip_initial_build = false )->
+
+    @basedir = basedir
+    @options = options
+    @skip_initial_build = skip_initial_build
 
     @basepath = path.resolve( basedir || "." )
     @cli = new toaster.Cli options
@@ -31,8 +40,8 @@ exports.Toaster = class Toaster
         break
 
     # injecting options into @cli.argv to maintain interoperability
-    if options?
-      @cli.argv[k] = v for k, v of options
+    if @options?
+      @cli.argv[k] = v for k, v of @options
 
     # printing version
     if @cli.argv.v
@@ -56,7 +65,6 @@ exports.Toaster = class Toaster
 
     # starting watching'n'compiling process
     else if (base = @cli.argv.w || @cli.argv.c || @cli.argv.a)
-      config = if options and options.config then options.config else null
       @toast = new toaster.Toast @
       @build() unless skip_initial_build
 
@@ -73,6 +81,8 @@ exports.Toaster = class Toaster
 
   # resets the toaster completely - specially used when the `toaster.coffee`
   # config file is edited :)
-  reset:()->
+  reset:( options )->
     builder.reset() for builder in @toast.builders
-    exports.run()
+    if options?
+      @options[ key ] = val for val, key of options
+    exports.run @basedir, @options, @skip_initial_build
