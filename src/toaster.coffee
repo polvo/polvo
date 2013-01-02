@@ -31,10 +31,10 @@ exports.Toaster = class Toaster
     @basepath = path.resolve( basedir || "." )
     @cli = new toaster.Cli options
 
-    # increments basepath if some path is given for args -n, -i, -c, -w, -d
+    # increments basepath if some path is given for args -n, -i, -c, -w, -d, -a
     # just one of these could have a path, so only the first found will be
     # considered.
-    for flag in ('nicwd'.split '')
+    for flag in ('nicwda'.split '')
       if (typeof (base = @cli.argv[flag]) is 'string')
         @basepath = path.resolve base
         break
@@ -63,10 +63,20 @@ exports.Toaster = class Toaster
       @toast = new toaster.Toast @
       new toaster.misc.InjectNS @toast.builders
 
+    # auto run mode
+    else if @cli.argv.a and not @cli.argv.c
+      msg = "Option -a can't work without -c, more options: \n"
+      msg += "\t-ca, -wca, -cda, -wcda"
+      error msg
+
     # starting watching'n'compiling process
-    else if (base = @cli.argv.w || @cli.argv.c || @cli.argv.a)
+    else if (@cli.argv.c || @cli.argv.d)
       @toast = new toaster.Toast @
       @build() unless skip_initial_build
+
+    else if @cli.argv.w
+      msg = "Option -w can't work alone, use it with -d or -c (-wd, -wc, -wdc)."
+      error msg
 
     # showing help screen
     else

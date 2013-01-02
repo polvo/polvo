@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.12 - ?
+ * Properly segmenting compilation and execution with more combinations using
+different options combos.
+ * Individualizing compile routines between `release` and `debug` versions.
+
 ## 0.6.11 - 12/29/2012
  * Listening for changes also in vendors
  * Adding autorun mode (-a) [closing[#56](https://github.com/serpentem/coffee-toaster/pull/56)] • Thanks to [Giacomo Trezzi](https://github.com/G3z)
