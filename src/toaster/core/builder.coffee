@@ -63,37 +63,42 @@ class Builder
       watcher.close()
 
   build:( header_code = "", footer_code = "" )=>
-    # namespaces
-    namespaces = @build_namespaces()
 
-    # prepare vendors
-    vendors = @merge_vendors()
-
-    # prepare release contents
-    contents = []
-    contents.push vendors if vendors isnt ""
-    contents.push namespaces if @packaging
-    contents.push header_code if header_code isnt ""
-    contents.push @compile()
-    contents.push footer_code if header_code isnt ""
-    contents = contents.join '\n'
-    
-    # uglifying
-    if @minify
-      ast = uglify_parser.parse contents
-      ast = uglify.ast_mangle ast
-      ast = uglify.ast_squeeze ast
-      contents = uglify.gen_code ast
-
-    # write release file
-    fs.writeFileSync @release, contents
-
-    # notify user through cli
+    # now timestamp for cli notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-    log "[#{now}] #{'Compiled'.bold} #{@release}".green
+
+    if @cli.argv.c
+
+      # namespaces
+      namespaces = @build_namespaces()
+
+      # prepare vendors
+      vendors = @merge_vendors()
+
+      # prepare release contents
+      contents = []
+      contents.push vendors if vendors isnt ""
+      contents.push namespaces if @packaging
+      contents.push header_code if header_code isnt ""
+      contents.push @compile()
+      contents.push footer_code if header_code isnt ""
+      contents = contents.join '\n'
+      
+      # uglifying
+      if @minify
+        ast = uglify_parser.parse contents
+        ast = uglify.ast_mangle ast
+        ast = uglify.ast_squeeze ast
+        contents = uglify.gen_code ast
+
+      # write release file
+      fs.writeFileSync @release, contents
+
+      # notify user through cli
+      log "[#{now}] #{'Compiled'.bold} #{@release}".green
 
     # compiling for debug
-    if @cli.argv.d && @debug? and not @cli.argv.a
+    if @cli.argv.d && @debug
       files = @compile_for_debug()
 
       # saving boot loader
@@ -121,7 +126,9 @@ class Builder
     # autorun mode
     if @cli.argv.a
 
-      # getting arguments after the third ( first three are ['node', 'path_to_toaster', '-a'] )
+      # getting arguments after the third - first three are
+      # ['node', 'path_to_toaster', '-a']
+
       args = []
       if process.argv.length > 3
         for i in [3...process.argv.length] by 1

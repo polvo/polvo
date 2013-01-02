@@ -63,10 +63,21 @@ exports.Toaster = class Toaster
       @toast = new toaster.Toast @
       new toaster.misc.InjectNS @toast.builders
 
-    # starting watching'n'compiling process
-    else if (base = @cli.argv.w || @cli.argv.c || @cli.argv.a)
+    # auto run mode
+    else if @cli.argv.a and not @cli.argv.c
+      msg = "Option -a can't work without -c, more options: \n"
+      msg += "\t-ca, -wca, -cda, -wcda"
+      error msg
+
+    # compile / debug project
+    else if (@cli.argv.c || @cli.argv.d)
       @toast = new toaster.Toast @
       @build() unless skip_initial_build
+
+    # `-w` option cannot be used alone
+    else if @cli.argv.w
+      msg = "Option -w can't work alone, use it with -d or -c (-wd, -wc, -wdc)."
+      error msg
 
     # showing help screen
     else

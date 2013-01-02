@@ -13,8 +13,13 @@ class Cli
     usage += "#{'Examples:'}\n"
     usage += "  toaster -n myawsomeapp   (#{'required'.red})\n"
     usage += "  toaster -i [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  toaster -d [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  toaster -c [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  toaster -ca [myawsomeapp] (#{'optional'.green})\n"
     usage += "  toaster -w [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  toaster -wc [myawsomeapp] (#{'optional'.green})"
     usage += "  toaster -wd [myawsomeapp] (#{'optional'.green})"
+    usage += "  toaster -wdc [myawsomeapp] (#{'optional'.green})"
     
     @argv = (@opts = optimist.usage( usage )
       .alias('n', 'new')
@@ -24,13 +29,13 @@ class Cli
       .describe('i', "Create a config (toaster.coffee) file")
       
       .alias('w', 'watch')
-      .describe('w', "Start watching/compiling your project")
+      .describe('w', "Start watching/compilin in the given mode.")
       
       .alias('c', 'compile')
-      .describe('c', "Compile the entire project, without watching it.")
+      .describe('c', "Compile in release mode (all js files merged).")
 
       .alias('d', 'debug')
-      .describe('d', 'Debug mode (compile js files individually)')
+      .describe('d', 'Compile in debug mode (compile js files individually)')
 
       .alias('a', 'autorun')
       .describe('a', 'Execute the script in node.js after compilation')
