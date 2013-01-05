@@ -1,6 +1,7 @@
 # => SRC FOLDER
 toast 'src'
-
+	nature: 'browser'
+	
 	# EXCLUDED FOLDERS (optional)
 	# exclude: ['folder/to/exclude', 'another/folder/to/exclude', ... ]
 

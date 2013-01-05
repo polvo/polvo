@@ -58,29 +58,26 @@ class Script
         for decl in [].concat (@raw.match rgx)
 
           # name
-          name = (decl.match /class\s([^\s]+)/)
-          name = (name[1].split '.').pop()
+          name = (decl.match /class\s([^\s]+)/)[1].split('.').pop()
+          
+          @classname ?= name
 
           # extends
-          extending = (decl.match /(\sextends\s[^\s]+$)/m)
-          extending = extending[0] if extending
-          extending ||= ""
+          @extending = (decl.match /(\s*extends\s*[^\s]+$)/m)
+          @extending = @extending[0] if @extending
+          @extending ||= ""
 
           # file modification (declaring namespaces for classes)
-          repl = "class #{@namespace}.#{name}#{extending}"
+          repl = "class #{@namespace}.#{name}#{@extending}"
 
           # write full declaration to the file if it's not right yet
           if decl isnt repl
             @raw = @raw.replace decl, repl
             fs.writeFileSync @realpath, @raw
 
-        @classpath = "#{@namespace}.#{@classname}"
-
-      # assemble some more infos about the file.
-      #   classname: ClassName
-      #   namespace: package.subpackage
-      #   classpath: package.subpackage.ClassName
-      @classname = @raw.match( rgx )[3]
+      # @classname = @raw.match( rgx )[3]
+      @classname = (@raw.match /class\s([^\s]+)/)[1].split('.').pop()
+      @classpath = "#{@namespace}.#{@classname}"
 
       # colletcts the base classes, in case some class in the file
       # extends something
@@ -108,6 +105,9 @@ class Script
 
         @dependencies_collapsed = @dependencies_collapsed.concat item
 
+    @backup = @raw
+
+  # expand all wildcards imports
   expand_dependencies:()->
 
     # referencies the builder's files array
@@ -143,4 +143,50 @@ class Script
         if expanded.item.filepath isnt @filepath
           @dependencies.push expanded.item.filepath
 
+    @inject_definitions()
+
     @dependencies
+
+  # inject proper definition based on project nature:
+  #   browser -> use AMD definitions
+  #   node -> use CommonJS definitions
+  inject_definitions:->
+
+    # computes all dependency and format it as a stringfied array without []
+    deps = ""
+    for dep in @dependencies
+      deps += "'#{dep.replace '.coffee', ''}',\n" 
+    deps = deps.slice 0, -1
+
+    # first namespace
+    ns_root = (@namespace.match /^([^\.]+)/)[1]
+
+    # namespaces after the first
+    ns_rest = @namespace.replace "#{ns_root}.", ""
+
+          # AMD (async)
+    if @builder.nature is 'browser'
+
+      # gets file identation style
+      match_identation = /^([\s]+).*$/mg
+      while identation isnt '\s' and identation isnt '\t'
+        identation = (match_identation.exec @raw)[1]
+
+      # reident content
+      idented = @backup.replace /^/mg, "#{identation}"
+
+      # add defininion
+      @raw = "__toast #{ns_root}, '#{ns_rest}'\n"
+
+      # re-process the raw file with AMD definitions
+      @raw += "define '#{@classpath}', [#{deps}], -> \n#{idented}"
+
+    # COMMON JS (sync)
+    else if @builder.nature is 'node'
+
+      root = "#{ns_root} = {}"
+      exp = "exports.#{ns_root} = {}"
+
+      @raw = "{toast} = require './toaster'\n"
+      @raw += "__e = toast '#{ns_rest}', #{root}, #{exp}, [ #{deps} ]\n"
+      @raw += @backup.replace /(class\s)/g, "__e.#{@classname} = $1"

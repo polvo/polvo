@@ -73,8 +73,8 @@ class Toast
       debug = null
 
     config =
-        # RUNNING BUILDERS
-        is_building: false
+        # PROJECT NATURE
+        nature: params.nature
 
         # BASEPATH
         basepath: @basepath

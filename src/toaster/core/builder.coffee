@@ -22,6 +22,7 @@ class Builder
   constructor:(@toaster, @cli, @config)->
     @vendors = @config.vendors
 
+    @nature = @config.nature
     @bare = @config.bare
     @packaging = @config.packaging
     @expose = @config.expose
@@ -325,6 +326,7 @@ class Builder
 
       # writing file
       try
+        file.expand_dependencies()
         fs.writeFileSync absolute_path, cs.compile file.raw, {bare:@bare}
       catch err
         ## dont show nothing because the error was alreary shown
