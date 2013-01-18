@@ -1,7 +1,10 @@
+# new toast routine
 toast
-  
+
   # src folders
-  folders: 'src':''
+  folders:[
+    'src'
+  ]
 
   # excluded items (default=[])
   exclude: []
@@ -10,8 +13,22 @@ toast
   bare: true
 
   # project nature, can be 'browser' or 'desktop'
+  # if browser:
   nature: 'browser':
-    base_url: 'js' # default=''
 
-  # location for the release file
-  release: 'www/js/app.js'
+    base_url: 'js' # default=''
+    # minify: true
+
+    # loader: 'toaster':
+    #     vendors:[
+    #       'jquery': 'http://cdn...'
+    #       'name': 'local/path'
+    #     ]
+
+    #     optimize:
+    #       'main': 'app/app'
+    #       'progressive': 'genres/progressive/*'
+    #       'triphop': 'genres/triphop/*'
+
+  # if desktop:
+  # TODO

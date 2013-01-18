@@ -1,2 +1,2 @@
 class Tool
-	constructor:-> console.log "\t\tArtist: Tool created!"
+  constructor:-> console.log "\t\tArtist: Tool created!"

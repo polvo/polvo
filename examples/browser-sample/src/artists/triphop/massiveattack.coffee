@@ -1,2 +1,2 @@
 class MassiveAttack
-	constructor:-> console.log "\t\tArtist: MassiveAttack created!"
+  constructor:-> console.log "\t\tArtist: MassiveAttack created!"

@@ -1,2 +1,2 @@
 class KingCrimson
-	constructor:-> console.log "\t\tArtist: KingCrimson created!"
+  constructor:-> console.log "\t\tArtist: KingCrimson created!"
