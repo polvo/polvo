@@ -1,77 +1,49 @@
+#<< toaster/utils/object_util
+
+{ObjectUtil} = toaster.utils
+
 class ArrayUtil
 
-  @find:(source, search, by_property)->
-    if !by_property
-      for v, k in source
-        return {item: v, index: k} if v == search
-    else
-      by_property = [].concat by_property
-      for v, k in source
-        for p in by_property
-          return {item: v, index: k} if search == v[p]
-    
+  ###
+  @param [] src
+  @param [] search
+  ###
+  @find:( src, search )->
+    for v, i in src
+      unless (search instanceof Object)
+        return item: v, index:i if v == search
+      else
+        return {item: v, index:i } if ObjectUtil.find(v, search)?
     return null
 
+  ###
+  @param [] src
+  @param [] search
+  ###
+  @delete:( src, search )->
+    item = ArrayUtil.find src, search
+    src.splice item.index, 1 if item?
 
 
-  @find_all:(source, search, by_property, regexp, unique)->
-    _output = []
-    _unique = {}
-
-    if by_property is null
-
-      for v, k in source
-        if regexp
-          item = {item: v, index: k} if search.test v
-        else
-          item = {item: v, index: k} if search == v
-        
-        _output.push item if item
-    else
-      
-      by_property = [].concat by_property
-      for v, k in source
-        
-        for p in by_property
-          item = null
-
-          if regexp
-            if search.test v[p]
-              if unique && !_unique[k]
-                item = {item: v, index: k}
-              else if unique is not true
-                item = {item: v, index: k}
-          else
-            if search == v[p]
-              item = {item: v, index: k}
-          
-          if item
-            _unique[k] = true
-            _output.push item
-
-    return _output
-
-
-
-  @diff:(a = [], b = [], by_property)->
-    diff = []
+  # @diff:(a = [], b = [], by_property)->
+  #   diff = []
     
-    for item in a
-      search = if by_property? then item[by_property] else item
-      if !ArrayUtil.has b, search, by_property
-        diff.push {item:item, action:"deleted"}
+  #   for item in a
+  #     search = if by_property? then item[by_property] else item
+  #     if !ArrayUtil.has b, search, by_property
+  #       diff.push {item:item, action:"deleted"}
     
-    for item in b
-      search = if by_property? then item[by_property] else item
-      if !ArrayUtil.has a, search, by_property
-        diff.push {item:item, action:"created"}
+  #   for item in b
+  #     search = if by_property? then item[by_property] else item
+  #     if !ArrayUtil.has a, search, by_property
+  #       diff.push {item:item, action:"created"}
     
-    diff
+  #   diff
 
 
 
-  @has:(source, search, by_property)->
-    return ArrayUtil.find( source, search, by_property )?
+  @has:(source, search)->
+    return (ArrayUtil.find source, search )?
 
 
 
