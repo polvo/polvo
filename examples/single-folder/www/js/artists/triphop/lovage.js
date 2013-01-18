@@ -1,6 +1,7 @@
-(function() {
 
-  artists.triphop.Lovage = (function() {
+define([], function() {
+  var Lovage;
+  return Lovage = (function() {
 
     function Lovage() {
       console.log("\t\tArtist: Lovage created!");
@@ -9,5 +10,4 @@
     return Lovage;
 
   })();
-
-}).call(this);
+});

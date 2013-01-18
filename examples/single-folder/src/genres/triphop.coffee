@@ -1,8 +1,10 @@
-#<< artists/triphop/*
+MassiveAttack = require 'artists/triphop/massiveattack'
+Portishead = require 'artists/triphop/portishead'
+Lovage = require 'artists/triphop/lovage'
 
-class genres.TripHop
+class TripHop
 	constructor:->
 		console.log "\tGenre: TripHop created!"
-		new artists.triphop.MassiveAttack
-		new artists.triphop.Portishead
-		new artists.triphop.Lovage
+		new MassiveAttack
+		new Portishead
+		new Lovage

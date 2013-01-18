@@ -1,2 +1,2 @@
-class artists.progressive.KingCrimson
+class KingCrimson
 	constructor:-> console.log "\t\tArtist: KingCrimson created!"

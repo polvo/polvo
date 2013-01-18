@@ -1,2 +1,2 @@
-class artists.triphop.Portishead
+class Portishead
 	constructor:-> console.log "\t\tArtist: Portishead created!"

@@ -1,2 +1,2 @@
-class artists.progressive.Tool
+class Tool
 	constructor:-> console.log "\t\tArtist: Tool created!"

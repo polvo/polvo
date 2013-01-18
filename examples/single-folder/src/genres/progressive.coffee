@@ -1,8 +1,10 @@
-#<< artists/progressive/*
+KingCrimson = require 'artists/progressive/kingcrimson'
+TheMarsVolta = require 'artists/progressive/themarsvolta'
+Tool = require 'artists/progressive/tool'
 
-class genres.Progressive
+class Progressive
 	constructor:->
 		console.log "\tGenre: Progressive created!"
-		new artists.progressive.KingCrimson
-		new artists.progressive.TheMarsVolta
-		new artists.progressive.Tool
+		new KingCrimson
+		new TheMarsVolta
+		new Tool

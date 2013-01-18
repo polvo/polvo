@@ -1,9 +1,10 @@
-#<< genres/*
+Progressive = require 'genres/progressive'
+TripHop = require 'genres/triphop'
 
-class app.App
+class App
 	constructor:->
 		console.log "App created!"
-		new genres.Progressive
-		new genres.TripHop
+		new Progressive
+		new TripHop
 
-new app.App
+new App
