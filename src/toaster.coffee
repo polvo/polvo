@@ -59,26 +59,20 @@ exports.Toaster = class Toaster
       new toaster.generators.Config( @basepath ).create()
 
     # injecting namespace declarations
-    else if @cli.argv.ns
-      @toast = new toaster.Toast @
-      new toaster.misc.InjectNS @toast.builders
+    # else if @cli.argv.ns
+    #   @toast = new toaster.Toast @
+    #   new toaster.misc.InjectNS @toast.builders
 
     # auto run mode
     else if @cli.argv.a and not @cli.argv.c
-      msg = "Option -a can't work without -c, more options: \n"
-      msg += "\t-ca, -wca, -cda, -wcda"
+      msg = "Option -a can't work without -w, usage: \n"
+      msg += "\ttoaster -wa"
       error msg
 
     # compile / debug project
-    else if (@cli.argv.c || @cli.argv.d)
+    else if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
       @toast = new toaster.Toast @
-      unless skip_initial_build
-        @build() 
-
-    # `-w` option cannot be used alone
-    else if @cli.argv.w
-      msg = "Option -w can't work alone, use it with -d or -c (-wd, -wc, -wdc)."
-      error msg
+      @build() unless skip_initial_build
 
     # showing help screen
     else
