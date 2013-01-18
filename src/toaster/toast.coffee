@@ -52,6 +52,7 @@ class Toast
 
   
   toast:( srcpath, params = {} )=>
+
     if srcpath instanceof Object
       params = srcpath
     else if path.resolve srcpath != srcpath
@@ -66,6 +67,9 @@ class Toast
         error "Release folder does not exist:\n\t#{dir.yellow}"
         return process.exit()
 
+    if params.nature.browser?
+      params.nature.browser.minify ?= true
+
     # configuration object shared between builders
     if params.debug
       debug = path.join @basepath, params.debug
@@ -73,26 +77,13 @@ class Toast
       debug = null
 
     config =
-        # project nature
-        nature: params.nature
-
-        # project conf
-        conf: params.conf
-
-        # basepath
-        basepath: @basepath
-
-        # SRC FOLDERS
+        # src folders
         src_folders: []
 
-        # FILES CONTRAINER ARRAY
-        files: []
-
-        # OPTIONS
+        # options
+        nature: params.nature
         exclude: params.exclude ? []
         bare: params.bare ? true
-        # packaging: params.packaging ? true
-
         release: path.join @basepath, params.release
 
     # # compute vendors full path
