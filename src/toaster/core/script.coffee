@@ -6,6 +6,8 @@ class Script
   fs = require "fs"
   path = require 'path'
   cs = require "coffee-script"
+  uglify = require("uglify-js").uglify
+  uglify_parser = require("uglify-js").parser
 
   {ArrayUtil} = toaster.utils
 
@@ -23,8 +25,22 @@ class Script
     # assemble some information about the file
     @filepath = @realpath.replace @folderpath, ''
 
-    if @alias?
-      @filepath = path.join path.sep, @alias, @filepath
+    # computes release paths for saving js files
+    search = "#{@builder.toaster.basepath}#{path.sep}"
+    @relative_path = @filepath.replace search, ''
+    @relative_path = @relative_path.replace '.coffee', '.js'
+
+    release_path = path.dirname @builder.release
+    absolute_path = path.resolve (path.join release_path, @relative_path)
+
+    folder_path = path.dirname absolute_path
+
+    @release = 
+      folder: folder_path
+      file: absolute_path
+
+    # if @alias?
+    #   @filepath = path.join path.sep, @alias, @filepath
 
     @filepath = (@filepath.substr 1) if (@filepath.substr 0, 1) is path.sep
 
@@ -51,27 +67,8 @@ class Script
     # if there is a class inside the file
     if @raw.match( rgx )?
 
-      # if the file is not in the root src folder (outside any
-      # folder/package ) and packaging is enabled
-      if @namespace != "" and @builder.packaging
-
-        # then modify the class declarations before starting
-        # the parser thing, adding the package headers declarations
-        # as well as the expose thing
-
-        for decl in [].concat (@raw.match rgx)
-
-          # name
-          name = (decl.match /class\s([^\s]+)/)[1].split('.').pop()
-          @classname ?= name
-
-          # extends
-          @extending = (decl.match /(\s*extends\s*[^\s]+$)/m)
-          @extending = @extending[0] if @extending
-          @extending ||= ""
-
       # @classname = @raw.match( rgx )[3]
-      @classname = (@raw.match /class\s([^\s]+)/)[1].split('.').pop()
+      @classname = (@raw.match /class\s([^\s]+)/)[1]
       @classpath = "#{@namespace}.#{@classname}"
 
       # colletcts the base classes, in case some class in the file
@@ -108,10 +105,9 @@ class Script
     @backup = @raw
     @inject_definitions()
 
-  # inject proper definition based on project nature:
-  #   browser -> use AMD definitions
-  #   node -> use CommonJS definitions
+  # inject proper amd definitions if project nature is 'browser'
   inject_definitions:->
+    return unless @builder.nature.browser?
 
     # computes all dependencies and format it as a stringfied array without []
     deps_path = ''
@@ -124,35 +120,46 @@ class Script
     deps_path = deps_path.slice 0, -1
     deps_args = deps_args.slice 0, -1
 
-    # first namespace
-    ns_root = (@namespace.match /^([^\.]+)/)[1]
+    # gets file identation style
+    match_identation = /^([\s]+).*$/mg
+    while identation isnt '\s' and identation isnt '\t'
+      identation = (match_identation.exec @raw)[1]
 
-    # namespaces after the first
-    ns_rest = @namespace.replace "#{ns_root}.", ""
+    # reident content
+    idented = @backup.replace /^/mg, "#{identation}"
 
-    # AMD (async)
-    if @builder.nature.browser
+    # re-process the raw file with AMD definitions
+    @raw = "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
-      # gets file identation style
-      match_identation = /^([\s]+).*$/mg
-      while identation isnt '\s' and identation isnt '\t'
-        identation = (match_identation.exec @raw)[1]
+    def = @filepath.replace '.coffee', ''
+    @defined_raw = "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
-      # reident content
-      idented = @backup.replace /^/mg, "#{identation}"
+  delete_compiled_from_disk:->
+    fs.unlinkFileSync @release.file if (fs.existsSync @release.folder)
 
-      # re-process the raw file with AMD definitions
-      @raw = "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+  compile_to_disk:->
+    # datetime for CLI notifications
+    now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
-      def = @filepath.replace '.coffee', ''
-      @defined_raw = "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+    # get compiled javascript
+    compiled = @compile_to_str()
 
-    # COMMON JS (sync)
-    else if @builder.nature.node
+    # create container folder if it doesnt exist yet
+    fsu.mkdir_p @release.folder unless fs.existsSync @release.folder
 
-      root = "#{ns_root} = {}"
-      exp = "exports.#{ns_root} = {}"
+    # write compile file inside of it
+    fs.writeFileSync @release.file, compiled
 
-      @raw = "{toast} = require './toaster'\n"
-      @raw += "__e = toast '#{ns_rest}', #{root}, #{exp}, [ #{deps} ]\n"
-      @raw += @backup.replace /(class\s)/g, "__e.#{@classname} = $1"
+    # notify user through cli
+    log "[#{now}] #{'Compiled'.bold} #{@relative_path}".green
+
+  compile_to_str:->
+    compiled = cs.compile @raw, bare: @builder.bare
+
+    if @builder.nature.browser? and @builder.cli.argv.r and @builder.minify
+      ast = uglify_parser.parse compiled
+      ast = uglify.ast_mangle ast
+      ast = uglify.ast_squeeze ast
+      compiled = uglify.gen_code ast
+
+    return compiled

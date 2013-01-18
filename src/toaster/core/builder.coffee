@@ -9,8 +9,6 @@ class Builder
   path = require 'path'
   cs = require "coffee-script"
   cp = require "child_process"
-  uglify = require("uglify-js").uglify
-  uglify_parser = require("uglify-js").parser
 
   Script = toaster.core.Script
   {FnUtil, ArrayUtil, StringUtil} = toaster.utils
@@ -23,18 +21,20 @@ class Builder
     @bare = @config.bare
     @exclude = [].concat( @config.exclude )
     @release = @config.release
-    @minify = @cli.build
 
     @nature = @config.nature
     if @config.nature.browser
       @base_url = @nature.browser.base_url
+      @minify = @nature.browser.minify
+    else
+      @minify = false
 
     @init()
     @watch() if @cli.argv.w
 
   init:()->
     # initializes buffer array to keep all tracked files
-    @files = @config.files
+    @files = []
     for folder in @config.src_folders
 
       # search for all *.coffee files inside src folder
@@ -46,56 +46,17 @@ class Builder
 
       # collects every files into Script instances
       for file in result
-
         include = true
-        for item in @exclude
-          include &= !(new RegExp( item ).test file)
-
-        if include
-          s = new Script @, fpath, file, falias, @cli
-          @files.push s
+        include &= !(new RegExp( item ).test file) for item in @exclude
+        @files.push (new Script @, fpath, file, falias, @cli) if include
 
   reset:()->
-    for watcher in @watchers
-      watcher.close()
+    watcher.close() for watcher in @watchers
 
-  build:( header_code = "", footer_code = "" )=>
+  build:=>
 
-    # now timestamp for cli notifications
-    now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-
-    if @cli.argv.c
-
-      # compile all files individually
-      @compile_all()
-
-      # root namespace
-      root_ns = @build_root_namespaces()
-
-      # # prepare vendors
-      # # vendors = @merge_vendors()
-
-      # prepare release contents
-      contents = []
-      # contents.push vendors if vendors isnt ""
-      contents.push root_ns
-      contents.push header_code if header_code isnt ""
-      contents.push @compile()
-      contents.push footer_code if header_code isnt ""
-      contents = contents.join '\n'
-
-      # uglifying
-      if @minify
-        ast = uglify_parser.parse contents
-        ast = uglify.ast_mangle ast
-        ast = uglify.ast_squeeze ast
-        contents = uglify.gen_code ast
-
-      # write release file
-      fs.writeFileSync @release, contents
-
-      # notify user through cli
-      log "[#{now}] #{'Compiled'.bold} #{@release}".green
+    # compile all files individually
+    @compile()
 
     # autorun mode
     if @cli.argv.a
@@ -119,34 +80,6 @@ class Builder
         @child = cp.fork @release, args, { execArgv: ['--debug-brk'] }
       else
         @child = cp.fork @release, args
-
-  # Creates a NS holder for all folders
-  build_root_namespaces:()->
-    tree = {}
-    for folder in @config.src_folders
-      t = (tree[folder.alias] = {}) if folder.alias?
-      @build_ns_tree t || tree, folder.path
-
-    buffer = ""
-    for name, scope of tree
-      buffer += "var #{name} = "
-      buffer += "#{@expose}.#{name} = " if @expose?
-      buffer += (JSON.stringify scope, null, '').replace /\"/g, "'"
-      buffer += ";\n"
-
-    return buffer
-
-  # Walk some folderpath and lists all its subfolders
-  build_ns_tree:( tree, folderpath )->
-    folders = fsu.ls folderpath
-    for folder in folders
-      include = true
-      for item in @exclude
-        include &= !(new RegExp( item ).test folder)
-      if include
-        tree[folder.match /[^\/\\]+$/m] = {}
-        # @build_ns_tree (tree[folder.match /[^\/\\]+$/m] = {}), folder
-
 
   watch:()->
 
@@ -172,18 +105,17 @@ class Builder
     # skip all folder creation
     return if f.type == "dir" and ev == "create"
 
-    # folder path and alias
+    # file-path, source-path, and alias
     fpath = f.location
     spath = src.path
-    if src.alias?
-      falias = (path.sep + src.alias)
+    if src.alias isnt ''
+      falias = (path.sep + src.alias) 
     else
       falias = ''
 
     # check if it's from some excluded folder
     include = true
-    for item in @exclude
-      include &= !(new RegExp( item ).test fpath)
+    include &= !(new RegExp( item ).test fpath) for item in @exclude
     return unless include
 
     # Titleize the type for use in the log messages bellow
@@ -191,6 +123,7 @@ class Builder
 
     # relative filepath (with alias, if informed)
     relative_path = fpath.replace spath, falias
+    relative_path = (relative_path.substr 1) if relative_path[0] is path.sep
 
     # date for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
@@ -201,15 +134,13 @@ class Builder
       # when a new file is created
       when "create"
 
-        # initiate file and adds it to the array
-        if f.type == "file"
-          # toaster/core/script
-          s = new Script @, spath, fpath, falias, @cli
-          @files.push s
-
         # cli filepath
         msg = "#{('New ' + f.type + ' created').bold}"
         log "[#{now}] #{msg} #{f.location}".cyan
+
+        # initiate file and adds it to the array
+        @files.push script = new Script @, spath, fpath, falias, @cli
+        script.compile_to_disk()
 
       # when a file is deleted
       when "delete"
@@ -218,6 +149,7 @@ class Builder
         file = ArrayUtil.find @files, 'filepath': relative_path
         return if file is null
 
+        file.item.delete_compiled()
         @files.splice file.index, 1
 
         # cli msg
@@ -233,101 +165,20 @@ class Builder
         if file is null
           warn "CHANGED FILE IS APPARENTLY NULL..."
         else
-          file.item.getinfo()
-
           # cli msg
           msg = "#{(type + ' changed').bold}"
-          log "[#{now}] #{msg} #{f.location}".cyan
+          log "[#{now}] #{msg} #{relative_path}".cyan
 
-    if @toaster.before_build is null or @toaster.before_build()
-      # rebuilds modules
-      @build()
+          file.item.getinfo()
+          file.item.compile_to_disk()
+
+    # if @toaster.before_build is null or @toaster.before_build()
+    #   # rebuilds modules
+    #   @build()
 
   compile:()->
-    # validating syntax
-    for file in @files
-      try
-        cs.compile file.raw
-      # if there's some error
-      catch err
-
-        # catches and shows it, and abort the compilation
-        msg = err.message.replace '"', '\\"'
-        msg = "#{msg.white} at file: " + "#{file.filepath}".bold.red
-        error msg
-        return null
-
-    # # otherwise move ahead, and expands all dependencies wild-cards
-    # file.expand_dependencies() for file in @files
-
-    # reordering files
-    @reorder()
-
-    # merging everything
-    output = (file.defined_raw for file in @files).join "\n"
-
-    # compiling
-    output = cs.compile output, {bare: @bare}
-
-  compile_all:()->
-    release_path = path.dirname @release
-    # release_path = path.join release_path, "toasted"
-
-    # cleaning previous/existent structure
-    fsu.rm_rf release_path if fs.existsSync release_path
-
-    # creating new structre from scratch
-    fsu.mkdir_p release_path
-
-    # initializing empty array of filepaths
-    files = []
-
     # loop through all ordered files
-    for file, index in @files
-
-      # computing releative filepath (replacing .coffee by .js)
-      find = "#{@toaster.basepath}#{path.sep}"
-      relative_path = file.filepath.replace find, ""
-      relative_path = relative_path.replace ".coffee", ".js"
-
-      # computing absolute filepath
-      absolute_path = path.resolve (path.join release_path, relative_path)
-
-      # extracts its folder path
-      folder_path = path.dirname absolute_path
-
-      # create container folder if it doesnt exist yet
-      fsu.mkdir_p folder_path if !fs.existsSync folder_path
-
-      # writing file
-      try
-        compiled = (cs.compile file.raw, {bare:@bare})
-
-        # uglifying
-        if @minify && @nature.browser
-          ast = uglify_parser.parse compiled
-          ast = uglify.ast_mangle ast
-          ast = uglify.ast_squeeze ast
-          compiled = uglify.gen_code ast
-
-        fs.writeFileSync absolute_path, compiled
-
-      catch err
-        ## dont show nothing because the error was alreary shown
-        ## in the compile rotine above
-        # 
-        # msg = err.message.replace '"', '\\"'
-        # msg = "#{msg.white} at file: " + "#{file.filepath}".bold.red
-        # error msg
-        continue
-
-      # adds to the files buffer
-      files.push relative_path
-
-    # returns all filepaths
-    return files
-
-
+    file.compile_to_disk() for file, index in @files
 
   missing = {}
   reorder: (cycling = false) ->
@@ -416,15 +267,3 @@ class Builder
              "#{file.classname} ".bold.grey +
              "in file ".yellow +
              file.filepath.bold.grey
-
-
-
-  merge_vendors:()=>
-    buffer = []
-    for vendor in @vendors
-      if fs.existsSync vendor
-        buffer.push fs.readFileSync vendor, 'utf-8'
-      else
-        warn "Vendor not found at ".white + vendor.yellow.bold
-
-    return buffer.join "\n"
