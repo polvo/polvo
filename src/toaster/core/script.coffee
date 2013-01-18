@@ -7,7 +7,7 @@ class Script
   path = require 'path'
   cs = require "coffee-script"
 
-  ArrayUtil = toaster.utils.ArrayUtil
+  {ArrayUtil} = toaster.utils
 
   constructor: (@builder, @folderpath, @realpath, @alias, @opts) ->
     @getinfo()
@@ -17,13 +17,17 @@ class Script
   getinfo:( declare_ns = true )->
     # read file content and initialize dependencies and baseclasses array
     @raw = fs.readFileSync @realpath, "utf-8"
-    @dependencies_collapsed = []
+    @dependencies = []
     @baseclasses = []
 
     # assemble some information about the file
     @filepath = @realpath.replace @folderpath, ''
+
     if @alias?
       @filepath = path.join path.sep, @alias, @filepath
+
+    @filepath = (@filepath.substr 1) if (@filepath.substr 0, 1) is path.sep
+
     @filename = path.basename @filepath
     @filefolder = path.dirname @filepath
     @namespace = ""
@@ -59,21 +63,12 @@ class Script
 
           # name
           name = (decl.match /class\s([^\s]+)/)[1].split('.').pop()
-          
           @classname ?= name
 
           # extends
           @extending = (decl.match /(\s*extends\s*[^\s]+$)/m)
           @extending = @extending[0] if @extending
           @extending ||= ""
-
-          # file modification (declaring namespaces for classes)
-          repl = "class #{@namespace}.#{name}#{@extending}"
-
-          # write full declaration to the file if it's not right yet
-          if decl isnt repl
-            @raw = @raw.replace decl, repl
-            fs.writeFileSync @realpath, @raw
 
       # @classname = @raw.match( rgx )[3]
       @classname = (@raw.match /class\s([^\s]+)/)[1].split('.').pop()
@@ -86,77 +81,48 @@ class Script
         @baseclasses.push baseclass
 
     # then if there's other dependencies
-    if /(#<<\s)(.*)/g.test @raw
+    require_reg_all = /^([^\s]+)\s*=\s*require\s(?:'|")(.*)(?:'|")/mg
+    require_reg_one = /^([^\s]+)\s*=\s*require\s(?:'|")(.*)(?:'|")/m
+
+    if require_reg_all.test @raw
 
       # collect all and loop through them
-      requirements = @raw.match /(#<<\s)(.*)/g
-      for item in requirements
-        # 1. filter dependency name
-        # 2. trim it 
-        # 3. split all dependencies
-        # 4. concat it with the dependencies array
-        item         = /(#<<\s)(.*)/.exec( item )[ 2 ]
-        item         = item.replace /\s/g, ""
-        # item         = [].concat item.split ","
+      deps = @raw.match require_reg_all
+      for dep in deps
+        
+        # comment line to strip it out from the compiled version
+        @raw = @raw.replace dep, "# #{dep}"
+
+        # computes dep name and path
+        match = dep.match require_reg_one
+        dep =
+          name: match[1]
+          path: match[2] + '.coffee'
 
         # if user is under windows, checks and replace any "/" by "\" in
-        # file dependencies
-        item = item.replace /(\/)/g, "\\" if path.sep == "\\"
+        # file dependencies: TODO: revise this
+        # item.path = item.path.replace /(\/)/g, "\\" if path.sep == "\\"
 
-        @dependencies_collapsed = @dependencies_collapsed.concat item
+        @dependencies.push dep
 
     @backup = @raw
-
-  # expand all wildcards imports
-  expand_dependencies:()->
-
-    # referencies the builder's files array
-    files = @builder.files
-
-    # resets the dependencies array
-    @dependencies = []
-
-    # looping through file dependencies
-    for dependency, index in @dependencies_collapsed
-
-      # normalize first slash / backslash
-      if (dependency.substr 0, 1) is path.sep
-        dependency = dependency.substr 1
-
-      # if dependency is not a wild-card (namespace.*)
-      if dependency.substr(-1) != "*"
-        # then add file extension to it and continue
-        @dependencies.push "#{path.sep}#{dependency}.coffee"
-        continue
-
-      # otherwise find all files under that namespace
-      reg = new RegExp dependency.replace /(\/|\\)/g, "\\$1"
-      found = ArrayUtil.find_all files, reg, "filepath", true, true
-
-      # if nothing is found under the given namespace
-      if found.length <= 0
-        warn "Nothing found inside #{("'"+dependency).white}'".yellow
-        continue
-      
-      # otherwise rewrites found array with filepath info only
-      for expanded in found
-        if expanded.item.filepath isnt @filepath
-          @dependencies.push expanded.item.filepath
-
     @inject_definitions()
-
-    @dependencies
 
   # inject proper definition based on project nature:
   #   browser -> use AMD definitions
   #   node -> use CommonJS definitions
   inject_definitions:->
 
-    # computes all dependency and format it as a stringfied array without []
-    deps = ""
+    # computes all dependencies and format it as a stringfied array without []
+    deps_path = ''
+    deps_args = ''
+
     for dep in @dependencies
-      deps += "'#{dep.replace '.coffee', ''}',\n" 
-    deps = deps.slice 0, -1
+      deps_path += "'#{dep.path.replace '.coffee', ''}',\n" 
+      deps_args += "#{dep.name}," 
+
+    deps_path = deps_path.slice 0, -1
+    deps_args = deps_args.slice 0, -1
 
     # first namespace
     ns_root = (@namespace.match /^([^\.]+)/)[1]
@@ -164,8 +130,8 @@ class Script
     # namespaces after the first
     ns_rest = @namespace.replace "#{ns_root}.", ""
 
-          # AMD (async)
-    if @builder.nature is 'browser'
+    # AMD (async)
+    if @builder.nature.browser
 
       # gets file identation style
       match_identation = /^([\s]+).*$/mg
@@ -175,14 +141,14 @@ class Script
       # reident content
       idented = @backup.replace /^/mg, "#{identation}"
 
-      # add defininion
-      @raw = "__toast #{ns_root}, '#{ns_rest}'\n"
-
       # re-process the raw file with AMD definitions
-      @raw += "define '#{@classpath}', [#{deps}], -> \n#{idented}"
+      @raw = "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+
+      def = @filepath.replace '.coffee', ''
+      @defined_raw = "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
     # COMMON JS (sync)
-    else if @builder.nature is 'node'
+    else if @builder.nature.node
 
       root = "#{ns_root} = {}"
       exp = "exports.#{ns_root} = {}"

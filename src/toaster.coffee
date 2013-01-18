@@ -72,7 +72,8 @@ exports.Toaster = class Toaster
     # compile / debug project
     else if (@cli.argv.c || @cli.argv.d)
       @toast = new toaster.Toast @
-      @build() unless skip_initial_build
+      unless skip_initial_build
+        @build() 
 
     # `-w` option cannot be used alone
     else if @cli.argv.w

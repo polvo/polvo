@@ -73,38 +73,33 @@ class Toast
       debug = null
 
     config =
-        # PROJECT NATURE
+        # project nature
         nature: params.nature
 
-        # BASEPATH
+        # project conf
+        conf: params.conf
+
+        # basepath
         basepath: @basepath
-        
+
         # SRC FOLDERS
         src_folders: []
 
         # FILES CONTRAINER ARRAY
         files: []
-        
-        # VENDORS
-        vendors: params.vendors ? []
 
         # OPTIONS
         exclude: params.exclude ? []
-        bare: params.bare ? false
-        packaging: params.packaging ? true
-        expose: params.expose ? null
-        minify: params.minify ? true
+        bare: params.bare ? true
+        # packaging: params.packaging ? true
 
-        # HTTP FOLDER / RELEASE / DEBUG
-        httpfolder: params.httpfolder ? ""
         release: path.join @basepath, params.release
-        debug: debug
 
-    # compute vendors full path
-    for v, i in config.vendors
-      vpath = config.vendors[i] = (path.resolve v)
-      if (path.resolve vpath) isnt vpath
-        config.vendors[i] = path.join @basepath, v
+    # # compute vendors full path
+    # for v, i in config.vendors
+    #   vpath = config.vendors[i] = (path.resolve v)
+    #   if (path.resolve vpath) isnt vpath
+    #     config.vendors[i] = path.join @basepath, v
 
     unless srcpath instanceof Object
       srcpath = path.resolve( path.join @basepath, srcpath )
@@ -125,5 +120,6 @@ class Toast
             "\n\t" + (path.join @basepath, "toaster.coffee" ).yellow
         return process.exit()
 
+    # console.log 'config: ' + config
     builder = new toaster.core.Builder @toaster, @toaster.cli, config
     @builders.push builder

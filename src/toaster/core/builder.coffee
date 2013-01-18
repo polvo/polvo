@@ -16,22 +16,18 @@ class Builder
   {FnUtil, ArrayUtil, StringUtil} = toaster.utils
 
   watchers: null
-  _include_tmpl: "document.write('<scri'+'pt src=\"%SRC%\"></scr'+'ipt>')"
 
 
   constructor:(@toaster, @cli, @config)->
-    @vendors = @config.vendors
+
+    @bare = @config.bare
+    @exclude = [].concat( @config.exclude )
+    @release = @config.release
+    @minify = @cli.build
 
     @nature = @config.nature
-    @bare = @config.bare
-    @packaging = @config.packaging
-    @expose = @config.expose
-    @minify = @config.minify
-    @exclude = [].concat( @config.exclude )
-
-    @httpfolder = @config.httpfolder
-    @release = @config.release
-    @debug = @config.debug
+    if @config.nature.browser
+      @base_url = @nature.browser.base_url
 
     @init()
     @watch() if @cli.argv.w
@@ -70,21 +66,24 @@ class Builder
 
     if @cli.argv.c
 
-      # namespaces
-      namespaces = @build_namespaces()
+      # compile all files individually
+      @compile_all()
 
-      # prepare vendors
-      vendors = @merge_vendors()
+      # root namespace
+      root_ns = @build_root_namespaces()
+
+      # # prepare vendors
+      # # vendors = @merge_vendors()
 
       # prepare release contents
       contents = []
-      contents.push vendors if vendors isnt ""
-      contents.push namespaces if @packaging
+      # contents.push vendors if vendors isnt ""
+      contents.push root_ns
       contents.push header_code if header_code isnt ""
       contents.push @compile()
       contents.push footer_code if header_code isnt ""
       contents = contents.join '\n'
-      
+
       # uglifying
       if @minify
         ast = uglify_parser.parse contents
@@ -97,32 +96,6 @@ class Builder
 
       # notify user through cli
       log "[#{now}] #{'Compiled'.bold} #{@release}".green
-
-    # compiling for debug
-    if @cli.argv.d && @debug
-      files = @compile_for_debug()
-
-      # saving boot loader
-      for f, i in files
-        include = path.normalize "#{@httpfolder}/toaster/#{f}"
-        include = include.replace /\\/g, "\/" if path.sep == "\\"
-        tmpl = @_include_tmpl.replace "%SRC%", include
-        files[i] = tmpl
-
-      # prepare boot loader contents
-      contents = []
-      contents.push vendors if vendors isnt ""
-      contents.push namespaces if @packaging
-      contents.push header_code if header_code isnt ""
-      contents.push (files.join "\n")
-      contents.push footer_code if header_code isnt ""
-      contents = contents.join '\n'
-
-      # write boot-loader file
-      fs.writeFileSync @debug, contents
-
-      # notify user through cli
-      log "[#{now}] #{'Compiled'.bold} #{@debug}".green
 
     # autorun mode
     if @cli.argv.a
@@ -148,7 +121,7 @@ class Builder
         @child = cp.fork @release, args
 
   # Creates a NS holder for all folders
-  build_namespaces:()->
+  build_root_namespaces:()->
     tree = {}
     for folder in @config.src_folders
       t = (tree[folder.alias] = {}) if folder.alias?
@@ -171,10 +144,12 @@ class Builder
       for item in @exclude
         include &= !(new RegExp( item ).test folder)
       if include
-        @build_ns_tree (tree[folder.match /[^\/\\]+$/m] = {}), folder
+        tree[folder.match /[^\/\\]+$/m] = {}
+        # @build_ns_tree (tree[folder.match /[^\/\\]+$/m] = {}), folder
 
 
   watch:()->
+
     @watchers = []
 
     # loops through all source folders
@@ -187,11 +162,11 @@ class Builder
       watcher.on 'delete', (FnUtil.proxy @on_fs_change, src, 'delete')
 
     # watching vendors for changes
-    for vendor in @vendors
-      temp = fsu.watch vendor
-      temp.on 'create', (FnUtil.proxy @on_fs_change, src, 'create')
-      temp.on 'change', (FnUtil.proxy @on_fs_change, src, 'change')
-      temp.on 'delete', (FnUtil.proxy @on_fs_change, src, 'delete')
+    # for vendor in @vendors
+    #   temp = fsu.watch vendor
+    #   temp.on 'create', (FnUtil.proxy @on_fs_change, src, 'create')
+    #   temp.on 'change', (FnUtil.proxy @on_fs_change, src, 'change')
+    #   temp.on 'delete', (FnUtil.proxy @on_fs_change, src, 'delete')
 
   on_fs_change:(src, ev, f)=>
     # skip all folder creation
@@ -240,7 +215,7 @@ class Builder
       when "delete"
 
         # removes files from array
-        file = ArrayUtil.find @files, relative_path, "filepath"
+        file = ArrayUtil.find @files, 'filepath': relative_path
         return if file is null
 
         @files.splice file.index, 1
@@ -253,7 +228,7 @@ class Builder
       when "change"
 
         # updates file information
-        file = ArrayUtil.find @files, relative_path, "filepath"
+        file = ArrayUtil.find @files, 'filepath': relative_path
 
         if file is null
           warn "CHANGED FILE IS APPARENTLY NULL..."
@@ -282,21 +257,21 @@ class Builder
         error msg
         return null
 
-    # otherwise move ahead, and expands all dependencies wild-cards
-    file.expand_dependencies() for file in @files
+    # # otherwise move ahead, and expands all dependencies wild-cards
+    # file.expand_dependencies() for file in @files
 
     # reordering files
     @reorder()
 
     # merging everything
-    output = (file.raw for file in @files).join "\n"
+    output = (file.defined_raw for file in @files).join "\n"
 
     # compiling
     output = cs.compile output, {bare: @bare}
 
-  compile_for_debug:()->
-    release_path = path.dirname @debug
-    release_path = path.join release_path, "toaster"
+  compile_all:()->
+    release_path = path.dirname @release
+    # release_path = path.join release_path, "toasted"
 
     # cleaning previous/existent structure
     fsu.rm_rf release_path if fs.existsSync release_path
@@ -326,8 +301,17 @@ class Builder
 
       # writing file
       try
-        file.expand_dependencies()
-        fs.writeFileSync absolute_path, cs.compile file.raw, {bare:@bare}
+        compiled = (cs.compile file.raw, {bare:@bare})
+
+        # uglifying
+        if @minify && @nature.browser
+          ast = uglify_parser.parse compiled
+          ast = uglify.ast_mangle ast
+          ast = uglify.ast_squeeze ast
+          compiled = uglify.gen_code ast
+
+        fs.writeFileSync absolute_path, compiled
+
       catch err
         ## dont show nothing because the error was alreary shown
         ## in the compile rotine above
@@ -363,10 +347,12 @@ class Builder
       continue if !file.dependencies.length && !file.baseclasses.length
       
       # otherwise loop thourgh all file dependencies
-      for filepath, index in file.dependencies
+      for dep, index in file.dependencies
+
+        filepath = dep.path
 
         # search for dependency
-        dependency = ArrayUtil.find @files, filepath, "filepath"
+        dependency = ArrayUtil.find @files, 'filepath': filepath
         dependency_index = dependency.index if dependency?
 
         # continue if the dependency was already initialized
@@ -376,7 +362,7 @@ class Builder
         if dependency?
 
           # if there's some circular dependency loop
-          if ArrayUtil.has dependency.item.dependencies, file.filepath
+          if (ArrayUtil.has dependency.item.dependencies, 'filepath': file.filepath)
 
             # remove it from the dependencies
             file.dependencies.splice index, 1
@@ -415,7 +401,7 @@ class Builder
              file.filepath.grey.bold
 
       # validate if all base classes was properly imported
-      file_index = ArrayUtil.find @files, file.filepath, "filepath"
+      file_index = ArrayUtil.find @files, 'filepath': file.filepath
       file_index = file_index.index
 
       for bc in file.baseclasses
