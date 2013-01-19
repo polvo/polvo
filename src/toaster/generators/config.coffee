@@ -1,6 +1,6 @@
-#<< toaster/generators/question
+Question = require './question'
 
-class Config extends toaster.generators.Question
+module.exports = class Config extends Question
 
   # requirements
   path = require "path"

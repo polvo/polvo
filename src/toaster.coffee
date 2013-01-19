@@ -1,12 +1,10 @@
-exports.run=(basedir, options = null, skip_initial_build = false)->
-  new Toaster basedir, options, skip_initial_build
+Toast = require './toaster/toast'
+Cli = require './toaster/cli'
 
-#<< toaster/toast
-#<< toaster/cli
-#<< toaster/misc/inject-ns
+Project = require './toaster/generators/project'
+Config = require './toaster/generators/config'
 
-exports.toaster = toaster
-exports.Toaster = class Toaster
+module.exports = class Toaster
 
   # requirements
   fs = require "fs"
@@ -16,20 +14,20 @@ exports.Toaster = class Toaster
   colors = require 'colors'
 
   @basedir = null
-  @options = null
+  @options = null 
   @skip_initial_build = false
 
   # variable - before filter container
   before_build: null
 
   constructor:( basedir, options = null, skip_initial_build = false )->
-
     @basedir = basedir
     @options = options
     @skip_initial_build = skip_initial_build
 
     @basepath = path.resolve( basedir || "." )
-    @cli = new toaster.Cli options
+
+    @cli = new Cli options
 
     # increments basepath if some path is given for args -n, -i, -c, -w, -d
     # just one of these could have a path, so only the first found will be
@@ -52,11 +50,11 @@ exports.Toaster = class Toaster
     
     # scaffolding basic structure for new projects
     else if @cli.argv.n
-      new toaster.generators.Project( @basepath ).create @cli.argv.n
+      new Project( @basepath ).create @cli.argv.n
 
     # initializing a toaster file template into an existent project
     else if @cli.argv.i
-      new toaster.generators.Config( @basepath ).create()
+      new Config( @basepath ).create()
 
     # injecting namespace declarations
     # else if @cli.argv.ns
@@ -71,7 +69,7 @@ exports.Toaster = class Toaster
 
     # compile / debug project
     else if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
-      @toast = new toaster.Toast @
+      @toast = new Toast @
       @build() unless skip_initial_build
 
     # showing help screen
@@ -92,3 +90,9 @@ exports.Toaster = class Toaster
     if options?
       @options[ key ] = val for val, key of options
     exports.run @basedir, @options, @skip_initial_build
+
+run = (basedir, options = null, skip_initial_build = false)->
+  new Toaster basedir, options, skip_initial_build
+
+if /\-\-auto\-init/.test (process.argv.join '')
+  run()

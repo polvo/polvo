@@ -1,4 +1,4 @@
-class ObjectUtil
+module.exports = class ObjectUtil
 
   ###
   @param [] str

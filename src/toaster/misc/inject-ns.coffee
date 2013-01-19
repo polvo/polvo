@@ -1,10 +1,10 @@
-#<< toaster/toast
-
 fs = require 'fs'
 path = require 'path'
 exec = (require "child_process").exec
 
-class InjectNS
+Toast = require '../toast'
+
+module.exports = class InjectNS
 
   constructor:( @builders )->
 

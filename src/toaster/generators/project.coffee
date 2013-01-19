@@ -1,15 +1,12 @@
-#<< toaster/generators/question
-#<< toaster/generators/config
+Question = require './question'
+Config = require './config'
 
-class Project extends toaster.generators.Question
+module.exports = class Project extends Question
 
   # requirements
   path = require "path"
   fs = require "fs"
   fsu = require 'fs-util'
-
-  {FsUtil} = toaster.utils
-
 
   constructor:(@basepath)->
 
@@ -56,5 +53,5 @@ class Project extends toaster.generators.Question
     srcdir = srcdir.replace( target, "" ).substr 1
     releasefile = releasefile.replace( target, "" ).substr 1
 
-    config = new toaster.generators.Config target
+    config = new Config target
     config.write srcdir, releasefile, httpfolder

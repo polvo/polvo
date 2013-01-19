@@ -1,7 +1,10 @@
-#<< toaster/utils/*
-#<< toaster/core/script
+FnUtil = require '../utils/fn-util'
+ArrayUtil = require '../utils/array-util'
+StringUtil = require '../utils/string-util'
 
-class Builder
+Script = require '../core/script'
+
+module.exports = class Builder
 
   # requirements
   fs = require 'fs'
@@ -10,9 +13,6 @@ class Builder
   cs = require "coffee-script"
   cp = require "child_process"
 
-  Script = toaster.core.Script
-  {FnUtil, ArrayUtil, StringUtil} = toaster.utils
-
   watchers: null
 
 
@@ -20,23 +20,24 @@ class Builder
 
     @bare = @config.bare
     @exclude = [].concat( @config.exclude )
-    @release = @config.release
 
     @nature = @config.nature
     if @config.nature.browser
       @base_url = @nature.browser.base_url
       @minify = @nature.browser.minify
+      @release = @config.nature.browser.release
     else
       @minify = false
 
     @init()
     @watch() if @cli.argv.w
 
+
   init:()->
     # initializes buffer array to keep all tracked files
     @files = []
-    for folder in @config.src_folders
 
+    for folder in @config.src_folders
       # search for all *.coffee files inside src folder
       result = fsu.find folder.path, /.coffee$/m
 
@@ -46,9 +47,12 @@ class Builder
 
       # collects every files into Script instances
       for file in result
+
         include = true
         include &= !(new RegExp( item ).test file) for item in @exclude
+
         @files.push (new Script @, fpath, file, falias, @cli) if include
+
 
   reset:()->
     watcher.close() for watcher in @watchers

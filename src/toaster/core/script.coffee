@@ -1,15 +1,14 @@
-#<< toaster/utils/array-util
+ArrayUtil = require '../utils/array-util'
 
-class Script
+module.exports = class Script
 
   # requires
   fs = require "fs"
+  fsu = require 'fs-util'
   path = require 'path'
   cs = require "coffee-script"
   uglify = require("uglify-js").uglify
   uglify_parser = require("uglify-js").parser
-
-  {ArrayUtil} = toaster.utils
 
   constructor: (@builder, @folderpath, @realpath, @alias, @opts) ->
     @getinfo()
@@ -23,24 +22,19 @@ class Script
     @baseclasses = []
 
     # assemble some information about the file
-    @filepath = @realpath.replace @folderpath, ''
+    @filepath = @realpath.replace "#{@folderpath}#{path.sep}", ''
 
     # computes release paths for saving js files
-    search = "#{@builder.toaster.basepath}#{path.sep}"
-    @relative_path = @filepath.replace search, ''
-    @relative_path = @relative_path.replace '.coffee', '.js'
+    @relative_path = @filepath.replace '.coffee', '.js'
+    @relative_path = @relative_path.substr 1 if @relative_path[0] is path.sep
 
     release_path = path.dirname @builder.release
     absolute_path = path.resolve (path.join release_path, @relative_path)
 
     folder_path = path.dirname absolute_path
-
     @release = 
       folder: folder_path
       file: absolute_path
-
-    # if @alias?
-    #   @filepath = path.join path.sep, @alias, @filepath
 
     @filepath = (@filepath.substr 1) if (@filepath.substr 0, 1) is path.sep
 
@@ -51,6 +45,7 @@ class Script
     # if the file is in the top level
     if @filepath.indexOf( path.sep ) is -1
       @filefolder = ""
+
 
     # assemble namespace info about the file by:
     # 1) replacing "/" or "\" by "."
@@ -63,6 +58,7 @@ class Script
 
     # filter classes that extends another classes
     rgx_ext = /(^|=\s*)(class)\s(\w+)\s(extends)\s(\\w+)\s*$/gm
+
 
     # if there is a class inside the file
     if @raw.match( rgx )?
@@ -107,6 +103,7 @@ class Script
 
   # inject proper amd definitions if project nature is 'browser'
   inject_definitions:->
+
     return unless @builder.nature.browser?
 
     # computes all dependencies and format it as a stringfied array without []
@@ -122,8 +119,13 @@ class Script
 
     # gets file identation style
     match_identation = /^([\s]+).*$/mg
-    while identation isnt '\s' and identation isnt '\t'
-      identation = (match_identation.exec @raw)[1]
+    identation = ''
+    while not (identation.match /^[\s\t]{2,}/m)?
+      identation = (match_identation.exec @raw)
+      if identation?
+        identation = identation[1]
+      else
+        identation = "  "
 
     # reident content
     idented = @backup.replace /^/mg, "#{identation}"
@@ -151,7 +153,7 @@ class Script
     fs.writeFileSync @release.file, compiled
 
     # notify user through cli
-    log "[#{now}] #{'Compiled'.bold} #{@relative_path}".green
+    console.log "[#{now}] #{'Compiled'.bold} #{@relative_path}".green
 
   compile_to_str:->
     compiled = cs.compile @raw, bare: @builder.bare

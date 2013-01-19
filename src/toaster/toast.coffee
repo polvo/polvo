@@ -1,4 +1,6 @@
-class Toast
+Builder = require './core/builder'
+
+module.exports = class Toast
 
   # requires
   fs = require "fs"
@@ -53,22 +55,24 @@ class Toast
   
   toast:( srcpath, params = {} )=>
 
+    
     if srcpath instanceof Object
       params = srcpath
     else if path.resolve srcpath != srcpath
       folder = path.join @basepath, srcpath
 
-    if params.release is null
-      error 'Release path not informed in config.'
-      return process.exit()
-    else
-      dir = path.dirname params.release
-      unless fs.existsSync (path.join @basepath, dir)
-        error "Release folder does not exist:\n\t#{dir.yellow}"
-        return process.exit()
 
     if params.nature.browser?
       params.nature.browser.minify ?= true
+
+      if params.nature.browser.release is null
+        error 'Release path not informed in config.'
+        return process.exit()
+      else
+        dir = path.dirname params.nature.browser.release
+        unless fs.existsSync (path.join @basepath, dir)
+          error "Release folder does not exist:\n\t#{dir.yellow}"
+          return process.exit()
 
     # configuration object shared between builders
     if params.debug
@@ -85,6 +89,7 @@ class Toast
         exclude: params.exclude ? []
         bare: params.bare ? true
         release: path.join @basepath, params.release
+
 
     # # compute vendors full path
     # for v, i in config.vendors
@@ -106,11 +111,10 @@ class Toast
 
     for item in config.src_folders
       unless fs.existsSync item.path
-        error "Source folder doens't exist:\n\t#{item.path.red}\n" + 
+        console.error "Source folder doens't exist:\n\t#{item.path.red}\n" + 
             "Check your #{'toaster.coffee'.yellow} and try again." +
             "\n\t" + (path.join @basepath, "toaster.coffee" ).yellow
         return process.exit()
 
-    # console.log 'config: ' + config
-    builder = new toaster.core.Builder @toaster, @toaster.cli, config
+    builder = new Builder @toaster, @toaster.cli, config
     @builders.push builder

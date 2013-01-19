@@ -1,7 +1,19 @@
 #!/usr/bin/env node
 
+// node requirements
 var path = require('path');
-var fs = require('fs');
-var lib = path.join(path.dirname(fs.realpathSync(__filename)), '../lib');
 
-require(lib + '/toaster').run()
+// folders
+var base = path.join( __dirname, '..');
+var node_modules = path.join( base, 'node_modules' );
+
+// files
+var coffee = path.join( node_modules, 'coffee-script', 'bin', 'coffee');
+var toaster = path.join( base, 'src', 'toaster.coffee' );
+
+// args
+var args = process.argv.slice( 2 )
+args = [toaster].concat( '/--auto-init/' ).concat( args );
+
+var cp = require('child_process');
+var cwd = path.resolve( '.' );

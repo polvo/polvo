@@ -1,8 +1,8 @@
-#<< toaster/utils/object_util
 
-{ObjectUtil} = toaster.utils
 
-class ArrayUtil
+ObjectUtil = require '../utils/object_util'
+
+module.exports = class ArrayUtil
 
   @find:( src, search )->
     for v, i in src

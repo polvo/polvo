@@ -1,4 +1,4 @@
-class Cli
+module.exports = class Cli
 
   # requires
   optimist = require 'optimist'

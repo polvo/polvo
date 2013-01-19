@@ -1,4 +1,4 @@
-class Question
+module.exports = class Question
 
   ask:(question, format, fn)->
       stdin = process.stdin
