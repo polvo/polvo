@@ -1,15 +1,13 @@
 .PHONY: build
 
-VERSION=`coffee build/bumper --version`
+VERSION=`node_modules/coffee-script/bin/coffee build/bumper --version`
 
-watch:
-	build/coffee-toaster/bin/toaster . -w
-
-build:
-	build/coffee-toaster/bin/toaster . -c
+setup:
+	sudo npm link
 
 test: build
 	node_modules/vows/bin/vows spec/*.coffee --spec
+
 
 
 bump.minor:
@@ -20,6 +18,7 @@ bump.major:
 
 bump.patch:
 	coffee build/bumper.coffee --patch
+
 
 
 publish:
