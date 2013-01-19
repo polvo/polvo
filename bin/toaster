@@ -1,19 +1,3 @@
-#!/usr/bin/env bash
+#!/usr/bin/env _toasted_coffee
 
-# ABSOLUTE PATH FOR THIS VERY EXECUTABLE FILE
-SELF=$(dirname $0)/$(dirname $(readlink -n $0))
-
-# ONE FOLDER UP (ROOT OF PROJECT)
-ROOT=$SELF/..
-
-# COFFEE EXECUTABLE INSIDE `node_modules`
-CS=$ROOT/node_modules/coffee-script/bin/coffee
-
-# TOASTER MAIN FILE
-MAIN=$ROOT/src/toaster.coffee
-
-# FORMATTING COMMAND
-COMMAND="$CS $MAIN --comming-from-bin $@"
-
-# EXECUTING IT
-eval $COMMAND
+new (require '../src/toaster.coffee')

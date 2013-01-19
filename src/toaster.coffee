@@ -89,10 +89,4 @@ module.exports = class Toaster
     builder.reset() for builder in @toast.builders
     if options?
       @options[ key ] = val for val, key of options
-    exports.run @basedir, @options, @skip_initial_build
-
-run = (basedir, options = null, skip_initial_build = false)->
-  new Toaster basedir, options, skip_initial_build
-
-if /--comming-from-bin/.test (process.argv.join '')
-  run()
+   new Toaster @basedir, @options, @skip_initial_build
