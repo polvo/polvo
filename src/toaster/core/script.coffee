@@ -1,5 +1,7 @@
 ArrayUtil = require '../utils/array-util'
 
+{log,debug,warn,error} = require '../utils/log-util'
+
 module.exports = class Script
 
   # requires

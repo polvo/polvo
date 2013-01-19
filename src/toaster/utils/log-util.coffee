@@ -11,17 +11,19 @@ icon_error = __dirname + '/../images/error.png'
 
 
 # LOGGING METHODS
-log = ( msg, send_to_growl = false ) ->
+exports.log = ( msg, send_to_growl = false ) ->
+  msg = "#{msg.white}"
   console.log msg
   return msg
 
-debug = ( msg, send_to_growl = false ) ->
-  msg = log "#{msg.magenta}"
+exports.debug = ( msg, send_to_growl = false ) ->
+  msg = "#{'DEBUG'.bold} #{msg}".magenta
+  console.debug msg
   return msg
 
-
-error = ( msg, send_to_growl = true, file = null ) ->
-  msg = log "ERROR ".bold.red + msg
+exports.error = ( msg, send_to_growl = true, file = null ) ->
+  msg = "#{'ERROR'.bold} #{msg}".magenta
+  console.error msg
 
   if send_to_growl && growl?
 
@@ -40,8 +42,9 @@ error = ( msg, send_to_growl = true, file = null ) ->
   
   return msg
 
-warn = ( msg, send_to_growl = true ) ->
-  msg = log "WARNING ".bold.yellow + msg
+exports.warn = ( msg, send_to_growl = true ) ->
+  msg = "#{'WARNING'.bold} #{msg}".yellow
+  console.warn msg
 
   if send_to_growl && growl?
 

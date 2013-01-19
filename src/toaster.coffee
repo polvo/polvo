@@ -4,6 +4,8 @@ Cli = require './toaster/cli'
 Project = require './toaster/generators/project'
 Config = require './toaster/generators/config'
 
+{log,debug,warn,error} = require './toaster/utils/log-util'
+
 module.exports = class Toaster
 
   # requirements

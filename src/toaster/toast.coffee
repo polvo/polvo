@@ -1,5 +1,7 @@
 Builder = require './core/builder'
 
+{log,debug,warn,error} = require './utils/log-util'
+
 module.exports = class Toast
 
   # requires
@@ -111,7 +113,7 @@ module.exports = class Toast
 
     for item in config.src_folders
       unless fs.existsSync item.path
-        console.error "Source folder doens't exist:\n\t#{item.path.red}\n" + 
+        error "Source folder doens't exist:\n\t#{item.path.red}\n" + 
             "Check your #{'toaster.coffee'.yellow} and try again." +
             "\n\t" + (path.join @basepath, "toaster.coffee" ).yellow
         return process.exit()

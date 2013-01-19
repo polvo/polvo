@@ -1,6 +1,8 @@
 Question = require './question'
 Config = require './config'
 
+{log,debug,warn,error} = require '../utils/log-util'
+
 module.exports = class Project extends Question
 
   # requirements

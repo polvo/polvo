@@ -4,6 +4,8 @@ StringUtil = require '../utils/string-util'
 
 Script = require '../core/script'
 
+{log,debug,warn,error} = require '../utils/log-util'
+
 module.exports = class Builder
 
   # requirements
