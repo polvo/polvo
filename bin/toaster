@@ -13,7 +13,7 @@ CS=$ROOT/node_modules/coffee-script/bin/coffee
 MAIN=$ROOT/src/toaster.coffee
 
 # FORMATTING COMMAND
-COMMAND="$CS $MAIN --auto-init $@"
+COMMAND="$CS $MAIN --comming-from-bin $@"
 
 # EXECUTING IT
 eval $COMMAND

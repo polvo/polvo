@@ -94,5 +94,5 @@ module.exports = class Toaster
 run = (basedir, options = null, skip_initial_build = false)->
   new Toaster basedir, options, skip_initial_build
 
-if /\-\-auto\-init/.test (process.argv.join '')
+if /--comming-from-bin/.test (process.argv.join '')
   run()
