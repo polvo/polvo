@@ -23,23 +23,28 @@ module.exports = class Script
 
     # assemble some information about the file
     @filepath = @realpath.replace "#{@folderpath}#{path.sep}", ''
-
-    # computes release paths for saving js files
-    @relative_path = @filepath.replace '.coffee', '.js'
-    @relative_path = @relative_path.substr 1 if @relative_path[0] is path.sep
-
-    release_path = path.dirname @builder.release
-    absolute_path = path.resolve (path.join release_path, @relative_path)
-
-    folder_path = path.dirname absolute_path
-    @release = 
-      folder: folder_path
-      file: absolute_path
-
     @filepath = (@filepath.substr 1) if (@filepath.substr 0, 1) is path.sep
-
     @filename = path.basename @filepath
     @filefolder = path.dirname @filepath
+
+    # compute all necessary release paths
+    release_file = path.join @builder.toaster.basepath, @builder.release
+    release_folder = path.dirname release_file
+
+    release_file = path.join release_folder, @filepath
+    release_file = release_file.replace '.coffee', '.js'
+
+    release_folder = path.dirname release_file
+
+    relative_path = release_file.replace @builder.toaster.basepath, ''
+    relative_path = relative_path.substr 1 if relative_path[0] is path.sep
+
+    @release = 
+      folder: release_folder
+      file: release_file
+      relative: relative_path
+
+    # cleaning filepath and 
     @namespace = ""
 
     # if the file is in the top level
@@ -153,7 +158,7 @@ module.exports = class Script
     fs.writeFileSync @release.file, compiled
 
     # notify user through cli
-    console.log "[#{now}] #{'Compiled'.bold} #{@relative_path}".green
+    console.log "[#{now}] #{'Compiled'.bold} #{@release.relative}".green
 
   compile_to_str:->
     compiled = cs.compile @raw, bare: @builder.bare
