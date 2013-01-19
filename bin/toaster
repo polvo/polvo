@@ -1,19 +1,19 @@
-#!/usr/bin/env node
+#!/usr/bin/env bash
 
-// node requirements
-var path = require('path');
+# ABSOLUTE PATH FOR THIS VERY EXECUTABLE FILE
+SELF=$(dirname $0)/$(dirname $(readlink -n $0))
 
-// folders
-var base = path.join( __dirname, '..');
-var node_modules = path.join( base, 'node_modules' );
+# ONE FOLDER UP (ROOT OF PROJECT)
+ROOT=$SELF/..
 
-// files
-var coffee = path.join( node_modules, 'coffee-script', 'bin', 'coffee');
-var toaster = path.join( base, 'src', 'toaster.coffee' );
+# COFFEE EXECUTABLE INSIDE `node_modules`
+COFFEE=$ROOT/node_modules/coffee-script/SELF/coffee
 
-// args
-var args = process.argv.slice( 2 )
-args = [toaster].concat( '/--auto-init/' ).concat( args );
+# TOASTER MAIN FILE
+TOASTER=$ROOT/src/toaster.coffee
 
-var cp = require('child_process');
-var cwd = path.resolve( '.' );
+# FORMATTING COMMAND
+COMMAND="$COFFEE $TOASTER --auto-init $@"
+
+# EXECUTING IT
+eval $COMMAND
