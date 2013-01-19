@@ -2,9 +2,8 @@
 toast
 
   # src folders
-  folders:[
-    'src'
-  ]
+  folders:
+    'src':''
 
   # excluded items (default=[])
   exclude: []
@@ -30,5 +29,6 @@ toast
     #       'progressive': 'genres/progressive/*'
     #       'triphop': 'genres/triphop/*'
 
+    release: 'www/js/app.js'
   # if desktop:
   # TODO
