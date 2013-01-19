@@ -7,13 +7,13 @@ SELF=$(dirname $0)/$(dirname $(readlink -n $0))
 ROOT=$SELF/..
 
 # COFFEE EXECUTABLE INSIDE `node_modules`
-COFFEE=$ROOT/node_modules/coffee-script/SELF/coffee
+CS=$ROOT/node_modules/coffee-script/bin/coffee
 
 # TOASTER MAIN FILE
-TOASTER=$ROOT/src/toaster.coffee
+MAIN=$ROOT/src/toaster.coffee
 
 # FORMATTING COMMAND
-COMMAND="$COFFEE $TOASTER --auto-init $@"
+COMMAND="$CS $MAIN --auto-init $@"
 
 # EXECUTING IT
 eval $COMMAND
