@@ -22,7 +22,7 @@ exports.debug = ( msg, send_to_growl = false ) ->
   return msg
 
 exports.error = ( msg, send_to_growl = true, file = null ) ->
-  msg = "#{'ERROR'.bold} #{msg}".magenta
+  msg = "#{'ERROR'.bold} #{msg}".red
   console.error msg
 
   if send_to_growl && growl?
