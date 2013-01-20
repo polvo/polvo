@@ -109,15 +109,17 @@ module.exports = class Toast
       # ...: vendors - optional
       if config.optimize.vendors?
         for vname, vurl of config.optimize.vendors
-          
+
           continue if /^http/m.test vurl
 
           vpath = path.join @basepath, vurl
 
           if fs.existsSync vpath
+            if (fs.lstatSync vpath).isSymbolicLink()
+              vpath = fs.readlinkSync vendor
             config.optimize.vendors[vname] = vpath
-          else
 
+          else
             # error "Local vendor not found. #{dir}\nCheck your config."
             msg = 'Check your `toaster.coffee` config file, local vendor was '
             msg += 'not found:\n\t' + vpath
