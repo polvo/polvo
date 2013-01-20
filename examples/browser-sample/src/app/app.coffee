@@ -1,5 +1,5 @@
-Progressive = require 'genres/progressive'
-TripHop = require 'genres/triphop'
+Progressive = require 'app/genres/progressive'
+TripHop = require 'app/genres/triphop'
 
 class App
   constructor:->
