@@ -12,7 +12,7 @@ module.exports = class Script
   uglify = require("uglify-js").uglify
   uglify_parser = require("uglify-js").parser
 
-  constructor: (@builder, @folderpath, @realpath, @alias, @opts) ->
+  constructor: (@builder, @dirpath, @realpath) ->
     @getinfo()
 
 
@@ -24,27 +24,27 @@ module.exports = class Script
     @baseclasses = []
 
     # assemble some information about the file
-    @filepath = @realpath.replace "#{@folderpath}#{path.sep}", ''
+    @filepath = @realpath.replace "#{@dirpath}#{path.sep}", ''
     @filepath = (@filepath.substr 1) if (@filepath.substr 0, 1) is path.sep
     @filename = path.basename @filepath
     @filefolder = path.dirname @filepath
 
     # compute all necessary release paths
-    release_file = path.join @builder.toaster.basepath, @builder.release
-    release_folder = path.dirname release_file
+    basepath = @builder.toaster.basepath
+    release_dir = path.join basepath, @builder.config.release_dir
+    release_file = path.join release_dir, (@filepath.replace '.coffee', '.js')
 
-    release_file = path.join release_folder, @filepath
-    release_file = release_file.replace '.coffee', '.js'
-
-    release_folder = path.dirname release_file
-
-    relative_path = release_file.replace @builder.toaster.basepath, ''
+    relative_path = release_file.replace basepath, ''
     relative_path = relative_path.substr 1 if relative_path[0] is path.sep
 
+    # this info is used when compiling or deleting from disk, see methods
+    # `delete_from_disk` and `compile_to_disk`
     @release = 
-      folder: release_folder
+      folder: release_dir
       file: release_file
       relative: relative_path
+
+    # TODO: REVIEW BLOCK BELLOW
 
     # cleaning filepath and 
     @namespace = ""
@@ -52,7 +52,6 @@ module.exports = class Script
     # if the file is in the top level
     if @filepath.indexOf( path.sep ) is -1
       @filefolder = ""
-
 
     # assemble namespace info about the file by:
     # 1) replacing "/" or "\" by "."
@@ -80,10 +79,13 @@ module.exports = class Script
         baseclass = klass.match( rgx_ext )[5]
         @baseclasses.push baseclass
 
-    # then if there's other dependencies
+    # TODO: REVIEW BLOCK ABOVE
+
+    # dependencies regexp
     require_reg_all = /^([^\s]+)\s*=\s*require\s(?:'|")(.*)(?:'|")/mg
     require_reg_one = /^([^\s]+)\s*=\s*require\s(?:'|")(.*)(?:'|")/m
 
+    # if file has one or more dependency
     if require_reg_all.test @raw
 
       # collect all and loop through them
@@ -99,19 +101,23 @@ module.exports = class Script
           name: match[1]
           path: match[2] + '.coffee'
 
+        # TODO: REVIEW BLOCK BELLOW
         # if user is under windows, checks and replace any "/" by "\" in
         # file dependencies: TODO: revise this
         # item.path = item.path.replace /(\/)/g, "\\" if path.sep == "\\"
+        # TODO: REVIEW BLOCK ABOVE
 
+        # and add it to the dependencies array
         @dependencies.push dep
 
+    # saves the orignal raw file
     @backup = @raw
+
+    # and inject AMD definitions
     @inject_definitions()
 
-  # inject proper amd definitions if project nature is 'browser'
+  # inject AMD definitions
   inject_definitions:->
-
-    return unless @builder.nature.browser?
 
     # computes all dependencies and format it as a stringfied array without []
     deps_path = ''
@@ -124,7 +130,7 @@ module.exports = class Script
     deps_path = deps_path.slice 0, -1
     deps_args = deps_args.slice 0, -1
 
-    # gets file identation style
+    # detect file identation style..
     match_identation = /^([\s]+).*$/mg
     identation = ''
     while not (identation.match /^[\s\t]{2,}/m)?
@@ -134,18 +140,21 @@ module.exports = class Script
       else
         identation = "  "
 
-    # reident content
+    # and reident content (will be wrapped by AMD closures)
     idented = @backup.replace /^/mg, "#{identation}"
 
-    # re-process the raw file with AMD definitions
+    # re-process the raw file with AMD definitions (modules without id)
     @raw = "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
+    # re-process the raw file with AMD definitions (modules with id)
     def = @filepath.replace '.coffee', ''
     @defined_raw = "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
-  delete_compiled_from_disk:->
-    fs.unlinkFileSync @release.file if (fs.existsSync @release.folder)
+  # deletes release file from disk
+  delete_from_disk:->
+    fs.unlinkSync @release.file if (fs.existsSync @release.file)
 
+  # compile release file to disk
   compile_to_disk:->
     # datetime for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
@@ -160,12 +169,15 @@ module.exports = class Script
     fs.writeFileSync @release.file, compiled
 
     # notify user through cli
-    console.log "[#{now}] #{'Compiled'.bold} #{@release.relative}".green
+    msg = '✓ Compiled'.bold
+    log "[#{now}] #{msg} #{@release.relative}".green
 
+  # compile file and returns it as string
   compile_to_str:->
     compiled = cs.compile @raw, bare: @builder.bare
 
-    if @builder.nature.browser? and @builder.cli.argv.r and @builder.minify
+    # if toaster is runnig 
+    if @builder.cli.argv.r and @builder.minify
       ast = uglify_parser.parse compiled
       ast = uglify.ast_mangle ast
       ast = uglify.ast_squeeze ast
