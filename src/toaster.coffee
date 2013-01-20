@@ -23,6 +23,7 @@ module.exports = class Toaster
   before_build: null
 
   constructor:( basedir, options = null, skip_initial_build = false )->
+
     @basedir = basedir
     @options = options
     @skip_initial_build = skip_initial_build
@@ -78,9 +79,9 @@ module.exports = class Toaster
     else
       return log @cli.opts.help()
 
-  # can be called by apps using toaster as lib, build the project with options
-  # to inject header and footer code which must to be in coffee as well and
-  # will be compiled together the app.
+  # can be called by apps using toaster as lib, and build the project with
+  # options to inject header and footer code which must to be in coffee as well
+  # and will be compiled together the app.
   build:( header_code = "", footer_code = "" )->
     for builder in @toast.builders
       builder.build header_code, footer_code
@@ -89,6 +90,5 @@ module.exports = class Toaster
   # config file is edited :)
   reset:( options )->
     builder.reset() for builder in @toast.builders
-    if options?
-      @options[ key ] = val for val, key of options
-   new Toaster @basedir, @options, @skip_initial_build
+    @options[ key ] = val for val, key of options if options?
+    new Toaster @basedir, @options, @skip_initial_build
