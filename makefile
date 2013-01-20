@@ -1,24 +1,26 @@
 .PHONY: build
 
-VERSION=`node_modules/coffee-script/bin/coffee build/bumper --version`
+CS=node_modules/coffee-script/bin/coffee
+VOWS=node_modules/vows/bin/vows
+VERSION=`$(CS) build/bumper --version`
+
 
 setup:
 	sudo npm link
 
 test: build
-	node_modules/vows/bin/vows spec/*.coffee --spec
+	$(VOWS) spec/*.coffee --spec
 
 
 
 bump.minor:
-	coffee build/bumper.coffee --minor
+	$(CS) build/bumper.coffee --minor
 
 bump.major:
-	coffee build/bumper.coffee --major
+	$(CS) build/bumper.coffee --major
 
 bump.patch:
-	coffee build/bumper.coffee --patch
-
+	$(CS) build/bumper.coffee --patch
 
 
 publish:
