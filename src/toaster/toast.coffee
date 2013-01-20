@@ -21,102 +21,107 @@ module.exports = class Toast
     @basepath = @toaster.basepath
     @builders = []
 
+    # if config is json
     if (config = @toaster.cli.argv["config"])?
       config = JSON.parse( config ) unless config instanceof Object
       @toast item for item in ( [].concat config )
+
+    # otherwise if it's file
     else
+
+      # evaluates it's path
       config_file = @toaster.cli.argv["config-file"]
       filepath = config_file || path.join @basepath, "toaster.coffee"
 
-      if @toaster.cli.argv.w
-        watcher = fsu.watch filepath
-        watcher.on 'change', (f)=>
-          now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-          log "[#{now}] #{'Changed'.bold} #{filepath}".cyan
-          watcher.close()
-          @toaster.reset()
+      # if file doesn't exist
+      unless fs.existsSync filepath
 
-      if fs.existsSync filepath
-
-        contents = fs.readFileSync filepath, "utf-8"
-        
-        try
-          code = cs.compile contents, {bare:1}
-        catch err
-          error err.message + " at 'toaster.coffee' config file."
-
-        fix_scope = /(^[\s\t]?)(toast)+(\()/mg
-        code = code.replace fix_scope, "$1this.$2$3"
-        eval code
-      else
+        # rise and error and aborts
         error "File not found: ".yellow + " #{filepath.red}\n" +
           "Try running:".yellow + " toaster -i".green +
-          " or type".yellow + " #{'toaster -h'.green} " +
+          " or type".yellow + " #toaster -h'".green +
           "for more info".yellow
 
-  
-  toast:( srcpath, params = {} )=>
+        return null
 
-    
-    if srcpath instanceof Object
-      params = srcpath
-    else if path.resolve srcpath != srcpath
-      folder = path.join @basepath, srcpath
+      # otherwise if file exists, go ahead and read it's contents
+      contents = fs.readFileSync filepath, "utf-8"
+
+      # now tries to compile it down to js
+      try
+        code = cs.compile contents, {bare:1}
+
+      # and if some error ocurrs, shows it and aborts
+      catch err
+        error "Error compiling `toaster.coffee` config file\n\n#{err}"
+        return proces.exit()
+
+      # if no errors, fix the `toast` call scope
+      fix_scope = /(^[\s\t]?)(toast)+(\()/mg
+      code = code.replace fix_scope, "$1this.$2$3"
+
+      # and finally execute it
+      eval code
 
 
-    if params.nature.browser?
-      params.nature.browser.minify ?= true
+  toast:( config = {} )=>
 
-      if params.nature.browser.release is null
-        error 'Release path not informed in config.'
-        return process.exit()
+    # normalize and validate all options in `toaster.coffee`
+
+    # ...: exclude - optional
+    config.exclude ?= []
+
+    # ...: bare - optional
+    config.bare ?= true # boolean
+
+    # ...: minify - optional
+    config.minify ?= true # boolean
+
+    # ...: dirs - mandatory
+    if config.dirs is null or config.dirs.length is 0
+      msg = 'Check your `toaster.coffee` config file, you need to inform at'
+      msg += 'least one dir in your config file.'
+      return error msg
+
+    for dir, i in config.dirs
+      dir = path.join @basepath, dir
+      if fs.existsSync dir
+        config.dirs[i] = dir
       else
-        dir = path.dirname params.nature.browser.release
-        unless fs.existsSync (path.join @basepath, dir)
-          error "Release folder does not exist:\n\t#{dir.yellow}"
-          return process.exit()
+        msg = 'Check your `toaster.coffee` config file, informed dir doens\'t '
+        msg += 'exist:\n\tleast one dir in your config file.'
+        return error msg
 
-    # configuration object shared between builders
-    if params.debug
-      debug = path.join @basepath, params.debug
+    # ...: release_dir - mandatory
+    if config.release_dir is null
+      msg = 'Check your `toaster.coffee` config file, `release_dir` must to'
+      msg += 'be informed.'
+      return error msg
     else
-      debug = null
+      config.release_dir ?= path.join @basepath, config.release_dir
+      unless fs.existsSync (path.dirname config.release_dir)
+        error "Release dir doesn't exist:\n\t#{dir.yellow}"
+        return null
 
-    config =
-        # src folders
-        src_folders: []
+    # ...:optimize - optional
+    if config.optimize?
 
-        # options
-        nature: params.nature
-        exclude: params.exclude ? []
-        bare: params.bare ? true
-        release: path.join @basepath, params.release
+      # ...: vendors - optional
+      if config.optimize.vendors?
+        for vname, vurl of config.optimize.vendors
+          
+          continue if /^http/m.test vurl
 
+          vpath = path.join @basepath, vurl
 
-    # # compute vendors full path
-    # for v, i in config.vendors
-    #   vpath = config.vendors[i] = (path.resolve v)
-    #   if (path.resolve vpath) isnt vpath
-    #     config.vendors[i] = path.join @basepath, v
+          if fs.existsSync vpath
+            config.optimize.vendors[vname] = vpath
+          else
 
-    unless srcpath instanceof Object
-      srcpath = path.resolve( path.join @basepath, srcpath )
-      config.src_folders.push
-        path: srcpath
-        alias: params.alias || null
-
-    if params.folders?
-      for folder, alias of params.folders
-        if (path.resolve folder) != folder
-          folder = path.join @basepath, folder
-        config.src_folders.push {path: folder, alias: alias}
-
-    for item in config.src_folders
-      unless fs.existsSync item.path
-        error "Source folder doens't exist:\n\t#{item.path.red}\n" + 
-            "Check your #{'toaster.coffee'.yellow} and try again." +
-            "\n\t" + (path.join @basepath, "toaster.coffee" ).yellow
-        return process.exit()
-
+            # error "Local vendor not found. #{dir}\nCheck your config."
+            msg = 'Check your `toaster.coffee` config file, local vendor was '
+            msg += 'not found:\n\t' + vpath
+            return error msg
+            
     builder = new Builder @toaster, @toaster.cli, config
     @builders.push builder
