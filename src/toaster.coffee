@@ -71,7 +71,6 @@ module.exports = class Toaster
       error msg
 
     # compile / debug project
-    else if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
     else if (@cli.argv.c or @cli.argv.r or @cli.argv.w or @cli.argv.s)
       @toast = new Toast @
       unless skip_initial_build
