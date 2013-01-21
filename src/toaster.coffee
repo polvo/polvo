@@ -65,10 +65,10 @@ module.exports = class Toaster
     #   new toaster.misc.InjectNS @toast.builders
 
     # auto run mode
-    else if @cli.argv.a and not @cli.argv.c
-      msg = "Option -a can't work without -w, usage: \n"
-      msg += "\ttoaster -wa"
-      error msg
+    # else if @cli.argv.a and not @cli.argv.c
+    #   msg = "Option -a can't work without -w, usage: \n"
+    #   msg += "\ttoaster -wa"
+    #   error msg
 
     # compile / debug project
     else if (@cli.argv.c or @cli.argv.r or @cli.argv.w or @cli.argv.s)
