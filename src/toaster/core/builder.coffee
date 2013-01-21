@@ -45,6 +45,22 @@ module.exports = class Builder
         # if it should be included, add to @files array
         @files.push (new Script @, dir, file) if include
 
+    # clean release folder
+    found = fsu.find @config.release_dir, /.*/, true
+    while found.length
+      location = found.pop()
+      if (fs.lstatSync location).isDirectory()
+        fs.rmdirSync location
+      else
+        fs.unlinkSync location
+
+    # copy vendors to release folder
+    return unless @config.optimize? and @config.optimize.vendors
+    for vname, vurl of @config.optimize.vendors
+      unless /^http/m.test vurl
+        fsu.cp vurl, (path.join @config.release_dir, "#{vname}.js")
+
+
 
   reset:()->
     # close all builder's watchers
