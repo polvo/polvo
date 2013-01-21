@@ -98,7 +98,7 @@ module.exports = class Toast
       msg += 'be informed.'
       return error msg
     else
-      config.release_dir ?= path.join @basepath, config.release_dir
+      config.release_dir = path.join @basepath, config.release_dir
       unless fs.existsSync (path.dirname config.release_dir)
         error "Release dir doesn't exist:\n\t#{dir.yellow}"
         return null

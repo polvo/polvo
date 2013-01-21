@@ -30,11 +30,11 @@ module.exports = class Script
     @filefolder = path.dirname @filepath
 
     # compute all necessary release paths
-    basepath = @builder.toaster.basepath
-    release_dir = path.join basepath, @builder.config.release_dir
-    release_file = path.join release_dir, (@filepath.replace '.coffee', '.js')
+    release_file = path.join @builder.config.release_dir, @filepath
+    release_file = release_file.replace '.coffee', '.js'
+    release_dir = path.dirname release_file
 
-    relative_path = release_file.replace basepath, ''
+    relative_path = release_file.replace @builder.toaster.basepath, ''
     relative_path = relative_path.substr 1 if relative_path[0] is path.sep
 
     # this info is used when compiling or deleting from disk, see methods
