@@ -37,12 +37,11 @@ module.exports = class Toast
       unless fs.existsSync filepath
 
         # rise and error and aborts
-        error "File not found: ".yellow + " #{filepath.red}\n" +
-          "Try running:".yellow + " toaster -i".green +
-          " or type".yellow + " #toaster -h'".green +
-          "for more info".yellow
-
-        return null
+        msg = "Config file not found: #{filepath.yellow}\n"
+        msg += "Try running:".white + " toaster -i".green
+        msg += " or type".white + " #toaster -h'".green
+        msg += "for more info".white
+        return error msg
 
       # otherwise if file exists, go ahead and read it's contents
       contents = fs.readFileSync filepath, "utf-8"
@@ -90,8 +89,8 @@ module.exports = class Toast
 
     # ...: dirs - mandatory
     if config.dirs is null or config.dirs.length is 0
-      msg = 'Check your `toaster.coffee` config file, you need to inform at'
-      msg += 'least one dir in your config file.'
+      msg = 'You need to inform at least one dir in your config file.'
+      msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
 
     for dir, i in config.dirs
@@ -99,20 +98,21 @@ module.exports = class Toast
       if fs.existsSync dir
         config.dirs[i] = dir
       else
-        msg = 'Check your `toaster.coffee` config file, informed dir doens\'t '
-        msg += 'exist:\n\tleast one dir in your config file.'
+        msg = 'Informed dir doesn\'t exist:\n\t#{dir.yellow}'
+        msg += '\nCheck your `toaster.coffee` config file.'
         return error msg
 
     # ...: release_dir - mandatory
     if config.release_dir is null
-      msg = 'Check your `toaster.coffee` config file, `release_dir` must to'
-      msg += 'be informed.'
+      msg = 'You need to inform your `release_dir`'
+      msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
     else
       config.release_dir = path.join @basepath, config.release_dir
       unless fs.existsSync (path.dirname config.release_dir)
-        error "Release dir doesn't exist:\n\t#{dir.yellow}"
-        return null
+        msg = "`release_dir` doesn't exist:\n\t#{config.release_dir.yellow}"
+        msg += '\nCheck your `toaster.coffee` config file.'
+        return error msg
 
     # ...:optimize - optional
     if config.optimize?
