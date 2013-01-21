@@ -14,6 +14,7 @@ module.exports = class Builder
   path = require 'path'
   cs = require "coffee-script"
   cp = require "child_process"
+  conn = require 'connect'
 
   watchers: null
 
@@ -21,11 +22,13 @@ module.exports = class Builder
   constructor:(@toaster, @cli, @config)->
 
     # initialize
-    @init()
+    @init() if @cli.argv.c or @cli.argv.w or @cli.argv.r
 
     # starts watching if -w is given
     @watch() if @cli.argv.w
 
+    # starts serving static files
+    setTimeout (=> @serve()), 1 if @cli.argv.s
 
   init:()->
     # initializes buffer array to keep all tracked files
@@ -60,7 +63,10 @@ module.exports = class Builder
       unless /^http/m.test vurl
         fsu.cp vurl, (path.join @config.release_dir, "#{vname}.js")
 
-
+  serve:->
+    # simple static server with 'connect'
+    conn().use(conn.static @config.webroot ).listen @config.port
+    log 'Server running at http://localhost:' + @config.port
 
   reset:()->
     # close all builder's watchers

@@ -33,6 +33,9 @@ module.exports = class Cli
       .alias('r', 'release')
       .describe('r', "Compile project in release mode.")
 
+      .alias('s', 'server')
+      .describe('s', "Serves project statically, options in config file.")
+
       .alias('a', 'autorun')
       .describe('a', 'Execute the script in node.js after compilation.')
 

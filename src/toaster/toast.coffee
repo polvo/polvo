@@ -77,6 +77,17 @@ module.exports = class Toast
     # ...: minify - optional
     config.minify ?= true # boolean
 
+    # ...: webroot - optional
+    config.webroot ?= '' # string
+    if @toaster.cli.argv.s? and config.webroot is ''
+      msg = 'Informe your webroot for using static server.'
+      msg += '\nCheck your `toaster.coffee` config file.'
+      return error msg
+
+
+    # ...: port - optional
+    config.port ?= 3000
+
     # ...: dirs - mandatory
     if config.dirs is null or config.dirs.length is 0
       msg = 'Check your `toaster.coffee` config file, you need to inform at'

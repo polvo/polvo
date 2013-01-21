@@ -24,6 +24,10 @@ toast
   # base url to reach your release folder through htto
   base_url: 'js'
 
+  # infos for simple static server (with -s option)
+  webroot: 'www'
+  port: 3000
+
   # optimization configs (when specified, means toaster's loader will be used)
   # the resulting will probably not be usefull with another AMD loader
   optimize:

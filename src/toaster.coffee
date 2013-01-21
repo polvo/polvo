@@ -72,8 +72,11 @@ module.exports = class Toaster
 
     # compile / debug project
     else if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
+    else if (@cli.argv.c or @cli.argv.r or @cli.argv.w or @cli.argv.s)
       @toast = new Toast @
-      @build() unless skip_initial_build
+      unless skip_initial_build
+        if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
+          @build()
 
     # showing help screen
     else
