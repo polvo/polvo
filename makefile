@@ -4,6 +4,17 @@ CS=node_modules/coffee-script/bin/coffee
 VOWS=node_modules/vows/bin/vows
 VERSION=`$(CS) build/bumper --version`
 
+compile.loader:
+	$(CS) -o lib/loader -j toaster.coffee -cb \
+		src/loader/script.coffee \
+		src/loader/chunk.coffee \
+		src/loader/toaster.coffee
+
+watch.loader:
+	$(CS) -o lib/loader -j toaster.coffee -cbw \
+		src/loader/script.coffee \
+		src/loader/chunk.coffee \
+		src/loader/toaster.coffee
 
 setup:
 	sudo npm link
