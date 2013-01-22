@@ -5,7 +5,7 @@
   "description": "Minimalist build system for CoffeeScript.",
   "keywords": ["coffeescript", "build", "namespace", "tool"],
 
-  "main" : "./src/toaster",
+  "main" : "./cli/toaster",
   "directories": {"lib": "./lib/"},
   "scripts": { "test": "make test" },
 
