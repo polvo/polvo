@@ -53,20 +53,10 @@ class Chunk
     for dep in @deps
 
       dep = dep.substr 1 if dep[0] is ':'
-      # console.log '------------ checking dep: ' + dep
 
       if Chunk.chunks[ dep ]?
         dep = Chunk.chunks[ dep ]
-        # console.log 'NOT NULL'
-        if dep.factored is null
-          # console.log 'NOT FACTORED'
-          return false
-        else
-          # console.log 'YES FACTORED'
-          status = true
-
-        # console.log 'YES DEFINED!'
+        return false if dep.factored is null
       else
-        # console.log '++++++++++ NOT DEFiNED ' + dep
         return false
     return status
