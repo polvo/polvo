@@ -265,3 +265,12 @@ require = function() {
 define = function() {
   return Toaster.process('define', [].slice.call(arguments));
 };
+
+
+
+// initializing project `browser-sample`
+(function(){
+  Toaster.map( {jquery:'https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'} );
+  Toaster.config( {base_url: 'js'} );
+  require( ['app/app'] );
+})()

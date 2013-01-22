@@ -240,7 +240,11 @@ module.exports = class Builder
     # all the necessary configs and a hash map containing the layer location
     # for each module that was merged into it.
 
-    toaster = fs.readFileSync (path.join __dirname, 'toaster.js'), 'utf-8'
+    loader_path = path.resolve __dirname
+    loader_path = path.join loader_path, '..', '..', '..', '..'
+    loader_path = path.join loader_path, 'lib', 'loader', 'toaster.js'
+
+    toaster = fs.readFileSync loader_path, 'utf-8'
 
     if map?
       map = "Toaster.map( #{(util.inspect map).replace /\s/g, ''} );"
