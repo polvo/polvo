@@ -92,6 +92,10 @@ module.exports = class Toast
       msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
 
+    # ...: main - mandatory
+    if config.base_url?
+      config.base_url += '/' if config.base_url.slice -1 isnt '/'
+
     # ...: dirs - mandatory
     if config.dirs is null or config.dirs.length is 0
       msg = 'You need to inform at least one dir or source files.'
