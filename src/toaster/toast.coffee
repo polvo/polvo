@@ -83,13 +83,18 @@ module.exports = class Toast
       msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
 
-
     # ...: port - optional
     config.port ?= 3000
 
+    # ...: main - mandatory
+    unless config.main?
+      msg = 'You need to inform the main entry point (module id) for your app.'
+      msg += '\nCheck your `toaster.coffee` config file.'
+      return error msg
+
     # ...: dirs - mandatory
     if config.dirs is null or config.dirs.length is 0
-      msg = 'You need to inform at least one dir in your config file.'
+      msg = 'You need to inform at least one dir or source files.'
       msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
 

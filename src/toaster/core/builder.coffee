@@ -15,6 +15,7 @@ module.exports = class Builder
   cs = require "coffee-script"
   cp = require "child_process"
   conn = require 'connect'
+  util = require 'util'
 
   watchers: null
 
@@ -57,12 +58,6 @@ module.exports = class Builder
       else
         fs.unlinkSync location
 
-    # copy vendors to release folder
-    return unless @config.optimize? and @config.optimize.vendors
-    for vname, vurl of @config.optimize.vendors
-      unless /^http/m.test vurl
-        fsu.cp vurl, (path.join @config.release_dir, "#{vname}.js")
-
   serve:->
     # simple static server with 'connect'
     conn().use(conn.static @config.webroot ).listen @config.port
@@ -71,10 +66,6 @@ module.exports = class Builder
   reset:()->
     # close all builder's watchers
     watcher.close() for watcher in @watchers
-
-  build:=>
-    # compile all files individually
-    @compile()
 
   watch:()->
     # initialize watchers array
@@ -166,94 +157,217 @@ module.exports = class Builder
           file.item.getinfo()
           file.item.compile_to_disk()
 
-  compile:()->
+  compile:( header_code, footer_code )->
     # loop through all ordered files
     file.compile_to_disk() for file, index in @files
+    @copy_vendors_to_release()
+    @write_toaster()
 
-  # missing = {}
-  # reorder: (cycling = false) ->
-  #   # log "Module.reorder"
+  optimize:( header_code, footer_code )->
+    log 'Optimizing project...'
 
-  #   # if cycling is true or @missing is null, initializes empty array
-  #   # for holding missing dependencies
-  #   # 
-  #   # cycling means the redorder method is being called recursively,
-  #   # no other methods call it with cycling = true
-  #   @missing = {} if cycling is false
+    map = {}
+    layers = []
+    included = []
+    ordered = @reorder (@files.slice 0) # .concat @config.optimize.vendors
 
-  #   # looping through all files
-  #   for file, i in @files
+    for layer_name, layer_deps of @config.optimize.layers
 
-  #     # if theres no dependencies, go to next file
-  #     continue if !file.dependencies.length && !file.baseclasses.length
+      layers.push layer_name
+
+      contents = ''
+      for dep in layer_deps
+
+        # gets dependency chain
+        found = (ArrayUtil.find ordered, 'filepath': "#{dep}.coffee")
+
+        # if nothing is found
+        unless found?
+          # checks if it was already included
+          is_included = (ArrayUtil.find included, 'filepath': "#{dep}.coffee")
+
+          # and if not..
+          unless is_included?
+            msg = "Cannot find module `#{dep}` for layer `#{layer_name}`."
+            msg += '\nCheck your `toaster.coffee` config file.'
+            error msg
+
+          continue
+
+        # scripts pack (all dependencies resolved)
+        pack = ordered.splice 0, found.index + 1
+
+        # adding all to included array
+        included = included.concat pack
+
+        # increments the layer contents and map the script location
+        for script in pack
+          map[script.filepath.replace '.coffee', ''] = layer_name
+          contents += "#{script.compile_to_str true}"
+
+      # if there's something to be written
+      if contents isnt ''
+        # write layer
+        layer_path = path.join @config.release_dir, "#{layer_name}.js"
+        fs.writeFileSync layer_path, contents
+
+        # notify user through cli
+        relative_path = layer_path.replace @toaster.basepath, ''
+        relative_path = relative_path.substr 1 if relative_path[0] is path.sep
+        msg = "#{'✓ Layer optimized: '.bold}#{layer_name} -> #{relative_path}"
+        log msg.green
+
+      # otherwise if it's empty just inform user through the cli
+      else
+        msg = "#{'✓ Layer is empty: '.bold} #{layer_name} -> [skipped]"
+        log msg.yellow
+
+    # write toaster loader and initializer
+    @write_toaster map
+
+    # copy all vendors as well
+    @copy_vendors_to_release()
+
+
+  write_toaster:( map )->
+
+    # increment map with all remote vendors
+    map or= {}
+    for name, url of @config.optimize.vendors
+      map[name] = url if /^http/m.test url
+
+    # mounting main toaster file, contains the toaster builtin amd loader, 
+    # all the necessary configs and a hash map containing the layer location
+    # for each module that was merged into it.
+
+    toaster = fs.readFileSync (path.join __dirname, 'toaster.js'), 'utf-8'
+
+    if map?
+      map = "Toaster.map( #{(util.inspect map).replace /\s/g, ''} );"
+    else map = ''
+
+    toaster += """\n\n
+      // initializing project `#{@config.name}`
+      (function(){
+        #{map}
+        Toaster.config( {base_url: '#{@config.base_url}'} );
+        require( ['#{@config.main}'] );
+      })()
+    """
+    
+    # writing to disk
+    toaster_path = path.join @config.release_dir, "toaster.js"
+    fs.writeFileSync toaster_path, toaster
+
+  copy_vendors_to_release:( verbose )->
+    # copy vendors to release folder
+    return unless @config.optimize? and @config.optimize.vendors?
+    for vname, vurl of @config.optimize.vendors
+      unless /^http/m.test vurl
+
+        release_path = path.join @config.release_dir, "#{vname}.js"
+        fsu.cp vurl, release_path
+        continue unless verbose
+
+        from = vurl.replace @toaster.basepath, ''
+        to = release_path.replace @toaster.basepath, ''
+
+        from = from.substr 1 if from[0] is path.sep
+        to = to.substr 1 if to[0] is path.sep
+
+        msg = "#{'✓ Vendor copied: '.bold}#{from} -> #{to}"
+        log msg.green
+
+
+  missing = {}
+  reorder: (files, cycling = false) ->
+    # log "Module.reorder"
+
+    # if cycling is true or @missing is null, initializes empty array
+    # for holding missing dependencies
+    # 
+    # cycling means the redorder method is being called recursively,
+    # no other methods call it with cycling = true
+    @missing = {} if cycling is false
+
+    # looping through all files
+    for file, i in files
+
+      # if theres no dependencies, go to next file
+      continue if !file.dependencies.length && !file.baseclasses.length
       
-  #     # otherwise loop thourgh all file dependencies
-  #     for dep, index in file.dependencies
+      # otherwise loop thourgh all file dependencies
+      for dep, index in file.dependencies
 
-  #       filepath = dep.path
+        filepath = dep.path
 
-  #       # search for dependency
-  #       dependency = ArrayUtil.find @files, 'filepath': filepath
-  #       dependency_index = dependency.index if dependency?
+        # skip vendors
+        continue if filepath[0] is ':'
 
-  #       # continue if the dependency was already initialized
-  #       continue if dependency_index < i && dependency?
+        # search for dependency
+        dependency = ArrayUtil.find files, 'filepath': filepath
+        dependency_index = dependency.index if dependency?
 
-  #       # if it's found
-  #       if dependency?
+        # continue if the dependency was already initialized
+        continue if dependency_index < i && dependency?
 
-  #         # if there's some circular dependency loop
-  #         if (ArrayUtil.has dependency.item.dependencies, 'filepath': file.filepath)
+        # if it's found
+        if dependency?
 
-  #           # remove it from the dependencies
-  #           file.dependencies.splice index, 1
+          # if there's some circular dependency loop
+          if (ArrayUtil.has dependency.item.dependencies, 'filepath': file.filepath)
 
-  #           # then prints a warning msg and continue
-  #           warn "Circular dependency found between ".yellow +
-  #                filepath.grey.bold + " and ".yellow +
-  #                file.filepath.grey.bold
-            
-  #           continue
+            # remove it from the dependencies
+            file.dependencies.splice index, 1
 
-  #         # otherwise if no circular dependency is found, reorder
-  #         # the specific dependency and run reorder recursively
-  #         # until everything is beautiful
-  #         else
-  #           @files.splice index, 0, dependency.item
-  #           @files.splice dependency.index + 1, 1
-  #           @reorder true
-  #           break
+            # then prints a warning msg and continue
+            warn "Circular dependency found between ".yellow +
+                 filepath.grey.bold + " and ".yellow +
+                 file.filepath.grey.bold
 
-  #       # otherwise if the dependency is not found
-  #       else if @missing[filepath] != true
-          
-  #         # then add it to the @missing hash (so it will be ignored
-  #         # until reordering finishes)
-  #         @missing[filepath] = true
+            continue
 
-  #         # move it to the end of the dependencies array (avoiding
-  #         # it from being touched again)
-  #         file.dependencies.push filepath
-  #         file.dependencies.splice index, 1
+          # otherwise if no circular dependency is found, reorder
+          # the specific dependency and run reorder recursively
+          # until everything is beautiful
+          else
+            files.splice index, 0, dependency.item
+            files.splice dependency.index + 1, 1
+            @reorder files, true
+            break
 
-  #         # ..and finally prints a warning msg
-  #         warn "#{'Dependency'.yellow} #{filepath.bold.grey} " +
-  #            "#{'not found for file'.yellow} " +
-  #            file.filepath.grey.bold
+        # otherwise if the dependency is not found (for the first time) 
+        else if @missing[filepath] != true
 
-  #     # validate if all base classes was properly imported
-  #     file_index = ArrayUtil.find @files, 'filepath': file.filepath
-  #     file_index = file_index.index
+          # then add it to the @missing hash (so it will be ignored
+          # until reordering finishes)
+          @missing[filepath] = true
 
-  #     for bc in file.baseclasses
-  #       found = ArrayUtil.find @files, bc, "classname"
-  #       not_found = (found == null) || (found.index > file_index)
+          # move it to the end of the dependencies array (avoiding
+          # it from being touched again)
+          file.dependencies.push filepath
+          file.dependencies.splice index, 1
 
-  #       if not_found && !@missing[bc]
-  #         @missing[bc] = true
-  #         warn "Base class ".yellow +
-  #            "#{bc} ".bold.grey +
-  #            "not found for class ".yellow +
-  #            "#{file.classname} ".bold.grey +
-  #            "in file ".yellow +
-  #            file.filepath.bold.grey
+          # ..and finally prints a warning msg
+          warn "#{'Dependency'.yellow} #{filepath.bold.grey} " +
+             "#{'not found for file'.yellow} " +
+             file.filepath.grey.bold
+
+      # validate if all base classes was properly imported
+      file_index = ArrayUtil.find files, 'filepath': file.filepath
+      file_index = file_index.index
+
+      for bc in file.baseclasses
+        found = ArrayUtil.find files, bc, "classname"
+        not_found = (found == null) || (found.index > file_index)
+
+        if not_found && !@missing[bc]
+          @missing[bc] = true
+          warn "Base class ".yellow +
+             "#{bc} ".bold.grey +
+             "not found for class ".yellow +
+             "#{file.classname} ".bold.grey +
+             "in file ".yellow +
+             file.filepath.bold.grey
+
+    return files

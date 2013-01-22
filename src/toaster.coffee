@@ -86,7 +86,10 @@ module.exports = class Toaster
   # and will be compiled together the app.
   build:( header_code = "", footer_code = "" )->
     for builder in @toast.builders
-      builder.build header_code, footer_code
+      if @cli.argv.c? or @cli.argv.w?
+        builder.compile header_code, footer_code
+      else if @cli.argv.r
+        builder.optimize header_code, footer_code
 
   # resets the toaster completely - specially used when the `toaster.coffee`
   # config file is edited :)

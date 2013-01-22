@@ -97,9 +97,14 @@ module.exports = class Script
 
         # computes dep name and path
         match = dep.match require_reg_one
-        dep =
+        dep = 
           name: match[1]
           path: match[2] + '.coffee'
+          vendor: false
+
+        if dep.path[0] is ':'
+          # dep.path = dep.path.substr 1
+          dep.is_vendor = true
 
         # TODO: REVIEW BLOCK BELLOW
         # if user is under windows, checks and replace any "/" by "\" in
@@ -125,7 +130,7 @@ module.exports = class Script
 
     for dep in @dependencies
       deps_path += "'#{dep.path.replace '.coffee', ''}',\n" 
-      deps_args += "#{dep.name}," 
+      deps_args += "#{dep.name}," unless dep.is_vendor
 
     deps_path = deps_path.slice 0, -1
     deps_args = deps_args.slice 0, -1
@@ -143,10 +148,10 @@ module.exports = class Script
     # and reident content (will be wrapped by AMD closures)
     idented = @backup.replace /^/mg, "#{identation}"
 
-    # re-process the raw file with AMD definitions (modules without id)
+    # re-process the raw file with AMD definitions (modules WITHOUT id)
     @raw = "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
-    # re-process the raw file with AMD definitions (modules with id)
+    # re-process the raw file with AMD definitions (modules WITH id)
     def = @filepath.replace '.coffee', ''
     @defined_raw = "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
@@ -173,11 +178,12 @@ module.exports = class Script
     log "[#{now}] #{msg} #{@release.relative}".green
 
   # compile file and returns it as string
-  compile_to_str:->
-    compiled = cs.compile @raw, bare: @builder.bare
+  compile_to_str:( add_definitions = false )->
+    raw = if add_definitions then @defined_raw else @raw
+    compiled = cs.compile raw, bare: @builder.config.bare
 
     # if toaster is runnig 
-    if @builder.cli.argv.r and @builder.minify
+    if @builder.cli.argv.r and @builder.config.minify
       ast = uglify_parser.parse compiled
       ast = uglify.ast_mangle ast
       ast = uglify.ast_squeeze ast
