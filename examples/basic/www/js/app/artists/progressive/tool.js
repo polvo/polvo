@@ -1,16 +1,11 @@
-(function() {
 
-  define([], function() {
-    var Tool;
-    return Tool = (function() {
+define([], function() {
+  var Tool;
+  return Tool = (function() {
 
-      function Tool() {
-        console.log("\t\tArtist: Tool created!");
-      }
+    function Tool() {}
 
-      return Tool;
+    return Tool;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

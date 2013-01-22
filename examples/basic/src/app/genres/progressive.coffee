@@ -4,7 +4,6 @@ Tool = require 'app/artists/progressive/tool'
 
 class Progressive
   constructor:->
-    console.log "\tGenre: Progressive created!"
-    new KingCrimson
-    new TheMarsVolta
-    new Tool
+    console.log 'king crimson: ' + (new KingCrimson).constructor
+    console.log 'the mars volta: ' + (new TheMarsVolta).constructor
+    console.log 'tool: ' + (new Tool).constructor

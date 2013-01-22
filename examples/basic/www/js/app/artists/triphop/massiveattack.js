@@ -1,16 +1,11 @@
-(function() {
 
-  define([], function() {
-    var MassiveAttack;
-    return MassiveAttack = (function() {
+define([], function() {
+  var MassiveAttack;
+  return MassiveAttack = (function() {
 
-      function MassiveAttack() {
-        console.log("\t\tArtist: MassiveAttack created!");
-      }
+    function MassiveAttack() {}
 
-      return MassiveAttack;
+    return MassiveAttack;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

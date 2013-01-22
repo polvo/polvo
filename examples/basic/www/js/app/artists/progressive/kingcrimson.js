@@ -1,16 +1,13 @@
-(function() {
 
-  define([], function() {
-    var KingCrimson;
-    return KingCrimson = (function() {
+define([':_'], function() {
+  var KingCrimson;
+  return KingCrimson = (function() {
 
-      function KingCrimson() {
-        console.log("\t\tArtist: KingCrimson created!");
-      }
+    function KingCrimson() {
+      console.log('underscore: ' + _);
+    }
 
-      return KingCrimson;
+    return KingCrimson;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

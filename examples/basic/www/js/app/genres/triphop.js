@@ -1,19 +1,15 @@
-(function() {
 
-  define(['app/artists/triphop/massiveattack', 'app/artists/triphop/portishead', 'app/artists/triphop/lovage'], function(MassiveAttack, Portishead, Lovage) {
-    var TripHop;
-    return TripHop = (function() {
+define(['app/artists/triphop/massiveattack', 'app/artists/triphop/portishead', 'app/artists/triphop/lovage'], function(MassiveAttack, Portishead, Lovage) {
+  var TripHop;
+  return TripHop = (function() {
 
-      function TripHop() {
-        console.log("\tGenre: TripHop created!");
-        new MassiveAttack;
-        new Portishead;
-        new Lovage;
-      }
+    function TripHop() {
+      console.log('massive attack: ' + (new MassiveAttack).constructor);
+      console.log('portishead: ' + (new Portishead).constructor);
+      console.log('lovage: ' + (new Lovage).constructor);
+    }
 
-      return TripHop;
+    return TripHop;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

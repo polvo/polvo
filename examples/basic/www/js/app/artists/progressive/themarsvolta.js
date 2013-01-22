@@ -1,16 +1,11 @@
-(function() {
 
-  define([], function() {
-    var TheMarsVolta;
-    return TheMarsVolta = (function() {
+define([], function() {
+  var TheMarsVolta;
+  return TheMarsVolta = (function() {
 
-      function TheMarsVolta() {
-        console.log("\t\tArtist: TheMarsVolta created!");
-      }
+    function TheMarsVolta() {}
 
-      return TheMarsVolta;
+    return TheMarsVolta;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

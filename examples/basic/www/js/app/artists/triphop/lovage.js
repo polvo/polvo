@@ -1,16 +1,11 @@
-(function() {
 
-  define([], function() {
-    var Lovage;
-    return Lovage = (function() {
+define([], function() {
+  var Lovage;
+  return Lovage = (function() {
 
-      function Lovage() {
-        console.log("\t\tArtist: Lovage created!");
-      }
+    function Lovage() {}
 
-      return Lovage;
+    return Lovage;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

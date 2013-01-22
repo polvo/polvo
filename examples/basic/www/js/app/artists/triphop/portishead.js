@@ -1,16 +1,11 @@
-(function() {
 
-  define([], function() {
-    var Portishead;
-    return Portishead = (function() {
+define([], function() {
+  var Portishead;
+  return Portishead = (function() {
 
-      function Portishead() {
-        console.log("\t\tArtist: Portishead created!");
-      }
+    function Portishead() {}
 
-      return Portishead;
+    return Portishead;
 
-    })();
-  });
-
-}).call(this);
+  })();
+});

@@ -1,2 +1,5 @@
+_ = require ':_'
+
 class KingCrimson
-  constructor:-> console.log "\t\tArtist: KingCrimson created!"
+  constructor:->
+    console.log 'underscore: ' + _

@@ -1,19 +1,16 @@
-(function() {
 
-  define(['app/genres/progressive', 'app/genres/triphop'], function(Progressive, TripHop) {
-    var App;
-    App = (function() {
+define(['app/genres/progressive', 'app/genres/triphop', ':jquery'], function(Progressive, TripHop) {
+  var App;
+  App = (function() {
 
-      function App() {
-        console.log("App created!");
-        new Progressive;
-        new TripHop;
-      }
+    function App() {
+      console.log('progressive: ' + (new Progressive).constructor);
+      console.log('triphop: ' + (new TripHop).constructor);
+      console.log('jquery: ' + $);
+    }
 
-      return App;
+    return App;
 
-    })();
-    return new App;
-  });
-
-}).call(this);
+  })();
+  return new App;
+});
