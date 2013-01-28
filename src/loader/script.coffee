@@ -1,5 +1,6 @@
 class Script
 
+  started = {}
   cached = {}
 
   id: null
@@ -8,33 +9,31 @@ class Script
   done: null
   error: null
 
-  constructor:( @id, @done, @error, timeout )->
+  constructor:( @id, @url, @done, @error, timeout, @is_non_amd )->
+    console.log "new script: #{id} -> #{url}"
     setTimeout =>
       @load()
     , timeout
 
   load:()->
 
-    if @id[0] is ':'
-      @id = @id.substr 1
-      
-      if Toaster.MAP[@id]?
-        @url = Toaster.MAP[@id]
-      else
-        @url = @id
+    if Toaster.MAP[@id]?
+      @url = Toaster.MAP[@id]
+    else
+      @url = @id
 
     unless /^http/m.test @url 
       reg = new RegExp( "(^#{Toaster.BASE_URL.replace '/', '\\/'})" )
-      @url = "#{Toaster.BASE_URL}#{@id}" unless reg.test @id
+      @url = "#{Toaster.BASE_URL}#{@url}" unless reg.test @url
 
     # adds extension if needed
     if (@url.indexOf '.js') < 0
       @url += '.js'
 
-
-    # console.log 'load..... >> ', @url
     if cached[ @url ] is true
-      return setTimeout @done, 1
+      return @done @id, @url
+    else if started[@url]?
+      return
 
     # creates element for loading the script
     @el = document.createElement 'script'
@@ -57,11 +56,14 @@ class Script
       @el.onload = ( ev )=>
         @internal_done ev
 
+    started[@url] = true
+
     # attach to head
+    console.log 'load..... >> ', @url
     head = (document.getElementsByTagName 'head')[0]
     head.insertBefore @el, head.lastChild
 
   internal_done: ( ev )->
-    # console.log '...loaded << ' + @url
+    console.log '...loaded << ' + @url
     cached[ @url ] = true
-    @done (@el.getAttribute 'data-id'), @el.src
+    @done @id, @el.src, @is_non_amd

@@ -1,4 +1,10 @@
+# initialize global require / define
+require = -> Toaster.process 'require', [].slice.call arguments
+define = -> Toaster.process 'define', [].slice.call arguments
+
+# Toaster class
 class Toaster
+
   @last_chunk = null
   @BASE_URL = null
   @MAP = {}
@@ -9,63 +15,107 @@ class Toaster
     Toaster.BASE_URL = options.base_url
 
   # ...
-  # layer map
+  # sets the layer map
   @map:( layer_map )->
     Toaster.MAP = layer_map
 
   # ...
   # process all require's and define's calls
-  @process = ( type, params, load = true )->
-
+  @process = ( type, params )->
     # first require (inline script) is handled differently (root)
-    Toaster.define_chunk 'root' if @last_chunk?
+    if @last_chunk? and @last_chunk.type is 'require'
+      Toaster.define_chunk 'root'
 
     # format params checking all possible ways
     params = Toaster._name_params type, params
 
     # creates and stores a new Chunk
-    @last_chunk = new Chunk type, params.id, params.deps, params.factory
+    chunk = new Chunk type, params.id, params.deps, params.factory
+    if type is 'define' and chunk.id?
+      Chunk.chunks[chunk.id] = chunk
+    else
+      @last_chunk = chunk
 
     # loop through all chunk deps and instantiate a new
     # script instance for loading it
     timeout = 0
-    for s in params.deps
-      new Script s,
+    for dep in params.deps
 
-      # onload callback
-      (name, url)->
+      [dep_id, dep_url, is_non_amd] = @disassemble dep
 
-        # define the last instantiated chunk
-        Toaster.define_chunk name, url
+      continue if Chunk.chunks[dep_id]?
 
-        # notify everybody that a new chunk was defined
-        Chunk.notify_all name
+      new Script dep_id, dep_url,
 
-      # on error callback
-      , ( e )->
-        console.error e
+        # onload callback
+        (id, url, is_non_amd)->
+          # define the last instantiated chunk
+          Toaster.define_chunk id, url, is_non_amd
 
-      # timeout
-      , ++timeout
+          # # process the factory method and caches it, for all chunks
+          # # that hasn't been factored yet
+          # Toaster.factor_all_unfactored()
+
+          # # notify everybody that a new chunk was defined
+          # Chunk.notify_all_of_new_defined_module id
+
+        # on error callback
+        , ( e )->
+          console.error e
+
+        # timeout
+        , ++timeout, is_non_amd
+
+  @disassemble:( id )->
+
+    is_non_amd = false
+
+    if id[0] is ':'
+      is_non_amd = true
+      id = id.substr 1
+    
+    if Toaster.MAP[id]?
+      url = Toaster.MAP[id]
+    else
+      url = id
+
+    unless (/^http/m.test url )
+      absolute = new RegExp( "(^#{Toaster.BASE_URL.replace '/', '\\/'})" )
+      unless (absolute.test url)
+        url = "#{Toaster.BASE_URL}#{url}"
+
+    # adds extension if needed
+    if (url.indexOf '.js') < 0
+      url += '.js'
+
+    return [id, url, is_non_amd]
 
   # ...
   # define last chunk
-  @define_chunk = (name, url)->
+  @define_chunk = (id, url, is_non_amd)->
 
-    # inject id into the chunk
-    if @last_chunk?
-      @last_chunk.id = name = (@last_chunk.id or name)
-    else
-      @last_chunk = new Chunk 'require', name, [], {}
+    if @last_chunk is null and is_non_amd
+      Chunk.chunks[id] = new Chunk 'require', id, [], null, true
 
-    if @last_chunk.id[0] is ':'
-      @last_chunk.id = @last_chunk.id.substr 1
+    else if @last_chunk?
 
-    # define it int the Chunk.chunks property
-    Chunk.chunks[@last_chunk.id] = @last_chunk
+      # inject id into the chunk
+      @last_chunk.id = (@last_chunk.id or id)
 
-    # resets the last reference
-    @last_chunk = null
+      if @last_chunk.id[0] is ':'
+        @last_chunk.id = @last_chunk.id.substr 1
+
+      # define it int the Chunk.chunks property
+      Chunk.chunks[@last_chunk.id] = @last_chunk
+
+      # resets the last reference
+      @last_chunk = null
+
+  # @factor_all_unfactored:->
+  #   @sort_chunks()
+
+  #   for chunk in Chunk.chunks
+    
 
   # ...
   # Sort all params in all possible ways
@@ -102,7 +152,3 @@ class Toaster
           sorted.deps = []
 
     sorted
-
-# initialize global require / define
-require = -> Toaster.process 'require', [].slice.call arguments
-define = -> Toaster.process 'define', [].slice.call arguments

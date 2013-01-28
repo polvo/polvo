@@ -2,7 +2,9 @@
 var Chunk, Script, Toaster, define, require;
 
 Script = (function() {
-  var cached;
+  var cached, started;
+
+  started = {};
 
   cached = {};
 
@@ -16,11 +18,14 @@ Script = (function() {
 
   Script.prototype.error = null;
 
-  function Script(id, done, error, timeout) {
+  function Script(id, url, done, error, timeout, is_non_amd) {
     var _this = this;
     this.id = id;
+    this.url = url;
     this.done = done;
     this.error = error;
+    this.is_non_amd = is_non_amd;
+    console.log("new script: " + id + " -> " + url);
     setTimeout(function() {
       return _this.load();
     }, timeout);
@@ -29,25 +34,24 @@ Script = (function() {
   Script.prototype.load = function() {
     var head, reg,
       _this = this;
-    if (this.id[0] === ':') {
-      this.id = this.id.substr(1);
-      if (Toaster.MAP[this.id] != null) {
-        this.url = Toaster.MAP[this.id];
-      } else {
-        this.url = this.id;
-      }
+    if (Toaster.MAP[this.id] != null) {
+      this.url = Toaster.MAP[this.id];
+    } else {
+      this.url = this.id;
     }
     if (!/^http/m.test(this.url)) {
       reg = new RegExp("(^" + (Toaster.BASE_URL.replace('/', '\\/')) + ")");
-      if (!reg.test(this.id)) {
-        this.url = "" + Toaster.BASE_URL + this.id;
+      if (!reg.test(this.url)) {
+        this.url = "" + Toaster.BASE_URL + this.url;
       }
     }
     if ((this.url.indexOf('.js')) < 0) {
       this.url += '.js';
     }
     if (cached[this.url] === true) {
-      return setTimeout(this.done, 1);
+      return this.done(this.id, this.url);
+    } else if (started[this.url] != null) {
+      return;
     }
     this.el = document.createElement('script');
     this.el.type = 'text/javascript';
@@ -68,13 +72,16 @@ Script = (function() {
         return _this.internal_done(ev);
       };
     }
+    started[this.url] = true;
+    console.log('load..... >> ', this.url);
     head = (document.getElementsByTagName('head'))[0];
     return head.insertBefore(this.el, head.lastChild);
   };
 
   Script.prototype.internal_done = function(ev) {
+    console.log('...loaded << ' + this.url);
     cached[this.url] = true;
-    return this.done(this.el.getAttribute('data-id'), this.el.src);
+    return this.done(this.id, this.el.src, this.is_non_amd);
   };
 
   return Script;
@@ -89,43 +96,45 @@ Chunk = (function() {
 
   Chunk.prototype.factored = null;
 
-  function Chunk(type, id, deps, factory) {
+  function Chunk(type, id, deps, factory, non_amd) {
     this.type = type;
     this.id = id;
     this.deps = deps;
     this.factory = factory;
+    this.non_amd = non_amd != null ? non_amd : false;
     if ((this.id != null) && this.id[0] === ':') {
       this.id = this.id.substr(1);
     }
-    Chunk.chunks_list.unshift(this);
+    Chunk.chunks_list.push(this);
   }
 
   Chunk.notify_all = function(loaded) {
     var chunk, _i, _len, _ref, _results;
+    console.log("----------- " + loaded + " ");
     _ref = this.chunks_list;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       chunk = _ref[_i];
-      if (chunk.factored === null && chunk._is_subtree_loaded()) {
-        _results.push(chunk.exec());
-      } else {
-        _results.push(void 0);
-      }
+      _results.push(chunk.exec(loaded));
     }
     return _results;
   };
 
-  Chunk.prototype.exec = function() {
+  Chunk.prototype.exec = function(loaded) {
     var current, dep, mod, refs, _i, _len, _ref;
-    if (this.factored != null) {
+    console.log(">>>>> ");
+    console.log("id: " + this.id);
+    console.log("factored: " + (this.factored != null));
+    if ((this.factored != null) || this.non_amd) {
       return this.factored;
     }
+    console.log(1);
     if (!this._is_subtree_loaded()) {
       return;
     }
-    if (this.factory == null) {
-      return;
-    }
+    console.log(2);
+    console.log(3);
+    console.log('\t <<---- go to go');
     refs = [];
     _ref = this.deps;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -134,17 +143,17 @@ Chunk = (function() {
         continue;
       }
       current = Chunk.chunks[dep];
-      if ((mod = current.exec()) != null) {
+      mod = current.exec(loaded);
+      if (mod != null) {
         refs.push(mod);
       }
     }
     if (this.factory instanceof Function) {
-      return this.factored = this.factory.apply(null, refs);
+      this.factored = this.factory.apply(null, refs);
     } else if (typeof this.factory === 'object') {
-      return this.factored = this.factory;
-    } else {
-      return this.factored = false;
+      this.factored = this.factory;
     }
+    return this.factored;
   };
 
   Chunk.prototype._is_subtree_loaded = function() {
@@ -156,9 +165,17 @@ Chunk = (function() {
       if (dep[0] === ':') {
         dep = dep.substr(1);
       }
+      if (this.id === 'app') {
+        console.log(">>>>>>>>>>>>>");
+        console.log("dep: " + dep);
+        console.log("def: " + Chunk.chunks[dep]);
+        console.log("ven: " + Chunk.chunks[dep].non_amd);
+        console.log("fac: " + Chunk.chunks[dep].factored);
+        console.log("<<<<<<<<<<<<<");
+      }
       if (Chunk.chunks[dep] != null) {
         dep = Chunk.chunks[dep];
-        if (dep.factored === null) {
+        if (dep.factored === null && dep.non_amd === false) {
           return false;
         }
       } else {
@@ -190,42 +207,71 @@ Toaster = (function() {
     return Toaster.MAP = layer_map;
   };
 
-  Toaster.process = function(type, params, load) {
-    var s, timeout, _i, _len, _ref, _results;
-    if (load == null) {
-      load = true;
-    }
-    if (this.last_chunk != null) {
+  Toaster.process = function(type, params) {
+    var chunk, dep, dep_id, dep_url, is_non_amd, timeout, _i, _len, _ref, _ref1, _results;
+    if ((this.last_chunk != null) && this.last_chunk.type === 'require') {
       Toaster.define_chunk('root');
     }
     params = Toaster._name_params(type, params);
-    this.last_chunk = new Chunk(type, params.id, params.deps, params.factory);
+    chunk = new Chunk(type, params.id, params.deps, params.factory);
+    if (type === 'define' && (chunk.id != null)) {
+      Chunk.chunks[chunk.id] = chunk;
+    } else {
+      this.last_chunk = chunk;
+    }
     timeout = 0;
     _ref = params.deps;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      s = _ref[_i];
-      _results.push(new Script(s, function(name, url) {
-        Toaster.define_chunk(name, url);
-        return Chunk.notify_all(name);
+      dep = _ref[_i];
+      _ref1 = this.disassemble(dep), dep_id = _ref1[0], dep_url = _ref1[1], is_non_amd = _ref1[2];
+      if (Chunk.chunks[dep_id] != null) {
+        continue;
+      }
+      _results.push(new Script(dep_id, dep_url, function(id, url, is_non_amd) {
+        return Toaster.define_chunk(id, url, is_non_amd);
       }, function(e) {
         return console.error(e);
-      }, ++timeout));
+      }, ++timeout, is_non_amd));
     }
     return _results;
   };
 
-  Toaster.define_chunk = function(name, url) {
-    if (this.last_chunk != null) {
-      this.last_chunk.id = name = this.last_chunk.id || name;
+  Toaster.disassemble = function(id) {
+    var absolute, is_non_amd, url;
+    is_non_amd = false;
+    if (id[0] === ':') {
+      is_non_amd = true;
+      id = id.substr(1);
+    }
+    if (Toaster.MAP[id] != null) {
+      url = Toaster.MAP[id];
     } else {
-      this.last_chunk = new Chunk('require', name, [], {});
+      url = id;
     }
-    if (this.last_chunk.id[0] === ':') {
-      this.last_chunk.id = this.last_chunk.id.substr(1);
+    if (!(/^http/m.test(url))) {
+      absolute = new RegExp("(^" + (Toaster.BASE_URL.replace('/', '\\/')) + ")");
+      if (!(absolute.test(url))) {
+        url = "" + Toaster.BASE_URL + url;
+      }
     }
-    Chunk.chunks[this.last_chunk.id] = this.last_chunk;
-    return this.last_chunk = null;
+    if ((url.indexOf('.js')) < 0) {
+      url += '.js';
+    }
+    return [id, url, is_non_amd];
+  };
+
+  Toaster.define_chunk = function(id, url, is_non_amd) {
+    if (this.last_chunk === null && is_non_amd) {
+      return Chunk.chunks[id] = new Chunk('require', id, [], null, true);
+    } else if (this.last_chunk != null) {
+      this.last_chunk.id = this.last_chunk.id || id;
+      if (this.last_chunk.id[0] === ':') {
+        this.last_chunk.id = this.last_chunk.id.substr(1);
+      }
+      Chunk.chunks[this.last_chunk.id] = this.last_chunk;
+      return this.last_chunk = null;
+    }
   };
 
   Toaster._name_params = function(type, params) {
