@@ -4,9 +4,9 @@ define(['app/artists/progressive/kingcrimson', 'app/artists/progressive/themarsv
   return Progressive = (function() {
 
     function Progressive() {
-      console.log('king crimson: ' + (new KingCrimson).constructor);
-      console.log('the mars volta: ' + (new TheMarsVolta).constructor);
-      console.log('tool: ' + (new Tool).constructor);
+      console.log('king crimson: ' + (new KingCrimson).constructor.name);
+      console.log('the mars volta: ' + (new TheMarsVolta).constructor.name);
+      console.log('tool: ' + (new Tool).constructor.name);
     }
 
     return Progressive;

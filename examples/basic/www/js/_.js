@@ -1,1 +1,1 @@
-var _ = {};
+var _ = function underscore(){}

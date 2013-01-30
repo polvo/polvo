@@ -4,8 +4,10 @@ $ = require ':jquery'
 
 class App
   constructor:->
-    console.log 'progressive: ' + (new Progressive).constructor
-    console.log 'triphop: ' + (new TripHop).constructor
+    console.log 'progressive: ' + (new Progressive).constructor.name
+    console.log 'triphop: ' + (new TripHop).constructor.name
     console.log 'jquery: ' + $
+
+    console.log 'APP INITIALIZED!'
 
 new App
