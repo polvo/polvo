@@ -1,8 +1,14 @@
 class Chunk
 
-  @chunks_list = []
   @chunks = {}
+  @chunks_list = []
 
+  type: null
+
+  id: null
+  deps: null
+  factory: null
+  non_amd: null
   factored: null
 
   constructor:( @type, @id, @deps, @factory, @non_amd = false )->
@@ -14,36 +20,50 @@ class Chunk
   # notify all loaded-but-not-yet-executed chunks that a new file has
   # finish loading, so the execution can occur
   @notify_all = ( loaded )->
-    console.log "----------- #{loaded} "
     for chunk in @chunks_list
       chunk.exec loaded
+
+  @reorder:( id )->
+
+    start = @_get_index_by_id id
+
+    for chunk, chunk_index in @chunks_list
+      continue unless (deps = chunk.deps).length
+
+      for dep_id, index in deps
+        continue if dep_id[0] is ':'
+
+        dep = @chunks[dep_id]
+        dep_index = @_get_index_by_id dep_id
+
+        if dep_index is null or (dep_index < chunk_index)
+          continue
+
+        if chunk.id in dep.deps
+          console.error 'Circular dependency found between '
+          continue
+
+        else
+          @chunks_list.splice chunk_index, 0, dep
+          @chunks_list.splice dep_index + 1, 1
+          @reorder true
+
+  @_get_index_by_id:( id )->
+    for chunk, index in @chunks_list
+      return index if chunk.id is id
+    return null
 
   # execute the factory method and stores it in a `factored` property
   exec:( loaded )->
 
-    console.log ">>>>> "
-    console.log "id: #{@id}"
-    console.log "factored: #{@factored?}"
-    # console.log "factory: #{@factory?}"
-    # console.log "loaded: #{@_is_subtree_loaded()}"
-    # console.log "non_amd: #{@non_amd}"
-
     # if was already factored, just returns it
-    return @factored if @factored? or @non_amd
-
-    console.log 1
+    return @factored if @factored?
 
     # abort if dependencies hasn't finish loading
     return unless @_is_subtree_loaded()
 
-    console.log 2
-
-    # # abort if there's no factory function/object reference
-    # return unless @factory?
-
-    console.log 3
-
-    console.log '\t <<---- go to go'
+    # abort if there's no factory function/object reference
+    return unless @factory?
 
     # loop through all dependencies
     refs = []
@@ -60,6 +80,7 @@ class Chunk
 
     # if factory is a method, execute it and keep the returned ref
     if @factory instanceof Function
+      @execd = true if @type is 'require'
       @factored = @factory.apply null, refs
 
     # otherwise if it's a object literal, just stores it
@@ -74,14 +95,6 @@ class Chunk
     for dep in @deps
 
       dep = dep.substr 1 if dep[0] is ':'
-
-      if @id is 'app'
-        console.log ">>>>>>>>>>>>>"
-        console.log "dep: #{dep}"
-        console.log "def: #{Chunk.chunks[ dep ]}"
-        console.log "ven: #{Chunk.chunks[ dep ].non_amd}"
-        console.log "fac: #{Chunk.chunks[ dep ].factored}"
-        console.log "<<<<<<<<<<<<<"
 
       if Chunk.chunks[ dep ]?
         dep = Chunk.chunks[ dep ]

@@ -22,7 +22,8 @@ class Toaster
   # ...
   # process all require's and define's calls
   @process = ( type, params )->
-    # first require (inline script) is handled differently (root)
+    # first require is handled differently because if isn't loaded
+    # like all the others
     if @last_chunk? and @last_chunk.type is 'require'
       Toaster.define_chunk 'root'
 
@@ -52,12 +53,11 @@ class Toaster
           # define the last instantiated chunk
           Toaster.define_chunk id, url, is_non_amd
 
-          # # process the factory method and caches it, for all chunks
-          # # that hasn't been factored yet
-          # Toaster.factor_all_unfactored()
+          # notify everybody that a new chunk was defined
+          Chunk.reorder id
 
-          # # notify everybody that a new chunk was defined
-          # Chunk.notify_all_of_new_defined_module id
+          # notify everybody that a new chunk was defined
+          Chunk.notify_all id
 
         # on error callback
         , ( e )->
@@ -66,6 +66,9 @@ class Toaster
         # timeout
         , ++timeout, is_non_amd
 
+  # ...
+  # disassemble an id, checks if it has some url mapped to another location,
+  # if it's an amd module or a plain js and return everything.
   @disassemble:( id )->
 
     is_non_amd = false
@@ -110,12 +113,6 @@ class Toaster
 
       # resets the last reference
       @last_chunk = null
-
-  # @factor_all_unfactored:->
-  #   @sort_chunks()
-
-  #   for chunk in Chunk.chunks
-    
 
   # ...
   # Sort all params in all possible ways

@@ -10,7 +10,6 @@ class Script
   error: null
 
   constructor:( @id, @url, @done, @error, timeout, @is_non_amd )->
-    console.log "new script: #{id} -> #{url}"
     setTimeout =>
       @load()
     , timeout
@@ -59,11 +58,11 @@ class Script
     started[@url] = true
 
     # attach to head
-    console.log 'load..... >> ', @url
+    # console.log 'load..... >> ', @url
     head = (document.getElementsByTagName 'head')[0]
     head.insertBefore @el, head.lastChild
 
   internal_done: ( ev )->
-    console.log '...loaded << ' + @url
+    # console.log '...loaded << ' + @url
     cached[ @url ] = true
     @done @id, @el.src, @is_non_amd
