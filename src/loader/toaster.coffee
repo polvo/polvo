@@ -53,8 +53,8 @@ class Toaster
           # define the last instantiated chunk
           Toaster.define_chunk id, url, is_non_amd
 
-          # notify everybody that a new chunk was defined
-          Chunk.reorder id
+          # re-position the module in the right position
+          Chunk.put_in_place id
 
           # notify everybody that a new chunk was defined
           Chunk.notify_all id

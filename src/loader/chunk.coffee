@@ -23,30 +23,22 @@ class Chunk
     for chunk in @chunks_list
       chunk.exec loaded
 
-  @reorder:( id )->
 
-    start = @_get_index_by_id id
+  @put_in_place:( id )->
 
-    for chunk, chunk_index in @chunks_list
-      continue unless (deps = chunk.deps).length
+    moving_chunk_index = @_get_index_by_id id
+    moving_chunk = (@chunks_list.splice moving_chunk_index, 1)[0]
 
-      for dep_id, index in deps
-        continue if dep_id[0] is ':'
+    for chunk, index in @chunks_list
 
-        dep = @chunks[dep_id]
-        dep_index = @_get_index_by_id dep_id
+      continue unless chunk.deps.length
 
-        if dep_index is null or (dep_index < chunk_index)
-          continue
+      for dep in chunk.deps
+        if id is dep
+          @chunks_list.splice index, 0, moving_chunk
+          return true
 
-        if chunk.id in dep.deps
-          console.error 'Circular dependency found between '
-          continue
-
-        else
-          @chunks_list.splice chunk_index, 0, dep
-          @chunks_list.splice dep_index + 1, 1
-          @reorder true
+    return null
 
   @_get_index_by_id:( id )->
     for chunk, index in @chunks_list
