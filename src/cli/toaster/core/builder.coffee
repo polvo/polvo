@@ -50,13 +50,13 @@ module.exports = class Builder
         @files.push (new Script @, dir, file) if include
 
     # clean release folder
-    found = fsu.find @config.release_dir, /.*/, true
-    while found.length
-      location = found.pop()
-      if (fs.lstatSync location).isDirectory()
-        fs.rmdirSync location
-      else
-        fs.unlinkSync location
+    # found = fsu.find @config.release_dir, /.*/, true
+    # while found.length
+    #   location = found.pop()
+    #   if (fs.lstatSync location).isDirectory()
+    #     fs.rmdirSync location
+    #   else
+    #     fs.unlinkSync location
 
   serve:->
     # simple static server with 'connect'
@@ -231,6 +231,8 @@ module.exports = class Builder
 
   write_toaster:( map )->
 
+    return unless @config.optimize?
+
     # increment map with all remote vendors
     map or= {}
     for name, url of @config.optimize.vendors
@@ -253,7 +255,7 @@ module.exports = class Builder
     toaster += """\n\n
       // initializing project `#{@config.name}`
       (function(){
-        #{map}
+        #{map if map?}
         Toaster.config( {base_url: '#{@config.base_url}'} );
         require( ['#{@config.main}'] );
       })()
