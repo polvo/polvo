@@ -1,2 +1,0 @@
-class TheMarsVolta
-  constructor:->
