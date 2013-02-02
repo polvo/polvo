@@ -256,7 +256,7 @@ module.exports = class Builder
       // initializing project `#{@config.name}`
       (function(){
         #{map if map?}
-        Toaster.config( {base_url: '#{@config.base_url}'} );
+        Toaster.config( {base_url: '#{@config.optimize.base_url}'} );
         require( ['#{@config.main}'] );
       })()
     """
