@@ -27,7 +27,8 @@
     "uglify-js": "1.1.x",
     "optimist": "0.2.x",
     "colors": "0.5.x",
-    "vows" : "0.6.x"
+    "vows" : "0.6.x",
+    "xregexp":"2.0.0"
   },
 
   "optionalDependencies": { "growl": "1.2.x" }
