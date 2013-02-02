@@ -1,4 +1,5 @@
 ArrayUtil = require '../utils/array-util'
+XRegExp = (require 'XRegExp').XRegExp
 
 {log,debug,warn,error} = require '../utils/log-util'
 
@@ -145,15 +146,23 @@ module.exports = class Script
       else
         identation = "  "
 
+    # filter code that must to be outside of the 'define' block
+    global_reg = XRegExp('#>>\n(.*)\n#<<', 's')
+    global_res = XRegExp.exec @backup, global_reg
+    if global_res? then global_code = global_res[1] else global_code = ''
+
     # and reident content (will be wrapped by AMD closures)
-    idented = @backup.replace /^/mg, "#{identation}"
+    idented = @backup.replace global_code, ''
+    idented = idented.replace /^/mg, "#{identation}"
 
     # re-process the raw file with AMD definitions (modules WITHOUT id)
-    @raw = "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+    @raw = "#{global_code}\n"
+    @raw += "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
     # re-process the raw file with AMD definitions (modules WITH id)
     def = @filepath.replace '.coffee', ''
-    @defined_raw = "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+    @defined_raw = "#{global_code}\n"
+    @defined_raw += "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
 
   # deletes release file from disk
   delete_from_disk:->
