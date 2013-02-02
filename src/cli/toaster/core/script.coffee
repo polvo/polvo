@@ -145,9 +145,10 @@ module.exports = class Script
     deps_args = deps_args.slice 0, -1
 
     # filter code that must to be outside of the 'define' block
-    global_reg = XRegExp('(#>>)\n(.*)\n#<<', 's')
+    global_reg = XRegExp('#>>\n(.*)\n#<<', 's')
     global_res = XRegExp.exec @backup, global_reg
     global_code = if global_res? then global_res[1] else ''
+    @raw = @raw.replace global_code, ''
 
     # detect file identation style..
     match_identation = /^(\s+).*$/mg
