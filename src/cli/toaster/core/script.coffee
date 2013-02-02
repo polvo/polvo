@@ -21,7 +21,10 @@ module.exports = class Script
   getinfo:( declare_ns = true )->
     # read file content and initialize dependencies and baseclasses array
     @raw = fs.readFileSync @realpath, "utf-8"
+
     @dependencies = []
+    @dependencies_diff_head = 0;
+
     @baseclasses = []
 
     # assemble some information about the file
@@ -83,8 +86,8 @@ module.exports = class Script
     # TODO: REVIEW BLOCK ABOVE
 
     # dependencies regexp
-    require_reg_all = /^([^\s]+)\s*=\s*require\s(?:'|")(.*)(?:'|")/mg
-    require_reg_one = /^([^\s]+)\s*=\s*require\s(?:'|")(.*)(?:'|")/m
+    require_reg_all = /^(([^\s]+)\s*=\s*)?require\s(?:'|")(.*)(?:'|")/mg
+    require_reg_one = /^([^\s]+)?(?:\s*=\s*)?require\s(?:'|")(.*)(?:'|")/m
 
     # if file has one or more dependency
     if require_reg_all.test @raw
@@ -98,6 +101,7 @@ module.exports = class Script
 
         # computes dep name and path
         match = dep.match require_reg_one
+
         dep = 
           name: match[1]
           path: match[2] + '.coffee'
@@ -114,7 +118,10 @@ module.exports = class Script
         # TODO: REVIEW BLOCK ABOVE
 
         # and add it to the dependencies array
-        @dependencies.push dep
+        if dep.is_vendor is true or dep.name is undefined
+          @dependencies.push dep
+        else
+          @dependencies.splice @dependencies_diff_head++, 0, dep
 
     # saves the orignal raw file
     @backup = @raw
@@ -130,30 +137,30 @@ module.exports = class Script
     deps_args = ''
 
     for dep in @dependencies
-      deps_path += "'#{dep.path.replace '.coffee', ''}',\n" 
-      deps_args += "#{dep.name}," unless dep.is_vendor
+      deps_path += "'#{dep.path.replace '.coffee', ''}'," 
+      if dep.is_vendor is false or dep.name isnt undefined
+        deps_args += "#{dep.name},"
 
     deps_path = deps_path.slice 0, -1
     deps_args = deps_args.slice 0, -1
 
+    # filter code that must to be outside of the 'define' block
+    global_reg = XRegExp('(#>>)\n(.*)\n#<<', 's')
+    global_res = XRegExp.exec @backup, global_reg
+    global_code = if global_res? then global_res[1] else ''
+
     # detect file identation style..
-    match_identation = /^([\s]+).*$/mg
+    match_identation = /^(\s+).*$/mg
     identation = ''
-    while not (identation.match /^[\s\t]{2,}/m)?
+    while not (identation.match /^[ \t]{2,}/m)?
       identation = (match_identation.exec @raw)
       if identation?
         identation = identation[1]
       else
         identation = "  "
 
-    # filter code that must to be outside of the 'define' block
-    global_reg = XRegExp('#>>\n(.*)\n#<<', 's')
-    global_res = XRegExp.exec @backup, global_reg
-    if global_res? then global_code = global_res[1] else global_code = ''
-
     # and reident content (will be wrapped by AMD closures)
-    idented = @backup.replace global_code, ''
-    idented = idented.replace /^/mg, "#{identation}"
+    idented = @raw.replace /^/mg, "#{identation}"
 
     # re-process the raw file with AMD definitions (modules WITHOUT id)
     @raw = "#{global_code}\n"
@@ -163,6 +170,7 @@ module.exports = class Script
     def = @filepath.replace '.coffee', ''
     @defined_raw = "#{global_code}\n"
     @defined_raw += "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+
 
   # deletes release file from disk
   delete_from_disk:->

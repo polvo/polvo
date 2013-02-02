@@ -127,11 +127,30 @@ Chunk = (function() {
     return _results;
   };
 
-  Chunk.reorder = function(cycling) {
-    var chunk, chunk_index, dep, dep_id, dep_index, deps, index, _i, _len, _ref, _results;
-    if (cycling == null) {
-      cycling = false;
+  Chunk.put_in_place = function(id) {
+    var chunk, dep, index, moving_chunk, moving_chunk_index, _i, _j, _len, _len1, _ref, _ref1;
+    moving_chunk_index = this._get_index_by_id(id);
+    moving_chunk = (this.chunks_list.splice(moving_chunk_index, 1))[0];
+    _ref = this.chunks_list;
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+      chunk = _ref[index];
+      if (!chunk.deps.length) {
+        continue;
+      }
+      _ref1 = chunk.deps;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        dep = _ref1[_j];
+        if (id === dep) {
+          this.chunks_list.splice(index, 0, moving_chunk);
+          return true;
+        }
+      }
     }
+    return null;
+  };
+
+  Chunk.reorder = function(id) {
+    var chunk, chunk_index, dep, dep_id, dep_index, deps, index, _i, _len, _ref, _results;
     _ref = this.chunks_list;
     _results = [];
     for (chunk_index = _i = 0, _len = _ref.length; _i < _len; chunk_index = ++_i) {
@@ -158,7 +177,7 @@ Chunk = (function() {
           } else {
             this.chunks_list.splice(chunk_index, 0, dep);
             this.chunks_list.splice(dep_index + 1, 1);
-            _results1.push(this.reorder(true));
+            _results1.push(this.reorder(chunk.id));
           }
         }
         return _results1;
@@ -181,10 +200,13 @@ Chunk = (function() {
 
   Chunk.prototype.exec = function(loaded) {
     var current, dep, mod, refs, _i, _len, _ref;
-    if ((this.factored != null) || this.non_amd) {
+    if (this.factored != null) {
       return this.factored;
     }
     if (!this._is_subtree_loaded()) {
+      return;
+    }
+    if (this.factory == null) {
       return;
     }
     refs = [];
@@ -201,6 +223,9 @@ Chunk = (function() {
       }
     }
     if (this.factory instanceof Function) {
+      if (this.type === 'require') {
+        this.execd = true;
+      }
       this.factored = this.factory.apply(null, refs);
     } else if (typeof this.factory === 'object') {
       this.factored = this.factory;
@@ -282,7 +307,7 @@ Toaster = (function() {
       }
       _results.push(new Script(dep_id, dep_url, function(id, url, is_non_amd) {
         Toaster.define_chunk(id, url, is_non_amd);
-        Chunk.reorder();
+        Chunk.put_in_place(id);
         return Chunk.notify_all(id);
       }, function(e) {
         return console.error(e);
