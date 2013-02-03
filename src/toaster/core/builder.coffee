@@ -161,12 +161,12 @@ module.exports = class Builder
     # loop through all ordered files
     file.compile_to_disk() for file, index in @files
     @copy_vendors_to_release()
-    @write_toaster()
+    @write_loader()
 
   optimize:( header_code, footer_code )->
     log 'Optimizing project...'
 
-    map = {}
+    paths = {}
     layers = []
     included = []
     ordered = @reorder (@files.slice 0) # .concat @config.optimize.vendors
@@ -200,9 +200,9 @@ module.exports = class Builder
         # adding all to included array
         included = included.concat pack
 
-        # increments the layer contents and map the script location
+        # increments the layer contents and map the script location into paths
         for script in pack
-          map[script.filepath.replace '.coffee', ''] = layer_name
+          paths[script.filepath.replace '.coffee', ''] = layer_name
           contents += "#{script.compile_to_str true}"
 
       # if there's something to be written
@@ -223,47 +223,51 @@ module.exports = class Builder
         log msg.yellow
 
     # write toaster loader and initializer
-    @write_toaster map
+    @write_loader paths
 
     # copy all vendors as well
     @copy_vendors_to_release()
 
 
-  write_toaster:( map )->
+  write_loader:( paths )->
 
     return unless @config.optimize?
 
     # increment map with all remote vendors
-    map or= {}
+    paths or= {}
     for name, url of @config.optimize.vendors
-      map[name] = url if /^http/m.test url
+      paths[name] = url if /^http/m.test url
 
     # mounting main toaster file, contains the toaster builtin amd loader, 
     # all the necessary configs and a hash map containing the layer location
     # for each module that was merged into it.
 
-    loader_path = path.resolve __dirname
-    loader_path = path.join loader_path, '..', '..', '..', '..'
-    loader_path = path.join loader_path, 'lib', 'loader', 'toaster.js'
+    octopus_path = path.resolve __dirname
+    octopus_path = path.join octopus_path, '..', '..', '..', 'node_modules'
+    octopus_path = path.join octopus_path, 'octopus-amd', 'lib'
+    octopus_path = path.join octopus_path, 'octopus-amd.min.js'
 
-    toaster = fs.readFileSync loader_path, 'utf-8'
+    octopus = fs.readFileSync octopus_path, 'utf-8'
 
-    if map?
-      map = "Toaster.map( #{(util.inspect map).replace /\s/g, ''} );"
-    else map = ''
+    if paths?
+      paths = (util.inspect paths).replace /\s/g, ''
+    else paths = ''
 
-    toaster += """\n\n
-      // initializing project `#{@config.name}`
-      (function(){
-        #{map if map?}
-        Toaster.config( {base_url: '#{@config.optimize.base_url}'} );
-        require( ['#{@config.main}'] );
-      })()
+    octopus += """\n\n
+      /*
+       * Toaster automated configuration
+       *    -> Configures OctopusAMD.
+       */
+      OctopusAMD.config({
+        base_url: '#{@config.optimize.base_url}',
+        paths: #{paths}
+      });
+      require( ['#{@config.main}'] );
     """
-    
+
     # writing to disk
-    toaster_path = path.join @config.release_dir, "toaster.js"
-    fs.writeFileSync toaster_path, toaster
+    release_path = path.join @config.release_dir, "toaster.js"
+    fs.writeFileSync release_path, octopus
 
   copy_vendors_to_release:( verbose )->
     # copy vendors to release folder
