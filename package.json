@@ -5,8 +5,7 @@
   "description": "Minimalist build system for CoffeeScript.",
   "keywords": ["coffeescript", "build", "namespace", "tool"],
 
-  "main" : "./src/cli/toaster",
-  "directories": {"lib": "./lib/"},
+  "main" : "./src/toaster",
   "scripts": { "test": "make test" },
 
   "repository": {
@@ -22,6 +21,7 @@
 
   "dependencies": {
     "fs-util": "0.3.x",
+    "octopus-amd": "0.1.0",
     "coffee-script" : "1.4.x",
     "connect":"2.7.x",
     "uglify-js": "1.1.x",
