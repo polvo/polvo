@@ -157,7 +157,15 @@ module.exports = class Builder
           file.item.getinfo()
           file.item.compile_to_disk()
 
+  clear:->
+    # clear release folder
+    fsu.rm_rf @config.release_dir
+    fsu.mkdir_p @config.release_dir
+
   compile:( header_code, footer_code )->
+    # clear release folder
+    @clear()
+
     # loop through all ordered files
     file.compile_to_disk() for file, index in @files
     @copy_vendors_to_release()
@@ -165,6 +173,9 @@ module.exports = class Builder
 
   optimize:( header_code, footer_code )->
     log 'Optimizing project...'
+
+    # clear release folder
+    @clear()
 
     paths = {}
     layers = []
