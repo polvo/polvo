@@ -139,11 +139,13 @@ module.exports = class Toast
 
           continue if /^http/m.test vurl
 
-          vpath = path.join @basepath, vurl
+          if vurl.indexOf( @basepath ) < 0
+            vpath = path.join @basepath, vurl
 
           if fs.existsSync vpath
             if (fs.lstatSync vpath).isSymbolicLink()
               vpath = fs.readlinkSync vendor
+
             config.optimize.vendors[vname] = vpath
 
           else
