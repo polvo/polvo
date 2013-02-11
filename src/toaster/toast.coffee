@@ -99,11 +99,13 @@ module.exports = class Toast
       return error msg
 
     for dir, i in config.dirs
-      dir = path.join @basepath, dir
+      if dir.indexOf( @basepath ) < 0
+        dir = path.join @basepath, dir
+
       if fs.existsSync dir
         config.dirs[i] = dir
       else
-        msg = 'Informed dir doesn\'t exist:\n\t#{dir.yellow}'
+        msg = "Informed dir doesn't exist:\n\t#{dir.yellow}"
         msg += '\nCheck your `toaster.coffee` config file.'
         return error msg
 
@@ -113,7 +115,8 @@ module.exports = class Toast
       msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
     else
-      config.release_dir = path.join @basepath, config.release_dir
+      if config.release_dir.indexOf( @basepath ) < 0
+        config.release_dir = path.join @basepath, config.release_dir
       unless fs.existsSync (path.dirname config.release_dir)
         msg = "`release_dir` doesn't exist:\n\t#{config.release_dir.yellow}"
         msg += '\nCheck your `toaster.coffee` config file.'
