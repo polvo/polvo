@@ -197,6 +197,17 @@ module.exports = class Script
 
   # compile file and returns it as string
   compile_to_str:( add_definitions = false )->
+
+    try
+      cs.compile @backup
+    catch err
+      # catches and shows it, and abort the compilation
+      msg = err.message.replace '"', '\\"'
+      msg = "#{msg.white} @ " + "#{@filepath}".bold.red
+      # console.log @raw
+      error msg
+      return null
+
     raw = if add_definitions then @defined_raw else @raw
     compiled = cs.compile raw, bare: @builder.config.bare
 
