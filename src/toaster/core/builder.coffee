@@ -162,7 +162,7 @@ module.exports = class Builder
     fsu.rm_rf @config.release_dir
     fsu.mkdir_p @config.release_dir
 
-  compile:( header_code, footer_code )->
+  compile:()->
     # clear release folder
     @clear()
 
@@ -171,7 +171,7 @@ module.exports = class Builder
     @copy_vendors_to_release()
     @write_loader()
 
-  optimize:( header_code, footer_code )->
+  optimize:()->
     log 'Optimizing project...'
 
     # clear release folder
