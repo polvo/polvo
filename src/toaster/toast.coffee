@@ -79,7 +79,7 @@ module.exports = class Toast
     # ...: webroot - optional
     config.webroot ?= '' # string
     if @toaster.cli.argv.s? and config.webroot is ''
-      msg = 'Informe your webroot for using static server.'
+      msg = 'Inform your webroot before using static server.'
       msg += '\nCheck your `toaster.coffee` config file.'
       return error msg
 
