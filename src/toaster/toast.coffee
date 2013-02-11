@@ -1,16 +1,17 @@
+# requires
+fs = require "fs"
+fsu = require "fs-util"
+path = require "path"
+exec = (require "child_process").exec
+colors = require 'colors'
+cs = require "coffee-script"
+
 Builder = require './core/builder'
 
 {log,debug,warn,error} = require './utils/log-util'
 
-module.exports = class Toast
 
-  # requires
-  fs = require "fs"
-  fsu = require "fs-util"
-  path = require "path"
-  exec = (require "child_process").exec
-  colors = require 'colors'
-  cs = require "coffee-script"
+module.exports = class Toast
 
   # variables
   builders: null
