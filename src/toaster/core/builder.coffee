@@ -32,6 +32,7 @@ module.exports = class Builder
     setTimeout (=> @serve()), 1 if @cli.argv.s
 
   init:()->
+
     # initializes buffer array to keep all tracked files
     @files = []
 
@@ -59,9 +60,12 @@ module.exports = class Builder
     #     fs.unlinkSync location
 
   serve:->
+    return if @config.nature_is_node
+
     # simple static server with 'connect'
-    conn().use(conn.static @config.webroot ).listen @config.port
-    log 'Server running at http://localhost:' + @config.port
+    (conn().use conn.static @config.browser.webroot )
+      .listen @config.browser.port
+    log 'Server running at http://localhost:' + @config.browser.port
 
   reset:()->
     # close all builder's watchers
@@ -90,7 +94,6 @@ module.exports = class Builder
   on_fs_change:(dir, ev, f)=>
     # skip all folder creation
     return if f.type == "dir" and ev == "create"
-
     
     # expand file location and type
     {location, type} = f
@@ -167,9 +170,11 @@ module.exports = class Builder
     @clear()
 
     # loop through all ordered files
-    file.compile_to_disk() for file, index in @files
-    @copy_vendors_to_release()
-    @write_loader()
+    file.compile_to_disk @config for file, index in @files
+
+    if @config.browser?
+      @copy_vendors_to_release()
+      @write_loader()
 
   optimize:()->
     log 'Optimizing project...'
@@ -256,7 +261,8 @@ module.exports = class Builder
     octopus_path = path.resolve __dirname
     octopus_path = path.join octopus_path, '..', '..', '..', 'node_modules'
     octopus_path = path.join octopus_path, 'octopus-amd', 'lib'
-    octopus_path = path.join octopus_path, 'octopus-amd.min.js'
+    octopus_path = path.join octopus_path, 'octopus-amd.js'
+    # octopus_path = path.join octopus_path, 'octopus-amd.min.js'
 
     octopus = fs.readFileSync octopus_path, 'utf-8'
 

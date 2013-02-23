@@ -178,12 +178,13 @@ module.exports = class Script
     fs.unlinkSync @release.file if (fs.existsSync @release.file)
 
   # compile release file to disk
-  compile_to_disk:->
+  compile_to_disk:( config )->
     # datetime for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
     # get compiled javascript
-    compiled = @compile_to_str()
+    inject_amd = config.browser?
+    compiled = @compile_to_str inject_amd
 
     # create container folder if it doesnt exist yet
     fsu.mkdir_p @release.folder unless fs.existsSync @release.folder

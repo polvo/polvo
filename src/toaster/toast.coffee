@@ -64,51 +64,8 @@ module.exports = class Toast
       eval code
 
 
+  # normalize and validate all options in `toaster.coffee`
   toast:( config = {} )=>
-
-    # normalize and validate all options in `toaster.coffee`
-
-    # ...: exclude - optional
-    config.exclude ?= []
-
-    # ...: bare - optional
-    config.bare ?= true # boolean
-
-    # ...: minify - optional
-    config.minify ?= true # boolean
-
-    # ...: webroot - optional
-    config.webroot ?= '' # string
-    if @toaster.cli.argv.s? and config.webroot is ''
-      msg = 'Inform your webroot before using static server.'
-      msg += '\nCheck your `toaster.coffee` config file.'
-      return error msg
-
-    # ...: port - optional
-    config.port ?= 3000
-
-    # ...: main - mandatory
-    unless config.main?
-      msg = 'You need to inform the main entry point (module id) for your app.'
-      msg += '\nCheck your `toaster.coffee` config file.'
-      return error msg
-
-    # ...: dirs - mandatory
-    if config.dirs is null or config.dirs.length is 0
-      msg = 'You need to inform at least one dir or source files.'
-      msg += '\nCheck your `toaster.coffee` config file.'
-      return error msg
-
-    for dir, i in config.dirs
-      if dir.indexOf( @basepath ) < 0
-        dir = path.join @basepath, dir
-
-      if fs.existsSync dir
-        config.dirs[i] = dir
-      else
-        msg = "Informed dir doesn't exist:\n\t#{dir.yellow}"
-        msg += '\nCheck your `toaster.coffee` config file.'
-        return error msg
 
     # ...: release_dir - mandatory
     if config.release_dir is null
@@ -122,6 +79,62 @@ module.exports = class Toast
         msg = "`release_dir` doesn't exist:\n\t#{config.release_dir.yellow}"
         msg += '\nCheck your `toaster.coffee` config file.'
         return error msg
+
+    # ...: exclude - optional
+    config.exclude ?= []
+
+    # ...: bare - optional
+    config.bare ?= true
+
+    # ...: dirs - mandatory
+    if config.dirs is null or config.dirs.length is 0
+      msg = 'You need to inform at least one dir or source files.'
+      msg += '\nCheck your `toaster.coffee` config file.'
+      return error msg
+
+    # validates and increments all dir's paths
+    for dir, i in config.dirs
+      if dir.indexOf( @basepath ) < 0
+        dir = path.join @basepath, dir
+
+      if fs.existsSync dir
+        config.dirs[i] = dir
+      else
+        msg = "Informed dir doesn't exist:\n\t#{dir.yellow}"
+        msg += '\nCheck your `toaster.coffee` config file.'
+        return error msg
+
+    # project nature
+    if config.browser?
+      config.nature_is_browser = true
+      @_toast_browser config, config.browser
+    else
+      config.nature_is_node = true
+      @_toast_node config.node or {}
+
+  _toast_browser:( base_config, config )->
+
+    # simple mixin
+    config[k] = v for k, v of base_config
+
+    # ...: main - mandatory
+    unless config.main?
+      msg = 'You need to inform the main entry point (module id) for your app.'
+      msg += '\nCheck your `toaster.coffee` config file.'
+      return error msg
+
+    # ...: minify - optional
+    config.minify ?= true # boolean
+
+    # ...: webroot - optional
+    config.webroot ?= '' # string
+    if @toaster.cli.argv.s? and config.webroot is ''
+      msg = 'Inform your webroot before using static server.'
+      msg += '\nCheck your `toaster.coffee` config file.'
+      return error msg
+
+    # ...: port - optional
+    config.port ?= 3000
 
     # ...:optimize - optional
     if config.optimize?
