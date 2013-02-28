@@ -17,6 +17,7 @@ module.exports = class Builder
   conn = require 'connect'
   util = require 'util'
 
+  conn: null
   watchers: null
 
 
@@ -63,12 +64,14 @@ module.exports = class Builder
     return if @config.nature_is_node
 
     # simple static server with 'connect'
-    (conn().use conn.static @config.browser.webroot )
+    @conn = (conn().use conn.static @config.browser.webroot )
       .listen @config.browser.port
-    log 'Server running at http://localhost:' + @config.browser.port
+    address = 'http://localhost:' + @config.browser.port
+    log 'Server running at ' + address.green
 
   reset:()->
     # close all builder's watchers
+    @conn.close() if @conn?
     watcher.close() for watcher in @watchers
 
   watch:()->

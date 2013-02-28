@@ -34,6 +34,17 @@ module.exports = class Toast
       config_file = @toaster.cli.argv["config-file"]
       filepath = config_file || path.join @basepath, "toaster.coffee"
 
+      if @toaster.cli.argv.w
+        # watch it for changes, and automatically reloads itself
+        watcher = fsu.watch filepath
+        watcher.on 'change', (f)=>
+          now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
+          filepath = filepath.replace @toaster.basepath, ''
+          log "[#{now}] #{'Changed'.bold} #{filepath}".cyan
+          log "~> Reloading Toaster.".bold
+          watcher.close()
+          @toaster.reset()
+
       # if file doesn't exist
       unless fs.existsSync filepath
 
