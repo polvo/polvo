@@ -131,7 +131,7 @@ module.exports = class Builder
 
         # initiate file and adds it to the array
         @files.push script = new Script @, dir, location
-        script.compile_to_disk()
+        script.compile_to_disk @config
 
       # when a file is deleted
       when "delete"
@@ -177,18 +177,28 @@ module.exports = class Builder
 
     if @config.browser?
       @copy_vendors_to_release()
-      @write_loader()
+
+      if @config.browser.amd
+        @write_loader()
 
   optimize:()->
-    log 'Optimizing project...'
+
+    unless @config.browser? and @config.browser.optimize?
+      return
 
     # clear release folder
     @clear()
 
+    # if merge is set, optimization will just merge everything
+    if @config.browser.optimize.merge?
+      return @merge_everything()
+
+    log 'Optimizing project...'
+
     paths = {}
     layers = []
     included = []
-    ordered = @reorder (@files.slice 0) # .concat @config.optimize.vendors
+    ordered = @reorder (@files.slice 0)
 
     for layer_name, layer_deps of @config.optimize.layers
 
@@ -220,9 +230,10 @@ module.exports = class Builder
         included = included.concat pack
 
         # increments the layer contents and map the script location into paths
+        inject_amd = @config.browser and @config.browser.amd
         for script in pack
           paths[script.filepath.replace '.coffee', ''] = layer_name
-          contents += "#{script.compile_to_str true}"
+          contents += "#{script.compile_to_str inject_amd}"
 
       # if there's something to be written
       if contents isnt ''
@@ -254,20 +265,14 @@ module.exports = class Builder
 
     # increment map with all remote vendors
     paths or= {}
-    for name, url of @config.optimize.vendors
+    for name, url of @config.vendors
       paths[name] = url if /^http/m.test url
 
     # mounting main toaster file, contains the toaster builtin amd loader, 
     # all the necessary configs and a hash map containing the layer location
     # for each module that was merged into it.
 
-    octopus_path = path.resolve __dirname
-    octopus_path = path.join octopus_path, '..', '..', '..', 'node_modules'
-    octopus_path = path.join octopus_path, 'octopus-amd', 'lib'
-    octopus_path = path.join octopus_path, 'octopus-amd.js'
-    # octopus_path = path.join octopus_path, 'octopus-amd.min.js'
-
-    octopus = fs.readFileSync octopus_path, 'utf-8'
+    octopus = @_get_octopus()
 
     if paths?
       paths = (util.inspect paths).replace /\s/g, ''
@@ -279,7 +284,7 @@ module.exports = class Builder
        *    -> Configures OctopusAMD.
        */
       OctopusAMD.config({
-        base_url: '#{@config.optimize.base_url}',
+        base_url: '#{@config.base_url}',
         paths: #{paths}
       });
       require( ['#{@config.main}'] );
@@ -289,15 +294,29 @@ module.exports = class Builder
     release_path = path.join @config.release_dir, "toaster.js"
     fs.writeFileSync release_path, octopus
 
-  copy_vendors_to_release:( verbose )->
-    # copy vendors to release folder
-    return unless @config.optimize? and @config.optimize.vendors?
-    for vname, vurl of @config.optimize.vendors
+  _get_octopus:->
+    octopus_path = path.resolve __dirname
+    octopus_path = path.join octopus_path, '..', '..', '..', 'node_modules'
+    octopus_path = path.join octopus_path, 'octopus-amd', 'lib'
+    # if
+    octopus_path = path.join octopus_path, 'octopus-amd.js'
+    # else
+    # octopus_path = path.join octopus_path, 'octopus-amd.min.js'
+
+    fs.readFileSync octopus_path, 'utf-8'
+
+  # copy vendors to release folder
+  copy_vendors_to_release:( all = true, specific )->
+
+    return unless @config.vendors?
+
+    for vname, vurl of @config.vendors
       unless /^http/m.test vurl
+
+        continue if all is false and vurl isnt specific
 
         release_path = path.join @config.release_dir, "#{vname}.js"
         fsu.cp vurl, release_path
-        continue unless verbose
 
         from = vurl.replace @toaster.basepath, ''
         to = release_path.replace @toaster.basepath, ''
@@ -305,9 +324,46 @@ module.exports = class Builder
         from = from.substr 1 if from[0] is path.sep
         to = to.substr 1 if to[0] is path.sep
 
-        msg = "#{'✓ Vendor copied: '.bold}#{from} -> #{to}"
+        # date for CLI notifications
+        now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
+
+        msg = "[#{now}]#{' ✓ Vendor copied: '.bold}#{from} -> #{to}"
+
         log msg.green
 
+        return if all is false and specific?
+
+  merge_everything:->
+    buffer = "//---------------------------------------- vendors\n"
+    buffer += @merge_vendors() + '\n\n'
+
+    if @config.browser.amd?
+      buffer += "//---------------------------------------- octopus\n"
+      buffer += @_get_octopus()
+
+    buffer += "//---------------------------------------- files\n"
+    buffer += @merge_files() + '\n'
+
+    location = path.join @config.release_dir, @config.browser.optimize.merge
+    fs.writeFileSync location, buffer
+
+    location = location.replace @toaster.basepath, ''
+    log 'Project merged at: ' + location.green
+
+  merge_files:->
+    buffer = []
+    inject_amd = @config.browser and @config.browser.amd
+    for file in (@reorder (@files.slice 0))
+      buffer.push file.compile_to_str inject_amd
+
+    buffer.join '\n'
+
+  merge_vendors:->
+    buffer = []
+    for vname, vpath of @config.vendors
+      buffer.push (fs.readFileSync vpath)
+
+    buffer.join '\n'
 
   missing = {}
   reorder: (files, cycling = false) ->

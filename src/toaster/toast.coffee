@@ -147,36 +147,48 @@ module.exports = class Toast
     # ...: port - optional
     config.port ?= 3000
 
+    # ...: base_url - optional
+    if config.base_url?
+      if config.base_url.slice -1 isnt '/'
+        config.base_url += '/'
+    else
+       config.base_url = ''
+
+    # ...: vendors - optional
+    if config.vendors?
+      for vname, vurl of config.vendors
+
+        continue if /^http/m.test vurl
+
+        if vurl.indexOf( @basepath ) < 0
+          vpath = path.join @basepath, vurl
+
+        if fs.existsSync vpath
+          if (fs.lstatSync vpath).isSymbolicLink()
+            vpath = fs.readlinkSync vendor
+
+          config.vendors[vname] = vpath
+
+        else
+          # error "Local vendor not found. #{dir}\nCheck your config."
+          msg = 'Check your `toaster.coffee` config file, local vendor was '
+          msg += 'not found:\n\t' + vpath
+          return error msg
+
     # ...:optimize - optional
+    config.optimize ?= null
+
+    # ...:optimization method (at least one should be specified)
     if config.optimize?
+      if (config.optimize.merge? or config.optimize.layers?) is false
+        msg = 'Check your `toaster.coffee` at least one method is need in order'
+        msg += ' to optimize your project.'
+        return error msg
 
-      # ...: base_url - optional
-      if config.optimize.base_url?
-        if config.optimize.base_url.slice -1 isnt '/'
-          config.optimize.base_url += '/'
-      else
-         config.optimize.base_url = ''
+      else if (config.optimize.merge? and config.optimize.layers?)
+        msg = 'Check your `toaster.coffee`, only one optimization method is '
+        msg += 'allowed, please use `layers` or `merge`.'
+        return error msg        
 
-      # ...: vendors - optional
-      if config.optimize.vendors?
-        for vname, vurl of config.optimize.vendors
-
-          continue if /^http/m.test vurl
-
-          if vurl.indexOf( @basepath ) < 0
-            vpath = path.join @basepath, vurl
-
-          if fs.existsSync vpath
-            if (fs.lstatSync vpath).isSymbolicLink()
-              vpath = fs.readlinkSync vendor
-
-            config.optimize.vendors[vname] = vpath
-
-          else
-            # error "Local vendor not found. #{dir}\nCheck your config."
-            msg = 'Check your `toaster.coffee` config file, local vendor was '
-            msg += 'not found:\n\t' + vpath
-            return error msg
-            
     builder = new Builder @toaster, @toaster.cli, config
     @builders.push builder

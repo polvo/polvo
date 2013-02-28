@@ -183,7 +183,7 @@ module.exports = class Script
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
     # get compiled javascript
-    inject_amd = config.browser?
+    inject_amd = config.browser? and config.browser.amd
     compiled = @compile_to_str inject_amd
 
     # create container folder if it doesnt exist yet
@@ -198,7 +198,6 @@ module.exports = class Script
 
   # compile file and returns it as string
   compile_to_str:( add_definitions = false )->
-
     try
       cs.compile @backup
     catch err
@@ -209,7 +208,7 @@ module.exports = class Script
       error msg
       return null
 
-    raw = if add_definitions then @defined_raw else @raw
+    raw = if add_definitions then @defined_raw else @backup
     compiled = cs.compile raw, bare: @builder.config.bare
 
     # if toaster is runnig 
