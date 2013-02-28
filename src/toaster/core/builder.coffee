@@ -83,18 +83,19 @@ module.exports = class Builder
 
       # and watch them entirely
       @watchers.push (watcher = fsu.watch dir, /.coffee$/m)
-      watcher.on 'create', (FnUtil.proxy @on_fs_change, dir, 'create')
-      watcher.on 'change', (FnUtil.proxy @on_fs_change, dir, 'change')
-      watcher.on 'delete', (FnUtil.proxy @on_fs_change, dir, 'delete')
+      watcher.on 'create', (FnUtil.proxy @on_fs_change, false, dir, 'create')
+      watcher.on 'change', (FnUtil.proxy @on_fs_change, false, dir, 'change')
+      watcher.on 'delete', (FnUtil.proxy @on_fs_change, false, dir, 'delete')
 
     # watching vendors for changes
-    # for vendor in @vendors
-    #   temp = fsu.watch vendor
-    #   temp.on 'create', (FnUtil.proxy @on_fs_change, src, 'create')
-    #   temp.on 'change', (FnUtil.proxy @on_fs_change, src, 'change')
-    #   temp.on 'delete', (FnUtil.proxy @on_fs_change, src, 'delete')
+    for vname, vpath of @config.vendors
+      @watchers.push (watcher = fsu.watch vpath)
+      dir = path.join (path.dirname vpath), '..'
+      watcher.on 'create', (FnUtil.proxy @on_fs_change, true, dir, 'create')
+      watcher.on 'change', (FnUtil.proxy @on_fs_change, true, dir, 'change')
+      watcher.on 'delete', (FnUtil.proxy @on_fs_change, true, dir, 'delete')
 
-  on_fs_change:(dir, ev, f)=>
+  on_fs_change:(is_vendor, dir, ev, f)=>
     # skip all folder creation
     return if f.type == "dir" and ev == "create"
     
@@ -153,15 +154,20 @@ module.exports = class Builder
         # updates file information
         file = ArrayUtil.find @files, 'filepath': relative_path
 
-        if file is null
-          warn "CHANGED FILE IS APPARENTLY NULL..."
+        if file is null and is_vendor is false
+          warn "Change file is apparently null, it shouldn't happened.\n"+
+              "Please report this at the repo issues section."
         else
+
           # cli msg
           msg = "• #{type} changed".bold
           log "[#{now}] #{msg} #{relative_path}"
 
-          file.item.getinfo()
-          file.item.compile_to_disk()
+          if is_vendor
+            @copy_vendors_to_release false, location
+          else
+            file.item.getinfo()
+            file.item.compile_to_disk @config
 
   clear:->
     # clear release folder
