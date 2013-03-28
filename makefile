@@ -1,8 +1,11 @@
 .PHONY: build
 
 CS=node_modules/coffee-script/bin/coffee
-VOWS=node_modules/vows/bin/vows
+MOCHA=node_modules/mocha/bin/mocha
 VERSION=`$(CS) build/bumper.coffee --version`
+
+setup:
+	sudo npm link
 
 compile.loader:
 	$(CS) -o lib/loader -j toaster.coffee -cb \
@@ -16,12 +19,14 @@ watch.loader:
 		src/loader/chunk.coffee \
 		src/loader/toaster.coffee
 
-setup:
-	sudo npm link
 
-test: build
-	$(VOWS) spec/*.coffee --spec
+test.clean:
+	# rm -rf tests/tmp-*
 
+test: test.clean
+	$(MOCHA) tests/* \
+		--compilers coffee:coffee-script \
+		--require should --reporter spec
 
 
 bump.minor:
