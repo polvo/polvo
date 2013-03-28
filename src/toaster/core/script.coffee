@@ -3,6 +3,8 @@ XRegExp = (require 'XRegExp').XRegExp
 
 {log,debug,warn,error} = require '../utils/log-util'
 
+MinifyUtil = require '../utils/minify-util'
+
 module.exports = class Script
 
   # requires
@@ -10,8 +12,6 @@ module.exports = class Script
   fsu = require 'fs-util'
   path = require 'path'
   cs = require "coffee-script"
-  uglify = require("uglify-js").uglify
-  uglify_parser = require("uglify-js").parser
 
   constructor: (@builder, @dirpath, @realpath) ->
     @getinfo()
@@ -60,6 +60,7 @@ module.exports = class Script
     # assemble namespace info about the file by:
     # 1) replacing "/" or "\" by "."
     @namespace = @filefolder.replace (new RegExp "\\#{path.sep}", "g"), "."
+
     # 2) excluding first and last ".", if there's one
     @namespace = @namespace.replace /^\.?(.*)\.?$/g, "$1"
 
@@ -161,16 +162,16 @@ module.exports = class Script
         identation = "  "
 
     # and reident content (will be wrapped by AMD closures)
-    idented = @raw.replace /^/mg, "#{identation}"
+    indented = @raw.replace /^/mg, "#{identation}"
 
     # re-process the raw file with AMD definitions (modules WITHOUT id)
     @raw = "#{global_code}\n"
-    @raw += "define [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+    @raw += "define [#{deps_path}], ( #{deps_args} )-> \n#{indented}"
 
     # re-process the raw file with AMD definitions (modules WITH id)
     def = @filepath.replace '.coffee', ''
     @defined_raw = "#{global_code}\n"
-    @defined_raw += "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{idented}"
+    @defined_raw += "define '#{def}', [#{deps_path}], ( #{deps_args} )-> \n#{indented}"
 
 
   # deletes release file from disk
@@ -183,8 +184,8 @@ module.exports = class Script
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
     # get compiled javascript
-    inject_amd = config.browser? and config.browser.amd
-    compiled = @compile_to_str inject_amd
+    inject_amd = config.browser?.amd
+    compiled = @compile_to_str config
 
     # create container folder if it doesnt exist yet
     fsu.mkdir_p @release.folder unless fs.existsSync @release.folder
@@ -197,7 +198,7 @@ module.exports = class Script
     log "[#{now}] #{msg} #{@release.relative}".green
 
   # compile file and returns it as string
-  compile_to_str:( add_definitions = false )->
+  compile_to_str:( config )->
     try
       cs.compile @backup
     catch err
@@ -208,14 +209,16 @@ module.exports = class Script
       error msg
       return null
 
-    raw = if add_definitions then @defined_raw else @backup
-    compiled = cs.compile raw, bare: @builder.config.bare
+    # study the possibilities to work with cjs injections
+    # if config.browser?.cjs
 
-    # if toaster is runnig 
-    if @builder.cli.argv.r and @builder.config.minify
-      ast = uglify_parser.parse compiled
-      ast = uglify.ast_mangle ast
-      ast = uglify.ast_squeeze ast
-      compiled = uglify.gen_code ast
+    if config.browser?.amd
+      compiled = cs.compile @defined_raw, bare: config.bare
+    else
+      compiled = cs.compile @backup, bare: config.bare
+
+    # if releasing code and minification is enabled
+    if @builder.cli.argv.r and config.minify
+      compiled = MinifyUtil.min compiled
 
     return compiled
