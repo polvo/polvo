@@ -3,9 +3,7 @@
 Minimalist build system for CoffeeScript.
 > Version 0.6.11
 
-[![Build Status](https://secure.travis-ci.org/serpentem/coffee-toaster.png)](http://travis-ci.org/serpentem/coffee-toaster)
-
-[![Dependency Status](https://gemnasium.com/serpentem/coffee-toaster.png)](https://gemnasium.com/serpentem/coffee-toaster)
+[![Build Status](https://secure.travis-ci.org/serpentem/coffee-toaster.png)](http://travis-ci.org/serpentem/coffee-toaster) [![Dependency Status](https://gemnasium.com/serpentem/coffee-toaster.png)](https://gemnasium.com/serpentem/coffee-toaster)
 
 # Features
 
