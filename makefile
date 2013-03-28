@@ -2,7 +2,7 @@
 
 CS=node_modules/coffee-script/bin/coffee
 VOWS=node_modules/vows/bin/vows
-VERSION=`$(CS) build/bumper --version`
+VERSION=`$(CS) build/bumper.coffee --version`
 
 compile.loader:
 	$(CS) -o lib/loader -j toaster.coffee -cb \
