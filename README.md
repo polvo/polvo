@@ -5,6 +5,8 @@ Minimalist build system for CoffeeScript.
 
 [![Build Status](https://secure.travis-ci.org/serpentem/coffee-toaster.png)](http://travis-ci.org/serpentem/coffee-toaster)
 
+[![Dependency Status](https://gemnasium.com/serpentem/coffee-toaster.png)](https://gemnasium.com/serpentem/coffee-toaster)
+
 # Features
 
 * Inheritance support across multiples files for the lazy
