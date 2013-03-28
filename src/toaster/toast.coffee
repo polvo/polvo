@@ -117,46 +117,52 @@ module.exports = class Toast
 
     # project nature
     if config.browser?
-      config.nature_is_browser = true
-      @_toast_browser config, config.browser
+      @_toast_browser config
     else
-      config.nature_is_node = true
-      @_toast_node config.node or {}
+      # TODO
+      # @_toast_node config.node or {}
 
-  _toast_browser:( base_config, config )->
+  _toast_browser:( config )->
 
-    # simple mixin
-    config[k] = v for k, v of base_config
+    browser = config.browser
 
-    # ...: main - mandatory
-    unless config.main?
-      msg = 'You need to inform the main entry point (module id) for your app.'
-      msg += '\nCheck your `toaster.coffee` config file.'
-      return error msg
+    # ...: amd - optional
+    if browser.amd?
 
-    # ...: minify - optional
-    config.minify ?= true # boolean
+      # ...: main - mandatory
+      unless browser.amd.main?
+        msg = 'You need to inform the main entry point (module id) for your '
+        msg += 'app. \nCheck your `toaster.coffee` config file.'
+        return error msg
 
-    # ...: webroot - optional
-    config.webroot ?= '' # string
-    if @toaster.cli.argv.s? and config.webroot is ''
-      msg = 'Inform your webroot before using static server.'
-      msg += '\nCheck your `toaster.coffee` config file.'
-      return error msg
+      # ...: boot - mandatory
+      unless browser.amd.boot?
+        msg = 'You need to inform the amd/boot file name for your app.'
+        msg += '\nCheck your `toaster.coffee` config file.'
+        return error msg
 
-    # ...: port - optional
-    config.port ?= 3000
+      # ...: base_url - optional
+      if browser.amd.base_url?
+        if browser.amd.base_url.slice -1 isnt '/'
+          browser.amd.base_url += '/'
+      else
+          browser.amd.base_url = ''
 
-    # ...: base_url - optional
-    if config.base_url?
-      if config.base_url.slice -1 isnt '/'
-        config.base_url += '/'
-    else
-       config.base_url = ''
+    # ...: server - optional
+    if server?
+
+      # ...: root  (mandatory when server is informed)
+      unless server.root?
+        msg = 'You need to inform the `root` property in your server config.'
+        msg += '\nCheck your `toaster.coffee` config file.'
+        return error msg
+
+      # ...: port - optional
+      server.port ?= 3000
 
     # ...: vendors - optional
-    if config.vendors?
-      for vname, vurl of config.vendors
+    if browser.vendors?
+      for vname, vurl of browser.vendors
 
         continue if /^http/m.test vurl
 
@@ -167,7 +173,7 @@ module.exports = class Toast
           if (fs.lstatSync vpath).isSymbolicLink()
             vpath = fs.readlinkSync vendor
 
-          config.vendors[vname] = vpath
+          browser.vendors[vname] = vpath
 
         else
           # error "Local vendor not found. #{dir}\nCheck your config."
@@ -176,16 +182,20 @@ module.exports = class Toast
           return error msg
 
     # ...:optimize - optional
-    config.optimize ?= null
+    browser.optimize ?= null
 
     # ...:optimization method (at least one should be specified)
-    if config.optimize?
-      if (config.optimize.merge? or config.optimize.layers?) is false
+    if browser.optimize?
+
+      # ...: minify - optional
+      browser.minify ?= true # boolean
+
+      if (browser.optimize.merge? or browser.optimize.layers?) is false
         msg = 'Check your `toaster.coffee` at least one method is need in order'
         msg += ' to optimize your project.'
         return error msg
 
-      else if (config.optimize.merge? and config.optimize.layers?)
+      else if (browser.optimize.merge? and browser.optimize.layers?)
         msg = 'Check your `toaster.coffee`, only one optimization method is '
         msg += 'allowed, please use `layers` or `merge`.'
         return error msg        
