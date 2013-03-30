@@ -171,7 +171,7 @@ module.exports = class Toast
 
         if fs.existsSync vpath
           if (fs.lstatSync vpath).isSymbolicLink()
-            vpath = fs.readlinkSync vendor
+            vurl = path.resolve (fs.readlinkSync vurl)
 
           browser.vendors[vname] = vpath
 
