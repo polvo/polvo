@@ -405,7 +405,7 @@ module.exports = class Builder
         filepath = dep.path
 
         # skip vendors
-        continue if filepath[0] is ':'
+        continue if dep.vendor
 
         # search for dependency
         dependency = ArrayUtil.find files, 'filepath': filepath

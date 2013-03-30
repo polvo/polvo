@@ -106,11 +106,7 @@ module.exports = class Script
         dep = 
           name: match[1]
           path: match[2] + '.coffee'
-          vendor: false
-
-        if dep.path[0] is ':'
-          # dep.path = dep.path.substr 1
-          dep.is_vendor = true
+          vendor: match[1] is undefined
 
         # TODO: REVIEW BLOCK BELLOW
         # if user is under windows, checks and replace any "/" by "\" in
