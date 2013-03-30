@@ -389,7 +389,7 @@ module.exports = class Builder
     # if cycling is true or @missing is null, initializes empty array
     # for holding missing dependencies
     # 
-    # cycling means the redorder method is being called recursively,
+    # cycling means the reorder method is being called recursively,
     # no other methods call it with cycling = true
     @missing = {} if cycling is false
 
