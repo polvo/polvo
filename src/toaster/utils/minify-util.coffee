@@ -1,9 +1,9 @@
-uglify = require("uglify-js").uglify
-uglify_parser = require("uglify-js").parser
+uglify = require 'uglify-js'
 
 module.exports = class MinifyUtil
   @min:( contents )->
-    ast = uglify_parser.parse contents
-    ast = uglify.ast_mangle ast
-    ast = uglify.ast_squeeze ast
-    compiled = uglify.gen_code ast
+    
+    ast = uglify.parse contents
+    stream = uglify.OutputStream()
+    ast.print stream
+    compiled = stream.toString()
