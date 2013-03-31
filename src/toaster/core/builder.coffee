@@ -267,7 +267,7 @@ module.exports = class Builder
     @write_loader paths
 
     # copy all vendors as well
-    @copy_vendors_to_release()
+    @copy_vendors_to_release true, null, false
 
 
   write_loader:( paths )->
@@ -319,7 +319,7 @@ module.exports = class Builder
     fs.readFileSync rjs_path, 'utf-8'
 
   # copy vendors to release folder
-  copy_vendors_to_release:( all = true, specific )->
+  copy_vendors_to_release:( all = true, specific = null, log_time = false )->
 
     return unless @config.browser.vendors?
 
@@ -340,7 +340,8 @@ module.exports = class Builder
         # date for CLI notifications
         now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
-        msg = "[#{now}]#{' ✓ Vendor copied: '.bold}#{from} -> #{to}"
+        msg = if log_time then "[#{now}] " else ""
+        msg += "#{'✓ Vendor copied: '.bold}#{from} -> #{to}"
 
         log msg.green
 
