@@ -29,7 +29,8 @@
     "optimist": "0.3.x",
     "should": "1.2.x",
     "uglify-js": "2.2.x",
-    "xregexp":"2.0.0"
+    "xregexp":"2.0.0",
+    "requirejs":"2.1.x"
   },
 
   "optionalDependencies": { "growl": "1.2.x" }
