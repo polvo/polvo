@@ -108,6 +108,10 @@ module.exports = class Script
           path: match[2] + '.coffee'
           vendor: match[1] is undefined
 
+        if dep.name? and @builder.config.browser
+          if dep.name of @builder.config.browser.vendors
+            dep.vendor = true
+
         # TODO: REVIEW BLOCK BELLOW
         # if user is under windows, checks and replace any "/" by "\" in
         # file dependencies: TODO: revise this
