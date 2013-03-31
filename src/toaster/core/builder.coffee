@@ -319,7 +319,7 @@ module.exports = class Builder
     fs.readFileSync rjs_path, 'utf-8'
 
   # copy vendors to release folder
-  copy_vendors_to_release:( all = true, specific = null, log_time = false )->
+  copy_vendors_to_release:( all = true, specific = null, log_time = true )->
 
     return unless @config.browser.vendors?
 
