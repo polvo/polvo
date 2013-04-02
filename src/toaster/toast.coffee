@@ -43,7 +43,7 @@ module.exports = class Toast
 
   init:()->
     @filetype = 
-      coffee: new Tree @toaster, @cli, @config, CoffeeHandler, CoffeeOptimizer
+      coffee: new Tree @toaster, @cli, @config, @, CoffeeHandler, CoffeeOptimizer
 
   serve:->
     return if @config.browser is null
@@ -57,19 +57,14 @@ module.exports = class Toast
     log 'Server running at ' + address.green
   
   compile:->
-    console.log '---> COMPILA!'
-    @clear()
     for type_str, type of @filetype
       do type.compile_files_to_disk
-    console.log '---> COMPILOU!'
 
   watch:->
-    @clear()
     for type_str, type of @filetype
       do type.watch
 
   optimize:->
-    @clear()
     for type_str, type of @filetype
       do type.optimize
 
@@ -78,8 +73,3 @@ module.exports = class Toast
     @conn.close() if @conn?
     for type_str, type of @filetype
       do type.close_watchers
-
-  clear:->
-    # clear release folder
-    fsu.rm_rf @config.release_dir
-    fsu.mkdir_p @config.release_dir

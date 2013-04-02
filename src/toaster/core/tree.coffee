@@ -15,7 +15,7 @@ module.exports = class Tree
   watchers = null
   optimizer: null
 
-  constructor:( @toaster, @cli, @config, HandlerClass, OptimizerClass )->
+  constructor:( @toaster, @cli, @config, @toast, HandlerClass, OptimizerClass )->
     @filter = HandlerClass.FILTER
     @init HandlerClass, OptimizerClass
 
@@ -38,7 +38,7 @@ module.exports = class Tree
 
         # if it should be included, add to @files array
         continue unless include
-        console.log 'capture: ' + filepath
+
         handler = new HandlerClass @toaster,
                                 @cli,
                                 @config,
@@ -47,9 +47,23 @@ module.exports = class Tree
                                 filepath
         @files.push handler
 
+  clear_release_dir:->
+    # clear release folder
+    fsu.rm_rf @config.release_dir
+    fsu.mkdir_p @config.release_dir
+
   # optimize all files covered by internal Handler
   optimize:->
-    Optimizer @files, @config
+    do @clear_release_dir
+    do @optimizer.optimize
+
+  compile_files_to_disk:->
+    do @clear_release_dir
+
+    for file in @files
+      file.compile_to_disk @config
+
+    do @optimizer.optimize_for_development
 
   watch:()->
     # initialize watchers array
@@ -71,9 +85,3 @@ module.exports = class Tree
       watcher.on 'create', (FnUtil.proxy @_on_fs_change, true, dir, 'create')
       watcher.on 'change', (FnUtil.proxy @_on_fs_change, true, dir, 'change')
       watcher.on 'delete', (FnUtil.proxy @_on_fs_change, true, dir, 'delete')
-
-  compile_files_to_disk:->
-    for file in @files
-      file.compile_to_disk @config
-
-    do @optimizer.optimize_for_development
