@@ -1,5 +1,8 @@
 path = require 'path'
 
+fs = require 'fs'
+path = require 'path'
+
 fsu = require 'fs-util'
 
 {log,debug,warn,error} = require '../../../utils/log-util'
@@ -10,9 +13,10 @@ module.exports = class Vendors
 
   # merge all vendors into one and return as string
   merge_to_str:->
+
     buffer = []
-    for vname, vpath of @config.vendors
-      buffer.push (fs.readFileSync vpath)
+    for vname, vpath of @config.browser.vendors
+      buffer.push (fs.readFileSync vpath, 'utf-8')
 
     buffer.join '\n'
 
