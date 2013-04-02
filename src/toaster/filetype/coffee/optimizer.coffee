@@ -1,33 +1,38 @@
 require('source-map-support').install()
 
+path = require 'path'
+fs = require 'fs'
+util = require 'util'
+
 fsu = require 'fs-util'
+
 ArrayUtil = require '../../utils/array-util'
 FnUtil = require '../../utils/fn-util'
 ArrayUtil = require '../../utils/array-util'
 StringUtil = require '../../utils/string-util'
 MinifyUtil = require '../../utils/minify-util'
 
+Loader = require './optimizer/loader'
+Vendors = require './optimizer/vendors'
+
 {log,debug,warn,error} = require '../../utils/log-util'
 
-path = require 'path'
-fs = require 'fs'
-util = require 'util'
 
 module.exports = class Optimizer
+
+  loader: null
+  vendors: null
+
   constructor:( @toaster, @cli, @config, @tree )->
-    # console.log 'OPTIMIZER --------------------->'
-    # console.log @toaster
-    # console.log @cli
-    # console.log @config
-    # console.log @tree
-    # console.log "................................"
+    @loader = new Loader @toaster, @cli, @config
+    @vendors = new Vendors @toaster, @cli, @config
 
   optimize_for_development:->
     if @config.browser?
-      @copy_vendors_to_release()
+      @vendors.copy_to_release()
 
       if @config.browser.amd
-        @write_loader()
+        @loader.write_loader()
 
   optimize:()->
 
@@ -104,11 +109,41 @@ module.exports = class Optimizer
           log msg.yellow
 
       # write toaster loader and initializer
-      @write_loader paths
+      @loader.write_loader paths
 
       # copy all vendors as well
-      @copy_vendors_to_release true, null, false
+      @vendors.copy_to_release true, null, false
 
+
+  merge_files:->
+    buffer = []
+    for file in (@reorder (@files.slice 0))
+      buffer.push file.compile_to_str @config
+
+    buffer.join '\n'
+
+
+  merge_everything:->
+    console.log 'Merging files..'.grey
+    buffer = "//---------------------------------------- vendors\n"
+    buffer += @vendors.merge_to_str() + '\n\n'
+
+    if @config.browser.amd?
+      buffer += "//---------------------------------------- amd loader\n"
+      buffer += @loader.get_amd_loader()
+
+    buffer += "//---------------------------------------- files\n"
+    buffer += @merge_files() + '\n'
+
+    if @config.browser?.optimize?.minify
+      console.log 'Minifying..'.grey
+      buffer = MinifyUtil.min buffer
+
+    location = path.join @config.release_dir, @config.browser.optimize.merge
+    fs.writeFileSync location, buffer
+
+    location = location.replace @toaster.basepath, ''
+    log 'Project merged at: ' + location.green
 
 
   missing = {}
@@ -203,115 +238,3 @@ module.exports = class Optimizer
              file.filepath.bold.grey
 
     return files
-
-   merge_everything:->
-    console.log 'Merging files..'.grey
-    buffer = "//---------------------------------------- vendors\n"
-    buffer += @merge_vendors() + '\n\n'
-
-    if @config.browser.amd?
-      buffer += "//---------------------------------------- amd loader\n"
-      buffer += @_get_amd_loader()
-
-    buffer += "//---------------------------------------- files\n"
-    buffer += @merge_files() + '\n'
-
-    if @config.browser?.optimize?.minify
-      console.log 'Minifying..'.grey
-      buffer = MinifyUtil.min buffer
-
-    location = path.join @config.release_dir, @config.browser.optimize.merge
-    fs.writeFileSync location, buffer
-
-    location = location.replace @toaster.basepath, ''
-    log 'Project merged at: ' + location.green
-
-  merge_files:->
-    buffer = []
-    for file in (@reorder (@files.slice 0))
-      buffer.push file.compile_to_str @config
-
-    buffer.join '\n'
-
-  merge_vendors:->
-    buffer = []
-    for vname, vpath of @config.vendors
-      buffer.push (fs.readFileSync vpath)
-
-    buffer.join '\n'
-
-  write_loader:( paths )->
-    return unless @config.browser.optimize? and @config.browser.amd
-
-    # increment map with all remote vendors
-    paths or= {}
-    for name, url of @config.vendors
-      paths[name] = url if /^http/m.test url
-
-    # mounting main toaster file, contains the toaster builtin amd loader, 
-    # all the necessary configs and a hash map containing the layer location
-    # for each module that was merged into it.
-
-    loader = @_get_amd_loader()
-
-    if paths?
-      paths = (util.inspect paths).replace /\s/g, ''
-    else paths = ''
-
-    loader += """\n\n
-      /*************************************************************************
-       * Automatic configuration by CoffeeToaster.
-      *************************************************************************/
-
-      require.config({
-        baseUrl: '#{@config.browser.amd.base_url}',
-        paths: #{paths}
-      });
-      require( ['#{@config.browser.amd.main}'] );
-
-      /*************************************************************************
-       * Automatic configuration by CoffeeToaster.
-      *************************************************************************/
-    """
-
-    # writing to disk
-    release_path = path.join @config.release_dir, @config.browser.amd.boot
-
-    if @config.browser.optimize.minify && @cli.r
-      loader = MinifyUtil.min loader
-
-    fs.writeFileSync release_path, loader
-
-
-  # copy vendors to release folder
-  copy_vendors_to_release:( all = true, specific = null, log_time = true )->
-
-    return unless @config.browser.vendors?
-
-    for vname, vurl of @config.browser.vendors
-      unless /^http/m.test vurl
-
-        continue if all is false and vurl isnt specific
-
-        release_path = path.join @config.release_dir, "#{vname}.js"
-        fsu.cp vurl, release_path
-
-        from = vurl.replace @toaster.basepath, ''
-        to = release_path.replace @toaster.basepath, ''
-
-        from = from.substr 1 if from[0] is path.sep
-        to = to.substr 1 if to[0] is path.sep
-
-        # date for CLI notifications
-        now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-
-        msg = if log_time then "[#{now}] " else ""
-        msg += "#{'✓ Vendor copied: '.bold}#{from} -> #{to}"
-
-        log msg.green
-
-
-  _get_amd_loader:->
-    rjs_path = path.join @toaster.toaster_base, 'node_modules'
-    rjs_path = path.join rjs_path, 'requirejs', 'require.js'
-    fs.readFileSync rjs_path, 'utf-8'
