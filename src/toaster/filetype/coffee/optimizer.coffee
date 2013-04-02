@@ -34,85 +34,85 @@ module.exports = class Optimizer
       if @config.browser.amd
         @loader.write_loader()
 
-  optimize:()->
+  optimize:->
 
-      unless @config.browser?.optimize?
-        return
+    unless @config.browser?.optimize?
+      return
 
-      # clear release folder
-      @tree.clear_release_dir()
+    # clear release folder
+    @tree.clear_release_dir()
 
-      # if merge is set, optimization will just merge everything
-      if @config.browser.optimize.merge?
-        return @merge_everything()
+    # if merge is set, optimization will just merge everything
+    if @config.browser.optimize.merge?
+      return @merge_everything()
 
-      log 'Optimizing project...'
+    log 'Optimizing project...'
 
-      paths = {}
-      layers = []
-      included = []
-      ordered = @reorder (@tree.files.slice 0)
+    paths = {}
+    layers = []
+    included = []
+    ordered = @reorder (@tree.files.slice 0)
 
-      for layer_name, layer_deps of @config.browser.optimize.layers
+    for layer_name, layer_deps of @config.browser.optimize.layers
 
-        layers.push layer_name
+      layers.push layer_name
 
-        contents = ''
-        for dep in layer_deps
+      contents = ''
+      for dep in layer_deps
 
-          # gets dependency chain
-          found = (ArrayUtil.find ordered, 'filepath': "#{dep}.coffee")
+        # gets dependency chain
+        found = (ArrayUtil.find ordered, 'filepath': "#{dep}.coffee")
 
-          # if nothing is found
-          unless found?
-            # checks if it was already included
-            is_included = (ArrayUtil.find included, 'filepath': "#{dep}.coffee")
+        # if nothing is found
+        unless found?
+          # checks if it was already included
+          is_included = (ArrayUtil.find included, 'filepath': "#{dep}.coffee")
 
-            # and if not..
-            unless is_included?
-              msg = "Cannot find module `#{dep}` for layer `#{layer_name}`."
-              msg += '\nCheck your `toaster.coffee` config file.'
-              error msg
+          # and if not..
+          unless is_included?
+            msg = "Cannot find module `#{dep}` for layer `#{layer_name}`."
+            msg += '\nCheck your `toaster.coffee` config file.'
+            error msg
 
-            continue
+          continue
 
-          # scripts pack (all dependencies resolved)
-          pack = ordered.splice 0, found.index + 1
+        # scripts pack (all dependencies resolved)
+        pack = ordered.splice 0, found.index + 1
 
-          # adding all to included array
-          included = included.concat pack
+        # adding all to included array
+        included = included.concat pack
 
-          # increments the layer contents and map the script location into paths
-          for script in pack
-            paths[script.filepath.replace '.coffee', ''] = layer_name
-            contents += script.compile_to_str @config
+        # increments the layer contents and map the script location into paths
+        for script in pack
+          paths[script.filepath.replace '.coffee', ''] = layer_name
+          contents += script.compile_to_str @config
 
-        # if there's something to be written
-        if contents isnt ''
+      # if there's something to be written
+      if contents isnt ''
 
-          if @config.browser?.optimize?.minify
-            contents = MinifyUtil.min contents
+        if @config.browser?.optimize?.minify
+          contents = MinifyUtil.min contents
 
-          # write layer
-          layer_path = path.join @config.release_dir, "#{layer_name}.js"
-          fs.writeFileSync layer_path, contents
+        # write layer
+        layer_path = path.join @config.release_dir, "#{layer_name}.js"
+        fs.writeFileSync layer_path, contents
 
-          # notify user through cli
-          relative_path = layer_path.replace @toaster.basepath, ''
-          relative_path = relative_path.substr 1 if relative_path[0] is path.sep
-          msg = "#{'✓ Layer optimized: '.bold}#{layer_name} -> #{relative_path}"
-          log msg.green
+        # notify user through cli
+        relative_path = layer_path.replace @toaster.basepath, ''
+        relative_path = relative_path.substr 1 if relative_path[0] is path.sep
+        msg = "#{'✓ Layer optimized: '.bold}#{layer_name} -> #{relative_path}"
+        log msg.green
 
-        # otherwise if it's empty just inform user through the cli
-        else
-          msg = "#{'✓ Layer is empty: '.bold} #{layer_name} -> [skipped]"
-          log msg.yellow
+      # otherwise if it's empty just inform user through the cli
+      else
+        msg = "#{'✓ Layer is empty: '.bold} #{layer_name} -> [skipped]"
+        log msg.yellow
 
-      # write toaster loader and initializer
-      @loader.write_loader paths
+    # write toaster loader and initializer
+    @loader.write_loader paths
 
-      # copy all vendors as well
-      @vendors.copy_to_release true, null, false
+    # copy all vendors as well
+    @vendors.copy_to_release true, null, false
 
 
   merge_files:->
