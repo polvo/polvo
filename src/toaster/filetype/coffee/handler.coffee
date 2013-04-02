@@ -129,17 +129,19 @@ module.exports = class Handler
     # saves the orignal raw file
     @backup = @raw
 
-    # and inject AMD definitions
-    @inject_definitions()
-
   # inject AMD definitions
-  inject_definitions:->
+  inject_definitions:( include_vendors = true )->
 
     # computes all dependencies and format it as a stringfied array without []
     deps_path = ''
     deps_args = ''
 
     for dep in @dependencies
+
+      # if current dep is a vendor and vendors are not wanted
+      if include_vendors is false and dep.vendor and dep.name is undefined
+        continue 
+
       deps_path += "'#{dep.path.replace '.coffee', ''}'," 
       if dep.is_vendor is false or dep.name isnt undefined
         deps_args += "#{dep.name},"
@@ -186,7 +188,6 @@ module.exports = class Handler
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
     # get compiled javascript
-    inject_amd = config.browser?.amd
     compiled = @compile_to_str config
 
     # create container folder if it doesnt exist yet
@@ -200,7 +201,11 @@ module.exports = class Handler
     log "[#{now}] #{msg} #{@release.relative}".green
 
   # compile file and returns it as string
-  compile_to_str:( config )->
+  compile_to_str:( config, include_vendors )->
+    
+    # and inject AMD definitions
+    @inject_definitions include_vendors
+
     try
       cs.compile @backup
     catch err
