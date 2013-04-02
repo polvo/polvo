@@ -117,7 +117,7 @@ module.exports = class Optimizer
 
   merge_files:->
     buffer = []
-    for file in (@reorder (@files.slice 0))
+    for file in (@reorder (@tree.files.slice 0))
       buffer.push file.compile_to_str @config
 
     buffer.join '\n'
