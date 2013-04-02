@@ -1,3 +1,5 @@
+require('source-map-support').install()
+
 Question = require './question'
 
 {log,debug,warn,error} = require '../utils/log-util'

@@ -1,3 +1,5 @@
+require('source-map-support').install()
+
 uglify = require 'uglify-js'
 
 module.exports = class MinifyUtil

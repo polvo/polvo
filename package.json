@@ -3,35 +3,43 @@
   "version": "0.6.12",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
   "description": "Minimalist build system for CoffeeScript.",
-  "keywords": ["coffeescript", "build", "namespace", "tool"],
-
-  "main" : "./src/toaster",
-  "scripts": { "test": "make test" },
-  "dirs":{ "toaster": "src/toaster" },
-
+  "keywords": [
+    "coffeescript",
+    "build",
+    "namespace",
+    "tool"
+  ],
+  "main": "./src/toaster",
+  "scripts": {
+    "test": "make test"
+  },
+  "dirs": {
+    "toaster": "src/toaster"
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/serpentem/coffee-toaster"
   },
-
   "bin": {
-    "toaster" : "./bin/toaster",
-    "_toasted_coffee": "./node_modules/coffee-script/bin/coffee"
+    "toaster": "./bin/toaster"
   },
-  "engines": { "node": "0.10.x" },
-
+  "engines": {
+    "node": "0.10.x"
+  },
   "dependencies": {
-    "coffee-script" : "1.6.x",
+    "coffee-script": "1.6.x",
     "colors": "0.6.x",
-    "connect":"2.7.x",
+    "connect": "2.7.x",
     "fs-util": "0.3.x",
     "mocha": "1.8.x",
     "optimist": "0.3.x",
     "should": "1.2.x",
     "uglify-js": "2.2.x",
-    "xregexp":"2.0.0",
-    "requirejs":"2.1.x"
+    "xregexp": "2.0.0",
+    "requirejs": "2.1.x",
+    "source-map-support": "0.1.x"
   },
-
-  "optionalDependencies": { "growl": "1.2.x" }
+  "optionalDependencies": {
+    "growl": "1.2.x"
+  }
 }

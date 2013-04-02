@@ -1,4 +1,4 @@
-
+require('source-map-support').install()
 
 ObjectUtil = require '../utils/object_util'
 

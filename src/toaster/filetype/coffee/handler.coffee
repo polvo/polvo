@@ -1,22 +1,24 @@
-ArrayUtil = require '../utils/array-util'
-XRegExp = (require 'XRegExp').XRegExp
+require('source-map-support').install()
 
-{log,debug,warn,error} = require '../utils/log-util'
+fs = require "fs"
+fsu = require 'fs-util'
+path = require 'path'
+cs = require "coffee-script"
 
-MinifyUtil = require '../utils/minify-util'
+{XRegExp} = require 'XRegExp'
+ArrayUtil = require '../../utils/array-util'
+MinifyUtil = require '../../utils/minify-util'
 
-module.exports = class Script
+{log,debug,warn,error} = require '../../utils/log-util'
 
-  # requires
-  fs = require "fs"
-  fsu = require 'fs-util'
-  path = require 'path'
-  cs = require "coffee-script"
 
-  constructor: (@builder, @dirpath, @realpath) ->
+module.exports = class Handler
+
+  # capture files ending with `.coffee`, `.litcoffee` and `.coffee.md`
+  FILTER = /\.(lit)?(coffee)(\.md)?$/m
+
+  constructor: (@tree, @dirpath, @realpath) ->
     @getinfo()
-
-
 
   getinfo:( declare_ns = true )->
     # read file content and initialize dependencies and baseclasses array
@@ -34,11 +36,11 @@ module.exports = class Script
     @filefolder = path.dirname @filepath
 
     # compute all necessary release paths
-    release_file = path.join @builder.config.release_dir, @filepath
+    release_file = path.join @tree.config.release_dir, @filepath
     release_file = release_file.replace '.coffee', '.js'
     release_dir = path.dirname release_file
 
-    relative_path = release_file.replace @builder.toaster.basepath, ''
+    relative_path = release_file.replace @tree.toaster.basepath, ''
     relative_path = relative_path.substr 1 if relative_path[0] is path.sep
 
     # this info is used when compiling or deleting from disk, see methods
@@ -108,8 +110,8 @@ module.exports = class Script
           path: match[2] + '.coffee'
           vendor: match[1] is undefined
 
-        if dep.name? and @builder.config.browser
-          if dep.name of @builder.config.browser.vendors
+        if dep.name? and @tree.config.browser
+          if dep.name of @tree.config.browser.vendors
             dep.vendor = true
 
         # TODO: REVIEW BLOCK BELLOW
@@ -218,7 +220,7 @@ module.exports = class Script
       compiled = cs.compile @backup, bare: config.bare
 
     # if releasing code and minification is enabled
-    if @builder.cli.argv.r and config.minify
+    if @tree.cli.argv.r and config.minify
       compiled = MinifyUtil.min compiled
 
     return compiled

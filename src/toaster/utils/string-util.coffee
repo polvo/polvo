@@ -1,3 +1,5 @@
+require('source-map-support').install()
+
 module.exports = class StringUtil
 
   @titleize:(str)->

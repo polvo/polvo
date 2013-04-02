@@ -4,24 +4,18 @@ CS=node_modules/coffee-script/bin/coffee
 MOCHA=node_modules/mocha/bin/mocha
 VERSION=`$(CS) build/bumper.coffee --version`
 
+
+
 setup:
-	sudo npm link
+	npm link
 
-compile.loader:
-	$(CS) -o lib/loader -j toaster.coffee -cb \
-		src/loader/script.coffee \
-		src/loader/chunk.coffee \
-		src/loader/toaster.coffee
+watch:
+	$(CS) -wmco lib src
 
-watch.loader:
-	$(CS) -o lib/loader -j toaster.coffee -cbw \
-		src/loader/script.coffee \
-		src/loader/chunk.coffee \
-		src/loader/toaster.coffee
+compile:
+	$(CS) -mco lib src
 
 
-test.clean:
-	# rm -rf tests/tmp-*
 
 test: test.clean
 	$(MOCHA) tests/* \
@@ -37,6 +31,7 @@ bump.major:
 
 bump.patch:
 	$(CS) build/bumper.coffee --patch
+
 
 
 publish:
