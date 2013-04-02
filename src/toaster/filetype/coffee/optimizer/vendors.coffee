@@ -7,16 +7,23 @@ fsu = require 'fs-util'
 
 {log,debug,warn,error} = require '../../../utils/log-util'
 
+
 module.exports = class Vendors
 
   constructor:( @toaster, @cli, @config )->
 
   # merge all vendors into one and return as string
   merge_to_str:->
-
     buffer = []
     for vname, vpath of @config.browser.vendors
-      buffer.push (fs.readFileSync vpath, 'utf-8')
+      contents = fs.readFileSync vpath, 'utf-8'
+
+      # if vendor is an AMD module, makes sure the define call is not anonymous
+      unless vname in @config.browser?.amd?.non_amd_vendors
+        match_define_calls = /(define[\s]*\()[\s]*(function)/g
+        contents = contents.replace match_define_calls, "$1'#{vname}',$2"
+
+      buffer.push contents
 
     buffer.join '\n'
 
