@@ -125,14 +125,14 @@ module.exports = class Optimizer
 
   merge_everything:->
     console.log 'Merging files..'.grey
-    buffer = "//---------------------------------------- vendors\n"
+    buffer = "//---------------------------------------- vendors\n\n\n"
     buffer += @vendors.merge_to_str() + '\n\n'
 
     if @config.browser.amd?
-      buffer += "//---------------------------------------- amd loader\n"
+      buffer += "//---------------------------------------- amd loader\n\n\n"
       buffer += @loader.get_amd_loader()
 
-    buffer += "//---------------------------------------- files\n"
+    buffer += "//---------------------------------------- files\n\n\n"
     buffer += @merge_files() + '\n'
 
     if @config.browser?.optimize?.minify
