@@ -1,6 +1,3 @@
 #!/usr/bin/env node
 
-var path = require('path'),
-    toaster = path.join(__dirname, '..', 'lib', 'toaster');
-
-new (require(toaster));
+new (require(require('path').join(__dirname, '..', 'lib', 'toaster')));
