@@ -20,7 +20,7 @@ module.exports = class Loader
     # all the necessary configs and a hash map containing the layer location
     # for each module that was merged into it.
 
-    loader = @_get_amd_loader()
+    loader = @get_amd_loader()
 
     if paths?
       paths = (util.inspect paths).replace /\s/g, ''
@@ -50,7 +50,7 @@ module.exports = class Loader
 
     fs.writeFileSync release_path, loader
 
-  _get_amd_loader:->
+  get_amd_loader:->
     rjs_path = path.join @toaster.toaster_base, 'node_modules'
     rjs_path = path.join rjs_path, 'requirejs', 'require.js'
     fs.readFileSync rjs_path, 'utf-8'
