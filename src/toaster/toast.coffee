@@ -42,8 +42,8 @@ module.exports = class Toast
     setTimeout (=> @serve()), 1 if @cli.argv.s
 
   init:()->
-    @filetype = {}
-    @filetype['coffee'] = new Tree @toaster, @config, CoffeeHandler, CoffeeOptimizer
+    @filetype = 
+      coffee: new Tree @toaster, @cli, @config, CoffeeHandler, CoffeeOptimizer
 
   serve:->
     return if @config.browser is null
@@ -57,25 +57,27 @@ module.exports = class Toast
     log 'Server running at ' + address.green
   
   compile:->
+    console.log '---> COMPILA!'
     @clear()
-    for type in @filetype
+    for type_str, type of @filetype
       do type.compile_files_to_disk
+    console.log '---> COMPILOU!'
 
   watch:->
     @clear()
-    for type in @filetype
+    for type_str, type of @filetype
       do type.watch
 
   optimize:->
     @clear()
-    for type in @filetype
+    for type_str, type of @filetype
       do type.optimize
 
   reset:()->
     # close all builder's watchers
     @conn.close() if @conn?
-    for type in @filetype
-      do type.close_watchers()
+    for type_str, type of @filetype
+      do type.close_watchers
 
   clear:->
     # clear release folder

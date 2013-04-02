@@ -1,44 +1,48 @@
 require('source-map-support').install()
 
+FnUtil = require '../utils/fn-util'
+
 fsu = require 'fs-util'
 
 module.exports = class Tree
 
-  handler: null
-  optimizer: null
+  Handler: null
+  Optimizer: null
 
   files: []
   watchers = null
 
-  constructor:( @toaster, @config, @handler, @optimizer )->
-    # console.log 'tree'
-    # console.log @config
-    # console.log @handler?
-    # console.log @optimizer?
-    # return
+  constructor:( @toaster, @cli, @config, @Handler, @Optimizer )->
     @init()
 
-  # collects all files covered by internal handler
+  # collects all files covered by internal Handler
   init:->
     @files = []
 
     # loops through all dirs and..
-    for dir in @config.dirs
+    for dirpath in @config.dirs
 
       # collects all files
-      for file in (fsu.find dir, @handler.FILTER)
+      for filepath in (fsu.find dirpath, @Handler.FILTER)
 
         # check if file should be included or ignored
         include = true
         for item in @config.exclude
-          include &= !(new RegExp( item ).test file)
+          include &= !(new RegExp( item ).test filepath)
 
         # if it should be included, add to @files array
-        @files.push (new @handler @, dir, file) if include
+        continue unless include
+        handler = new @Handler @toaster,
+                                @cli,
+                                @config,
+                                @,
+                                dirpath,
+                                filepath
+        @files.push handler
 
-  # optimize all files covered by internal handler
+  # optimize all files covered by internal Handler
   optimize:->
-    optimizer @files, @config
+    Optimizer @files, @config
 
   watch:()->
     # initialize watchers array
@@ -48,23 +52,29 @@ module.exports = class Tree
     for dir in @config.dirs
 
       # and watch them entirely
-      @watchers.push (watcher = fsu.watch dir, @    .EXT)
-      watcher.on 'create', (FnUtil.proxy @on_fs_change, false, dir, 'create')
-      watcher.on 'change', (FnUtil.proxy @on_fs_change, false, dir, 'change')
-      watcher.on 'delete', (FnUtil.proxy @on_fs_change, false, dir, 'delete')
+      @watchers.push (watcher = fsu.watch dir, @Handler.FILTER)
+      watcher.on 'create', (FnUtil.proxy @_on_fs_change, false, dir, 'create')
+      watcher.on 'change', (FnUtil.proxy @_on_fs_change, false, dir, 'change')
+      watcher.on 'delete', (FnUtil.proxy @_on_fs_change, false, dir, 'delete')
 
     # watching vendors for changes
     for vname, vpath of @config.vendors
       @watchers.push (watcher = fsu.watch vpath)
       dir = path.join (path.dirname vpath), '..'
-      watcher.on 'create', (FnUtil.proxy @on_fs_change, true, dir, 'create')
-      watcher.on 'change', (FnUtil.proxy @on_fs_change, true, dir, 'change')
-      watcher.on 'delete', (FnUtil.proxy @on_fs_change, true, dir, 'delete')
+      watcher.on 'create', (FnUtil.proxy @_on_fs_change, true, dir, 'create')
+      watcher.on 'change', (FnUtil.proxy @_on_fs_change, true, dir, 'change')
+      watcher.on 'delete', (FnUtil.proxy @_on_fs_change, true, dir, 'delete')
+
+  compile_files_to_disk:->
+    for file in @files
+      file.compile_to_disk @config
 
   close_watchers:->
+    console.log 'close watchers'
     watcher.close() for watcher in @watchers
+    console.log 'CLOSED!'
 
-  on_fs_change:(is_vendor, dir, event, file)=>
+  _on_fs_change:(is_vendor, dir, event, file)=>
 
     # skip all folder creation
     return if file.type is "dir" and event == "create"

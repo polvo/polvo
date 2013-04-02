@@ -1,7 +1,6 @@
 require('source-map-support').install()
 
 fs = require "fs"
-fsu = require "fs-util"
 path = require "path"
 exec = (require "child_process").exec
 colors = require 'colors'
@@ -53,7 +52,7 @@ module.exports = class Toaster
       contents = fs.readFileSync filepath, "utf-8"
       schema = JSON.parse contents
       return log schema.version
-    
+
     # scaffolding basic structure for new projects
     else if @cli.argv.n
       new ProjectGen( @basepath ).create @cli.argv.n
@@ -75,7 +74,7 @@ module.exports = class Toaster
 
     # compile / release / watch / serve
     else if (@cli.argv.c or @cli.argv.r or @cli.argv.w or @cli.argv.s)
-      @toast()
+      @initialize_toasters()
 
       unless skip_initial_compile
         if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
@@ -85,11 +84,11 @@ module.exports = class Toaster
     else
       return log @cli.opts.help()
 
-  toast:->
+  initialize_toasters:( compile_at_startup )->
     @toasts = []
     @config = new Config @ #, @options, @skip_initial_compile
     for conf in @config.confs
-      @toasts.push = new Toast @, @cli, conf
+      @toasts.push new Toast @, @cli, conf
 
   # can be called by apps using toaster as lib, and compile the project with
   # options to inject header and footer code which must to be in coffee as well
@@ -106,4 +105,5 @@ module.exports = class Toaster
   reset:( options )->
     toast.reset() for toast in @toasts
     @options[ key ] = val for val, key of options if options?
-    @toast()
+    @initialize_toasters true
+    @compile()
