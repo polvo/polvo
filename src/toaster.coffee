@@ -16,17 +16,18 @@ ConfigGen = require './toaster/generators/config'
 
 module.exports = class Toaster
 
-  @basedir = null
   @options = null 
   @skip_initial_compile = false
 
+  toaster_base: null
   toasts: null
   # variable - before filter container
   before_compile: null
 
   constructor:( basedir, options = null, skip_initial_compile = false )->
 
-    @basedir = basedir
+    @toaster_base = path.dirname __dirname
+
     @options = options
     @skip_initial_compile = skip_initial_compile
 
