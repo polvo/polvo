@@ -147,6 +147,12 @@ module.exports = class Config
       else
           browser.amd.base_url = ''
 
+    else if browser.cjs
+      null
+    else
+      null
+      # validate browser.none?.props
+
     # ...: server - optional
     if server?
 
