@@ -19,7 +19,8 @@ module.exports = class Vendors
       contents = fs.readFileSync vpath, 'utf-8'
 
       # if vendor is an AMD module, makes sure the define call is not anonymous
-      unless vname in @config.browser?.amd?.non_amd_vendors
+      non_amd = @config.browser?.amd?.non_amd_vendors
+      unless non_amd isnt null or vname in non_amd
         match_define_calls = /(define[\s]*\()[\s]*(function)/g
         contents = contents.replace match_define_calls, "$1'#{vname}',$2"
 
