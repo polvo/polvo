@@ -5,7 +5,36 @@ util = require 'util'
 {log,debug,warn,error} = require '../../../utils/log-util'
 
 module.exports = class Loader
-  constructor:( @toaster, @cli, @config )->
+  constructor:( @toaster, @cli, @config, @tree, @optimizer )->
+
+  write_basic_loader:( paths )->
+    paths ?= []
+
+    for name, url of @config.browser.vendors
+      paths.push "#{@config.browser.base_url}/#{name}.js"
+
+    @optimizer.reorder @tree.files
+
+    # main = @config.browser.main
+    # paths.push "#{@config.browser.base_url}/#{main}.js"
+
+    for file in @tree.files
+
+      filepath = file.filepath.replace @tree.filter, ''
+
+      # continue if filepath is main
+      paths.push "#{@config.browser.base_url}/#{filepath}.js"
+
+    template = "document.write(\"<scri\" + \"pt src='~SRC'></script>\");\n"
+
+    buffer = ""
+    for src in paths
+      buffer += template.replace '~SRC', src
+
+    # writing to disk
+    release_path = path.join @config.release_dir, @config.browser.boot
+    fs.writeFileSync release_path, buffer
+
 
 
   write_loader:( paths )->

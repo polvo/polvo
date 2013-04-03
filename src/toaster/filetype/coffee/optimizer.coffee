@@ -24,7 +24,7 @@ module.exports = class Optimizer
   vendors: null
 
   constructor:( @toaster, @cli, @config, @tree )->
-    @loader = new Loader @toaster, @cli, @config
+    @loader = new Loader @toaster, @cli, @config, @tree, @
     @vendors = new Vendors @toaster, @cli, @config
 
   optimize_for_development:->
@@ -33,6 +33,8 @@ module.exports = class Optimizer
 
       if @config.browser.amd
         @loader.write_loader()
+      else
+        @loader.write_basic_loader()
 
   optimize:->
 
