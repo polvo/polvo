@@ -246,4 +246,14 @@ module.exports = class Optimizer
              "in file ".yellow +
              file.filepath.bold.grey
 
+    # makes sure the main file goes in first place
+    if cycling is false
+      
+      # but only in case amd/cjs isnt in use
+      unless @config.browser.amd? or @config.browser.cjs?
+        main = @config.browser.main + '.coffee'
+
+        index = (ArrayUtil.find files, 'filepath': main)?.index
+        files.splice 0, 0, (files.splice index, 1 )[0]
+
     return files
