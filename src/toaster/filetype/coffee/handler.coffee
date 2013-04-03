@@ -36,9 +36,9 @@ module.exports = class Handler
     @filefolder = path.dirname @filepath
 
     # compute all necessary release paths
-    release_file = path.join @tree.config.release_dir, @filepath
+    release_file = path.join @tree.config.output_dir, @filepath
     release_file = release_file.replace '.coffee', '.js'
-    release_dir = path.dirname release_file
+    output_dir = path.dirname release_file
 
     relative_path = release_file.replace @tree.toaster.basepath, ''
     relative_path = relative_path.substr 1 if relative_path[0] is path.sep
@@ -46,7 +46,7 @@ module.exports = class Handler
     # this info is used when compiling or deleting from disk, see methods
     # `delete_from_disk` and `compile_to_disk`
     @release = 
-      folder: release_dir
+      folder: output_dir
       file: release_file
       relative: relative_path
 
@@ -219,10 +219,15 @@ module.exports = class Handler
     # study the possibilities to work with cjs injections
     # if config.browser?.cjs
 
-    if config.browser?.amd
-      compiled = cs.compile @defined_raw, bare: config.bare
-    else
-      compiled = cs.compile @backup, bare: config.bare
+    switch config.browser.module_system
+      when 'amd'
+        compiled = cs.compile @defined_raw, bare: config.bare
+      when 'cjs'
+        null
+        # TODO: implement
+        # compiled = cs.compile @defined_raw, bare: config.bare
+      when 'none'
+        compiled = cs.compile @backup, bare: config.bare
 
     # if releasing code and minification is enabled
     if @tree.cli.argv.r and config.minify

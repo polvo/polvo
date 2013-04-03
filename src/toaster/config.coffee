@@ -15,7 +15,7 @@ CoffeeConfig = require './filetype/coffee/config'
 
 
 module.exports = class Config
-  confs: []
+  confs: null
 
   constructor: (@toaster) ->
     @basepath = @toaster.basepath

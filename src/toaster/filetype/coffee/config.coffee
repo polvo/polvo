@@ -24,9 +24,6 @@ module.exports = class Config
 
     if @cs.browser?
 
-      # module system
-      return unless do @validate_modules_options
-
       # glogal properties for browser
       return unless do @validate_browser_module_system
       return unless do @validate_browser_main_module
@@ -108,7 +105,7 @@ module.exports = class Config
     # if folder existence
     unless fs.existsSync (path.dirname @cs.output_dir)
       msg = "Path set in property `output_dir` doesn't exist:"
-      msg += "\n\t#{config.release_dir.yellow}"
+      msg += "\n\t#{config.output_dir.yellow}"
       msg += 'Check your config file.'
       return error msg
 
@@ -117,20 +114,11 @@ module.exports = class Config
 
 
   # ----------------------------------------------------------------------------
-  # modules conflicts (amd vs cjs)
+  # nature conflicts (desktop vs browser)
   validate_project_nature:->
-    if @cs.node? and @cs.browser?
+    if @cs.desktop? and @cs.browser?
       msg = 'Cannot use two natures in the same project. Choose between '
       msg += '`browser` or `desktop`, check your config file.'
-      return error msg
-    return yes
-
-  # ----------------------------------------------------------------------------
-  # modules conflicts (amd vs cjs)
-  validate_modules_options:->
-    if @cs.browser.amd? and @cs.browser.cjs?
-      msg = 'Cannot use two module systems together. Choose between'
-      msg += '`cjs` or `amd`, check your config file.'
       return error msg
     return yes
 

@@ -43,13 +43,16 @@ module.exports = class Toast
 
   init:()->
     @filetype = 
-      coffee: new Tree @toaster, @cli, @config, @, CoffeeHandler, CoffeeOptimizer
+      coffee: new Tree @toaster,
+                      @cli,
+                      @config.coffeescript,
+                      @,
+                      CoffeeHandler,
+                      CoffeeOptimizer
 
   serve:->
-    return if @config.browser is null
-
-    root = @config.browser.server.root
-    port = @config.browser.server.port
+    root = @config.server.root
+    port = @config.server.port
 
     # simple static server with 'connect'
     @conn = (conn().use conn.static root ).listen port

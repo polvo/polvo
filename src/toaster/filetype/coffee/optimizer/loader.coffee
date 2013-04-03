@@ -7,8 +7,14 @@ util = require 'util'
 module.exports = class Loader
   constructor:( @toaster, @cli, @config, @tree, @optimizer )->
 
-  write_basic_loader:( paths )->
-    paths ?= []
+
+  write_basic_loader_for_layers:( layers )->
+    console.log 'IMPLEMENT!!!'
+
+
+  write_basic_loader:->
+
+    paths = []
 
     for name, url of @config.browser.vendors
       paths.push "#{@config.browser.base_url}/#{name}.js"
@@ -32,13 +38,14 @@ module.exports = class Loader
       buffer += template.replace '~SRC', src
 
     # writing to disk
-    release_path = path.join @config.release_dir, @config.browser.boot
+    release_path = path.join @config.output_dir, @config.browser.main_module
     fs.writeFileSync release_path, buffer
 
 
 
   write_loader:( paths )->
-    return unless @config.browser.optimize? and @config.browser.amd
+    unless @config.browser.optimize? and @config.browser.module_system is 'amd'
+      return
 
     # increment map with all remote vendors
     paths or= {}
@@ -61,10 +68,10 @@ module.exports = class Loader
       *************************************************************************/
 
       require.config({
-        baseUrl: '#{@config.browser.amd.base_url}',
+        baseUrl: '#{@config.browser.base_url}',
         paths: #{paths}
       });
-      require( ['#{@config.browser.amd.main}'] );
+      require( ['#{@config.browser.main_module}'] );
 
       /*************************************************************************
        * Automatic configuration by CoffeeToaster.
@@ -72,7 +79,7 @@ module.exports = class Loader
     """
 
     # writing to disk
-    release_path = path.join @config.release_dir, @config.browser.amd.boot
+    release_path = path.join @config.output_dir, @config.browser.output_file
 
     if @config.browser.optimize.minify && @cli.r
       loader = MinifyUtil.min loader

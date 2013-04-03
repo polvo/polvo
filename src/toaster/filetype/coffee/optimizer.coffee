@@ -31,7 +31,7 @@ module.exports = class Optimizer
     if @config.browser?
       @vendors.copy_to_release()
 
-      if @config.browser.amd
+      if @config.browser.module_system is 'amd'
         @loader.write_loader()
       else
         @loader.write_basic_loader()
@@ -42,7 +42,7 @@ module.exports = class Optimizer
       return
 
     # clear release folder
-    @tree.clear_release_dir()
+    @tree.clear_output_dir()
 
     # if merge is set, optimization will just merge everything
     if @config.browser.optimize.merge?
@@ -96,7 +96,7 @@ module.exports = class Optimizer
           contents = MinifyUtil.min contents
 
         # write layer
-        layer_path = path.join @config.release_dir, "#{layer_name}.js"
+        layer_path = path.join @config.output_dir, "#{layer_name}.js"
         fs.writeFileSync layer_path, contents
 
         # notify user through cli
@@ -111,7 +111,14 @@ module.exports = class Optimizer
         log msg.yellow
 
     # write toaster loader and initializer
-    @loader.write_loader paths
+    switch @config.browser.module_system
+      when 'amd'
+        @loader.write_loader paths
+      when 'cjs'
+        null
+       # implement
+      when 'none'
+        @loader.write_basic_loader_for_layers paths
 
     # copy all vendors as well
     @vendors.copy_to_release true, null, false
@@ -130,7 +137,7 @@ module.exports = class Optimizer
 
     buffer = ""
 
-    if @config.browser.amd?
+    if @config.browser.module_system is 'amd'
       buffer += "//---------------------------------------- amd loader\n\n\n"
       buffer += @loader.get_amd_loader()
 
@@ -140,15 +147,15 @@ module.exports = class Optimizer
     buffer += "//---------------------------------------- files\n\n\n"
     buffer += @merge_files() + '\n'
 
-    if @config.browser.amd?
+    if @config.browser.module_system is 'amd'
       buffer += "//---------------------------------------- amd initializer\n\n\n"
-      buffer += "require( ['#{@config.browser.amd.main}'] );"
+      buffer += "require( ['#{@config.browser.main_module}'] );"
 
     if @config.browser?.optimize?.minify
       console.log 'Minifying..'.grey
       buffer = MinifyUtil.min buffer
 
-    location = path.join @config.release_dir, @config.browser.optimize.merge
+    location = path.join @config.output_dir, @config.browser.optimize.merge
     fs.writeFileSync location, buffer
 
     location = location.replace @toaster.basepath, ''
@@ -250,8 +257,8 @@ module.exports = class Optimizer
     if cycling is false
       
       # but only in case amd/cjs isnt in use
-      unless @config.browser.amd? or @config.browser.cjs?
-        main = @config.browser.main + '.coffee'
+      unless @config.browser.module_system isnt 'none'
+        main = @config.browser.output_file + '.coffee'
 
         index = (ArrayUtil.find files, 'filepath': main)?.index
         files.splice 0, 0, (files.splice index, 1 )[0]

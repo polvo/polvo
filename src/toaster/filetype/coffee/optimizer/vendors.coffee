@@ -19,8 +19,7 @@ module.exports = class Vendors
       contents = fs.readFileSync vpath, 'utf-8'
 
       # if vendor is an AMD module, makes sure the define call is not anonymous
-      non_amd = @config.browser?.amd?.non_amd_vendors
-      unless non_amd isnt null or vname in non_amd
+      unless (vname in @config.browser.incompatible_vendors)
         match_define_calls = /(define[\s]*\()[\s]*(function)/g
         contents = contents.replace match_define_calls, "$1'#{vname}',$2"
 
@@ -38,7 +37,7 @@ module.exports = class Vendors
 
       continue if all is false and vurl isnt specific
 
-      release_path = path.join @config.release_dir, "#{vname}.js"
+      release_path = path.join @config.output_dir, "#{vname}.js"
       fsu.cp vurl, release_path
 
       from = vurl.replace @toaster.basepath, ''

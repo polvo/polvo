@@ -16,6 +16,7 @@ module.exports = class Tree
   optimizer: null
 
   constructor:( @toaster, @cli, @config, @toast, HandlerClass, OptimizerClass )->
+
     @filter = HandlerClass.FILTER
     @init HandlerClass, OptimizerClass
 
@@ -47,18 +48,18 @@ module.exports = class Tree
                                 filepath
         @files.push handler
 
-  clear_release_dir:->
+  clear_output_dir:->
     # clear release folder
-    fsu.rm_rf @config.release_dir
-    fsu.mkdir_p @config.release_dir
+    fsu.rm_rf @config.output_dir
+    fsu.mkdir_p @config.output_dir
 
   # optimize all files covered by internal Handler
   optimize:->
-    do @clear_release_dir
+    do @clear_output_dir
     do @optimizer.optimize
 
   compile_files_to_disk:->
-    do @clear_release_dir
+    do @clear_output_dir
 
     for file in @files
       file.compile_to_disk @config
