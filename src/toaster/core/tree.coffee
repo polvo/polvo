@@ -29,7 +29,7 @@ module.exports = class Tree
     for dirpath in @config.dirs
 
       # collects all files
-      for filepath in (fsu.find dirpath, HandlerClass.FILTER)
+      for filepath in (fsu.find dirpath, @filter)
 
         # check if file should be included or ignored
         include = true
