@@ -15,7 +15,7 @@ MinifyUtil = require '../../utils/minify-util'
 module.exports = class Handler
 
   # capture files ending with `.coffee`, `.litcoffee` and `.coffee.md`
-  FILTER = /\.(lit)?(coffee)(\.md)?$/m
+  @FILTER = /\.(lit)?(coffee)(\.md)?$/m
 
   constructor: (@toaster, @cli, @config, @tree, @dirpath, @realpath) ->
     @getinfo()
