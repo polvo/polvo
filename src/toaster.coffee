@@ -2,7 +2,6 @@ require('source-map-support').install()
 
 fs = require "fs"
 path = require "path"
-exec = (require "child_process").exec
 colors = require 'colors'
 
 Cli = require './toaster/cli'

@@ -4,12 +4,11 @@ require('source-map-support').install()
 fs = require "fs"
 fsu = require "fs-util"
 path = require "path"
-exec = (require "child_process").exec
+
 colors = require 'colors'
 cs = require "coffee-script"
 
 {log,debug,warn,error} = require './utils/log-util'
-
 
 module.exports = class Config
 
