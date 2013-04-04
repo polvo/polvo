@@ -7,13 +7,7 @@ util = require 'util'
 module.exports = class Loader
   constructor:( @toaster, @cli, @config, @tree, @optimizer )->
 
-
-  write_basic_loader_for_layers:( layers )->
-    console.log 'IMPLEMENT!!!'
-
-
   write_basic_loader:->
-
     paths = []
 
     for name, url of @config.browser.vendors
@@ -25,11 +19,10 @@ module.exports = class Loader
     # paths.push "#{@config.browser.base_url}/#{main}.js"
 
     for file in @tree.files
-
       filepath = file.filepath.replace @tree.filter, ''
 
       # continue if filepath is main
-      paths.push "#{@config.browser.base_url}/#{filepath}.js"
+      paths.push "#{@config.browser.base_url}#{filepath}.js"
 
     template = "document.write(\"<scri\" + \"pt src='~SRC'></script>\");\n"
 
@@ -38,7 +31,7 @@ module.exports = class Loader
       buffer += template.replace '~SRC', src
 
     # writing to disk
-    release_path = path.join @config.output_dir, @config.browser.main_module
+    release_path = path.join @config.output_dir, @config.browser.output_file
     fs.writeFileSync release_path, buffer
 
 

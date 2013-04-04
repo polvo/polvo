@@ -30,7 +30,6 @@ module.exports = class Optimizer
   optimize_for_development:->
     if @config.browser?
       @vendors.copy_to_release()
-
       if @config.browser.module_system is 'amd'
         @loader.write_loader()
       else
@@ -39,6 +38,7 @@ module.exports = class Optimizer
   optimize:->
 
     unless @config.browser?.optimize?
+      console.error 'No optimization routine set. Check your config file.'
       return
 
     # clear release folder
@@ -118,7 +118,8 @@ module.exports = class Optimizer
         null
        # implement
       when 'none'
-        @loader.write_basic_loader_for_layers paths
+        null
+        # pure javascript libraries can only be merged into a `single.js` file
 
     # copy all vendors as well
     @vendors.copy_to_release true, null, false
@@ -257,10 +258,12 @@ module.exports = class Optimizer
     if cycling is false
       
       # but only in case amd/cjs isnt in use
-      unless @config.browser.module_system isnt 'none'
-        main = @config.browser.output_file + '.coffee'
+      if @config.browser.module_system is 'none'
+        main = @config.browser.main_module + '.coffee'
 
         index = (ArrayUtil.find files, 'filepath': main)?.index
-        files.splice 0, 0, (files.splice index, 1 )[0]
+
+        if index?
+          files.splice 0, 0, (files.splice index, 1 )[0]
 
     return files
