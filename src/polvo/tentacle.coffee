@@ -48,14 +48,17 @@ module.exports = class Tentacle
     setTimeout (=> @serve()), 1 if @cli.argv.s
 
   init:()->
-    @filetype = 
-      coffeescript: new Tree @polvo,
+    @filetype = {}
+
+    if @config.languages.javascript is 'coffeescript'
+      @filetype.coffeescript = new Tree @polvo,
                               @cli,
                               @config.coffeescript,
                               @,
                               CoffeeHandler,
                               CoffeeOptimizer
-
+                              
+    if @config.languages.templates is 'jade'
       jade: new Tree @polvo,
                               @cli,
                               @config.jade,
@@ -63,6 +66,7 @@ module.exports = class Tentacle
                               JadeHandler,
                               JadeOptimizer
 
+    if @config.languages.styles is 'stylus'
       stylus: new Tree @polvo,
                         @cli,
                         @config.stylus,
