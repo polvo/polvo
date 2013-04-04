@@ -1,0 +1,47 @@
+# CONFIGS ----------------------------------------------------------------------
+
+# mocha paths
+mocha_phantom=../../node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee
+
+# polvo path
+# polvo=node_modules/coffee-polvo/bin/polvo
+polvo=polvo
+
+
+
+# TARGETS ----------------------------------------------------------------------
+
+# starts watching'compiling project, serving it locally at http://localhost:3000
+dev:
+	@$(polvo) -ws
+
+# optimize project for release
+release:
+	@$(polvo) -r
+
+# optimize project for release and serves it locally at http://localhost:3000
+release.preview:
+	@$(polvo) -rs
+
+
+
+# run mocha tests via mocha-phantom using phantomjs
+test: test.dev test.release
+
+# test dev version
+test.dev:
+	@echo ''
+	@echo '∆ testing `development` version'
+	@echo ''
+	@$(polvo) -c
+	@echo ''
+	@../.phantomjs/bin/phantomjs $(mocha_phantom) www/index.html
+
+# testing release version
+test.release:
+	@echo ''
+	@echo '∆ testing `release` version'
+	@echo ''
+	@$(polvo) -r
+	@echo ''
+	@../.phantomjs/bin/phantomjs $(mocha_phantom) www/index.html
