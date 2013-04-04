@@ -93,7 +93,7 @@ module.exports = class Config
 
   validate_languages:( config )->
     unless config.languages?
-      msg = "Property `languages` not specified in config: #{filepath.yellow}\n"
+      msg = "Property `languages` not specified, check your config file."
       return error msg
     return yes
 
