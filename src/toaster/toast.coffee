@@ -11,9 +11,12 @@ MinifyUtil = require './utils/minify-util'
 
 # handlers and optimizers
 Tree = require './core/tree'
+
 CoffeeHandler = require './filetype/coffee/handler'
 CoffeeOptimizer = require './filetype/coffee/optimizer'
 
+JadeHandler = require './filetype/jade/handler'
+JadeOptimizer = require './filetype/jade/optimizer'
 
 module.exports = class Toast
 
@@ -43,12 +46,18 @@ module.exports = class Toast
 
   init:()->
     @filetype = 
-      coffee: new Tree @toaster,
-                      @cli,
-                      @config.coffeescript,
-                      @,
-                      CoffeeHandler,
-                      CoffeeOptimizer
+      coffeescript: new Tree @toaster,
+                              @cli,
+                              @config.coffeescript,
+                              @,
+                              CoffeeHandler,
+                              CoffeeOptimizer
+      jade: new Tree @toaster,
+                              @cli,
+                              @config.jade,
+                              @,
+                              JadeHandler,
+                              JadeOptimizer
 
   serve:->
     root = @config.server.root

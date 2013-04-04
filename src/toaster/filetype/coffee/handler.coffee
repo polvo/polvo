@@ -37,7 +37,7 @@ module.exports = class Handler
 
     # compute all necessary release paths
     release_file = path.join @tree.config.output_dir, @filepath
-    release_file = release_file.replace '.coffee', '.js'
+    release_file = release_file.replace Handler.FILTER, '.js'
     output_dir = path.dirname release_file
 
     relative_path = release_file.replace @tree.toaster.basepath, ''
