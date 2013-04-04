@@ -53,7 +53,7 @@ module.exports = class Tree
 
   clear_output_dir:->
     # clear release folder
-    fsu.rm_rf @config.output_dir
+    fsu.rm_rf @config.output_dir if fs.existsSync @config.output_dir
     fsu.mkdir_p @config.output_dir
 
   # optimize all files covered by internal Handler
