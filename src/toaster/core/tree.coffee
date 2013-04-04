@@ -67,7 +67,7 @@ module.exports = class Tree
     for file in @files
       file.compile_to_disk @config
 
-    do @optimizer.optimize_for_development
+    @optimizer.optimize_for_development?()
 
   watch:()->
     # initialize watchers array
