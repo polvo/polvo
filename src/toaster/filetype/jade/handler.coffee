@@ -10,7 +10,7 @@ fsu = require 'fs-util'
 
 module.exports = class Handler
 
-  @FILTER = /(?:\/)(?:[^\/_]+)\.jade/m
+  @FILTER = /(\/)([^\/_]+)(\.jade)/m
 
   constructor: (@toaster, @cli, @config, @tree, @dirpath, @realpath) ->
     @getinfo()
@@ -25,7 +25,7 @@ module.exports = class Handler
 
     # compute all necessary release paths
     release_file = path.join @tree.config.output_dir, @filepath
-    release_file = release_file.replace '.jade', '.js'
+    release_file = release_file.replace Handler.FILTER, "$1$2.js"
     output_dir = path.dirname release_file
 
     relative_path = release_file.replace @tree.toaster.basepath, ''
