@@ -57,9 +57,9 @@ module.exports = class Tentacle
                               @,
                               CoffeeHandler,
                               CoffeeOptimizer
-                              
+
     if @config.languages.templates is 'jade'
-      jade: new Tree @polvo,
+      @filetype.jade = new Tree @polvo,
                               @cli,
                               @config.jade,
                               @,
@@ -67,7 +67,7 @@ module.exports = class Tentacle
                               JadeOptimizer
 
     if @config.languages.styles is 'stylus'
-      stylus: new Tree @polvo,
+      @filetype.stylus = new Tree @polvo,
                         @cli,
                         @config.stylus,
                         @,
