@@ -21,7 +21,7 @@ JadeOptimizer = require './filetype/jade/optimizer'
 StylusHandler = require './filetype/stylus/handler'
 StylusOptimizer = require './filetype/stylus/optimizer'
 
-module.exports = class Toast
+module.exports = class Tentacle
 
   # requirements
   fs = require 'fs'
@@ -37,7 +37,7 @@ module.exports = class Toast
 
   filetype: null
 
-  constructor:(@toaster, @cli, @config)->
+  constructor:(@polvo, @cli, @config)->
     # initialize
     @init() if @cli.argv.c or @cli.argv.w or @cli.argv.r
 
@@ -49,21 +49,21 @@ module.exports = class Toast
 
   init:()->
     @filetype = 
-      coffeescript: new Tree @toaster,
+      coffeescript: new Tree @polvo,
                               @cli,
                               @config.coffeescript,
                               @,
                               CoffeeHandler,
                               CoffeeOptimizer
 
-      jade: new Tree @toaster,
+      jade: new Tree @polvo,
                               @cli,
                               @config.jade,
                               @,
                               JadeHandler,
                               JadeOptimizer
 
-      stylus: new Tree @toaster,
+      stylus: new Tree @polvo,
                         @cli,
                         @config.stylus,
                         @,

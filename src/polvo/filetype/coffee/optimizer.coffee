@@ -23,9 +23,9 @@ module.exports = class Optimizer
   loader: null
   vendors: null
 
-  constructor:( @toaster, @cli, @config, @tree )->
-    @loader = new Loader @toaster, @cli, @config, @tree, @
-    @vendors = new Vendors @toaster, @cli, @config
+  constructor:( @polvo, @cli, @config, @tree )->
+    @loader = new Loader @polvo, @cli, @config, @tree, @
+    @vendors = new Vendors @polvo, @cli, @config
 
   optimize_for_development:->
     if @config.browser?
@@ -73,7 +73,7 @@ module.exports = class Optimizer
           # and if not..
           unless is_included?
             msg = "Cannot find module `#{dep}` for layer `#{layer_name}`."
-            msg += '\nCheck your `toaster.coffee` config file.'
+            msg += '\nCheck your config file.'
             error msg
 
           continue
@@ -100,7 +100,7 @@ module.exports = class Optimizer
         fs.writeFileSync layer_path, contents
 
         # notify user through cli
-        relative_path = layer_path.replace @toaster.basepath, ''
+        relative_path = layer_path.replace @polvo.basepath, ''
         relative_path = relative_path.substr 1 if relative_path[0] is path.sep
         msg = "#{'✓ Layer optimized: '.bold}#{layer_name} -> #{relative_path}"
         log msg.green
@@ -110,7 +110,7 @@ module.exports = class Optimizer
         msg = "#{'✓ Layer is empty: '.bold} #{layer_name} -> [skipped]"
         log msg.yellow
 
-    # write toaster loader and initializer
+    # write polvo loader and initializer
     switch @config.browser.module_system
       when 'amd'
         @loader.write_loader paths
@@ -159,7 +159,7 @@ module.exports = class Optimizer
     location = path.join @config.output_dir, @config.browser.optimize.merge
     fs.writeFileSync location, buffer
 
-    location = location.replace @toaster.basepath, ''
+    location = location.replace @polvo.basepath, ''
     log 'Project merged at: ' + location.green
 
 

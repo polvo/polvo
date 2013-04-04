@@ -18,7 +18,7 @@ module.exports = class Tree
   watchers = null
   optimizer: null
 
-  constructor:( @toaster, @cli, @config, @toast, HandlerClass, OptimizerClass )->
+  constructor:( @polvo, @cli, @config, @toast, HandlerClass, OptimizerClass )->
 
     @filter = HandlerClass.FILTER
     @init HandlerClass, OptimizerClass
@@ -27,7 +27,7 @@ module.exports = class Tree
   init:( HandlerClass, OptimizerClass )->
     @files = []
 
-    @optimizer = new OptimizerClass @toaster, @cli, @config, @
+    @optimizer = new OptimizerClass @polvo, @cli, @config, @
 
     # loops through all dirs and..
     for dirpath in @config.dirs
@@ -43,7 +43,7 @@ module.exports = class Tree
         # if it should be included, add to @files array
         continue unless include
 
-        handler = new HandlerClass @toaster,
+        handler = new HandlerClass @polvo,
                                 @cli,
                                 @config,
                                 @,

@@ -52,7 +52,7 @@ toast '%src%'
 
   write:(src, release, httpfolder)=>
 
-    filepath = path.join @basepath, "toaster.coffee"
+    filepath = path.join @basepath, "polvo.coffee"
 
     rgx = /(\/)?((\w+)(\.*)(\w+$))/
     parts = rgx.exec release 
@@ -63,7 +63,7 @@ toast '%src%'
     else
       debug = "#{release}-debug"
 
-    # NOTE: All paths (src, release, debug, httpfolder) in 'toaster.coffee'
+    # NOTE: All paths (src, release, debug, httpfolder) in 'polvo.coffee'
     # are FORDED to be always '/' even when in win32 which wants to use '\'.
     buffer = @tpl.replace "%src%", src.replace /\\/g, "\/"
     buffer = buffer.replace "%release%", release.replace /\\/g, "\/"

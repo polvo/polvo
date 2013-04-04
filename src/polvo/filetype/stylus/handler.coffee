@@ -13,7 +13,7 @@ module.exports = class Handler
 
   @FILTER = /(\/)([^\/_]+)(\.styl)/m
 
-  constructor: (@toaster, @cli, @config, @tree, @dirpath, @realpath) ->
+  constructor: (@polvo, @cli, @config, @tree, @dirpath, @realpath) ->
     @getinfo()
 
   getinfo:->
@@ -29,7 +29,7 @@ module.exports = class Handler
     release_file = release_file.replace Handler.FILTER, "$1$2.css"
     output_dir = path.dirname release_file
 
-    relative_path = release_file.replace @tree.toaster.basepath, ''
+    relative_path = release_file.replace @tree.polvo.basepath, ''
     relative_path = relative_path.substr 1 if relative_path[0] is path.sep
 
     # this info is used when compiling or deleting from disk, see methods
@@ -59,7 +59,7 @@ module.exports = class Handler
       log "[#{now}] #{msg} #{@release.relative}".green
 
   compile_to_str:( after_compile )->
-    fullpath = (path.join @toaster.basepath, @dirpath, @filepath)
+    fullpath = (path.join @polvo.basepath, @dirpath, @filepath)
     # TODO: move compile options to config file
     stylus( @raw )
       .set( 'filename', fullpath )

@@ -17,7 +17,7 @@ module.exports = class Project extends Question
   create:(folderpath, name, src, release)->
     if (typeof folderpath) isnt 'string'
       error_msg = "You need to inform a target path!\n"
-      error_msg += "\ttoaster -n myawesomeapp".green
+      error_msg += "\tpolvo -n myawesomeapp".green
       return error error_msg
 
     if name? && src? && release?

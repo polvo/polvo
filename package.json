@@ -1,27 +1,29 @@
 {
-  "name": "coffee-toaster",
-  "version": "0.6.12",
+  "name": "polvo",
+  "version": "0.1.0",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
-  "description": "Minimalist build system for CoffeeScript.",
+  "description": "Ambitious build system.",
   "keywords": [
-    "coffeescript",
     "build",
-    "namespace",
-    "tool"
+    "system",
+    "tool",
+    "coffeescript",
+    "jade",
+    "stylus"
   ],
-  "main": "./src/toaster",
+  "main": "./src/polvo",
   "scripts": {
     "test": "make test"
   },
   "dirs": {
-    "toaster": "src/toaster"
+    "polvo": "src/polvo"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/serpentem/coffee-toaster"
+    "url": "http://github.com/serpentem/polvo"
   },
   "bin": {
-    "toaster": "./bin/toaster"
+    "polvo": "./bin/polvo"
   },
   "engines": {
     "node": "0.10.x"

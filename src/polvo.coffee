@@ -4,28 +4,28 @@ fs = require "fs"
 path = require "path"
 colors = require 'colors'
 
-Cli = require './toaster/cli'
-Config = require './toaster/config'
-Toast = require './toaster/toast'
+Cli = require './polvo/cli'
+Config = require './polvo/config'
+Tentacle = require './polvo/tentacle'
 
-ProjectGen = require './toaster/generators/project'
-ConfigGen = require './toaster/generators/config'
+ProjectGen = require './polvo/generators/project'
+ConfigGen = require './polvo/generators/config'
 
-{log,debug,warn,error} = require './toaster/utils/log-util'
+{log,debug,warn,error} = require './polvo/utils/log-util'
 
-module.exports = class Toaster
+module.exports = class Polvo
 
   @options = null 
   @skip_initial_compile = false
 
-  toaster_base: null
-  toasts: null
+  polvo_base: null
+  configs: null
   # variable - before filter container
   before_compile: null
 
   constructor:( basedir, options = null, skip_initial_compile = false )->
 
-    @toaster_base = path.dirname __dirname
+    @polvo_base = path.dirname __dirname
 
     @options = options
     @skip_initial_compile = skip_initial_compile
@@ -57,24 +57,13 @@ module.exports = class Toaster
     else if @cli.argv.n
       new ProjectGen( @basepath ).create @cli.argv.n
 
-    # initializing a toaster file template into an existent project
+    # initializing a polvo file template into an existent project
     else if @cli.argv.i
       new ConfigGen( @basepath ).create()
 
-    # injecting namespace declarations
-    # else if @cli.argv.ns
-    #   @toast = new toaster.Config @
-    #   new toaster.misc.InjectNS @toast.compileers
-
-    # auto run mode
-    # else if @cli.argv.a and not @cli.argv.c
-    #   msg = "Option -a can't work without -w, usage: \n"
-    #   msg += "\ttoaster -wa"
-    #   error msg
-
     # compile / release / watch / serve
     else if (@cli.argv.c or @cli.argv.r or @cli.argv.w or @cli.argv.s)
-      @initialize_toasters()
+      @init()
 
       unless skip_initial_compile
         if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
@@ -84,26 +73,26 @@ module.exports = class Toaster
     else
       return log @cli.opts.help()
 
-  initialize_toasters:( compile_at_startup )->
-    @toasts = []
+  init:( compile_at_startup )->
+    @configs = []
     @config = new Config @ #, @options, @skip_initial_compile
     for conf in @config.confs
-      @toasts.push new Toast @, @cli, conf
+      @configs.push new Tentacle @, @cli, conf
 
-  # can be called by apps using toaster as lib, and compile the project with
+  # can be called by apps using polvo as lib, and compile the project with
   # options to inject header and footer code which must to be in coffee as well
   # and will be compiled together the app.
   compile:( header_code = "", footer_code = "" )->
-    for toast in @toasts
+    for config in @configs
       if @cli.argv.c? or @cli.argv.w?
-        toast.compile header_code, footer_code
+        config.compile header_code, footer_code
       else if @cli.argv.r
-        toast.optimize header_code, footer_code
+        config.optimize header_code, footer_code
 
-  # resets the toaster completely - specially used when the `toaster.coffee`
+  # resets the polvo completely - specially used when the `polvo.coffee`
   # config file is edited :)
   reset:( options )->
-    toast.reset() for toast in @toasts
+    config.reset() for config in @configs
     @options[ key ] = val for val, key of options if options?
-    @initialize_toasters true
+    @init true
     @compile()

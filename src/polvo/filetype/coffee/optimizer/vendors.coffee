@@ -10,7 +10,7 @@ fsu = require 'fs-util'
 
 module.exports = class Vendors
 
-  constructor:( @toaster, @cli, @config )->
+  constructor:( @polvo, @cli, @config )->
 
   # merge all vendors into one and return as string
   merge_to_str:->
@@ -40,8 +40,8 @@ module.exports = class Vendors
       release_path = path.join @config.output_dir, "#{vname}.js"
       fsu.cp vurl, release_path
 
-      from = vurl.replace @toaster.basepath, ''
-      to = release_path.replace @toaster.basepath, ''
+      from = vurl.replace @polvo.basepath, ''
+      to = release_path.replace @polvo.basepath, ''
 
       from = from.substr 1 if from[0] is path.sep
       to = to.substr 1 if to[0] is path.sep

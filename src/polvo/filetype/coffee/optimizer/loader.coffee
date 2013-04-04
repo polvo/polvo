@@ -5,7 +5,7 @@ util = require 'util'
 {log,debug,warn,error} = require '../../../utils/log-util'
 
 module.exports = class Loader
-  constructor:( @toaster, @cli, @config, @tree, @optimizer )->
+  constructor:( @polvo, @cli, @config, @tree, @optimizer )->
 
   write_basic_loader:->
     paths = []
@@ -45,7 +45,7 @@ module.exports = class Loader
     for name, url of @config.vendors
       paths[name] = url if /^http/m.test url
 
-    # mounting main toaster file, contains the toaster builtin amd loader, 
+    # mounting main polvo file, contains the polvo builtin amd loader, 
     # all the necessary configs and a hash map containing the layer location
     # for each module that was merged into it.
 
@@ -57,7 +57,7 @@ module.exports = class Loader
 
     loader += """\n\n
       /*************************************************************************
-       * Automatic configuration by CoffeeToaster.
+       * Automatic configuration by Polvo.
       *************************************************************************/
 
       require.config({
@@ -67,7 +67,7 @@ module.exports = class Loader
       require( ['#{@config.browser.main_module}'] );
 
       /*************************************************************************
-       * Automatic configuration by CoffeeToaster.
+       * Automatic configuration by Polvo.
       *************************************************************************/
     """
 
@@ -80,6 +80,6 @@ module.exports = class Loader
     fs.writeFileSync release_path, loader
 
   get_amd_loader:->
-    rjs_path = path.join @toaster.toaster_base, 'node_modules'
+    rjs_path = path.join @polvo.polvo_base, 'node_modules'
     rjs_path = path.join rjs_path, 'requirejs', 'require.js'
     fs.readFileSync rjs_path, 'utf-8'

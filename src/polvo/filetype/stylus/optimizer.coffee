@@ -4,8 +4,8 @@ Loader = require './optimizer/loader'
 
 module.exports = class Optimizer
   
-  constructor:( @toaster, @cli, @config, @tree )->
-    @loader = new Loader @toaster, @cli, @config, @tree, @
+  constructor:( @polvo, @cli, @config, @tree )->
+    @loader = new Loader @polvo, @cli, @config, @tree, @
 
   optimize_for_development:->
     do @loader.write_loader

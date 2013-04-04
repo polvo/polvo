@@ -3,7 +3,7 @@ require('source-map-support').install()
 # requirements
 os = require 'os'
 
-# ignoring growl if user is under win32 (otherwise it'd break toaster)
+# ignoring growl if user is under win32 (otherwise it'd break polvo)
 growl = if os.platform() == 'win32' then null else require 'growl'
 
 # ICONS 
@@ -39,7 +39,7 @@ exports.error = ( msg, send_to_growl = true, file = null ) ->
     queue_msg
       msg: msg
       opts:
-        title: 'Coffee Toaster'
+        title: 'Polvo'
         image: icon_error
   
   return msg
@@ -60,7 +60,7 @@ exports.warn = ( msg, send_to_growl = true ) ->
     queue_msg
       msg: msg
       opts:
-        title: 'Coffee Toaster'
+        title: 'Polvo'
         image: icon_warn
   
   return msg

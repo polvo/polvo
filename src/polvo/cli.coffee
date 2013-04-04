@@ -6,25 +6,25 @@ module.exports = class Cli
   optimist = require 'optimist'
 
   constructor:->
-    usage = "#{'CoffeeToaster'.bold}\n"
-    usage += "  Minimalist build system for CoffeeScript\n\n".grey
+    usage = "#{'Polvo'.bold}\n"
+    usage += "  Ambitious build system.\n\n".grey
     
     usage += "#{'Usage:'}\n"
-    usage += "  toaster [#{'options'.green}] [#{'path'.green}]\n\n"
+    usage += "  polvo [#{'options'.green}] [#{'path'.green}]\n\n"
     
     usage += "#{'Examples:'}\n"
-    usage += "  toaster -n myawsomeapp   (#{'required'.red})\n"
-    usage += "  toaster -i [myawsomeapp] (#{'optional'.green})\n"
-    usage += "  toaster -c [myawsomeapp] (#{'optional'.green})\n"
-    usage += "  toaster -w [myawsomeapp] (#{'optional'.green})\n"
-    usage += "  toaster -wa [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  polvo -n myawsomeapp   (#{'required'.red})\n"
+    usage += "  polvo -i [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  polvo -c [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  polvo -w [myawsomeapp] (#{'optional'.green})\n"
+    usage += "  polvo -wa [myawsomeapp] (#{'optional'.green})\n"
 
     @argv = (@opts = optimist.usage( usage )
       .alias('n', 'new')
       .describe('n', "Scaffold a very basic new App.")
       
       .alias('i', 'init')
-      .describe('i', "Create a config (toaster.coffee) file for existing projects.")
+      .describe('i', "Create a config (polvo.coffee) file for existing projects.")
       
       .alias('w', 'watch')
       .describe('w', "Start watching/compiling in dev mode.")

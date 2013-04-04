@@ -7,7 +7,7 @@ util = require 'util'
 {log,debug,warn,error} = require '../../../utils/log-util'
 
 module.exports = class Loader
-  constructor:( @toaster, @cli, @config, @tree, @optimizer )->
+  constructor:( @polvo, @cli, @config, @tree, @optimizer )->
 
   write_loader:->
     paths = []

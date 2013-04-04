@@ -17,7 +17,7 @@ module.exports = class Handler
   # capture files ending with `.coffee`, `.litcoffee` and `.coffee.md`
   @FILTER = /\.(lit)?(coffee)(\.md)?$/m
 
-  constructor: (@toaster, @cli, @config, @tree, @dirpath, @realpath) ->
+  constructor: (@polvo, @cli, @config, @tree, @dirpath, @realpath) ->
     @getinfo()
 
   getinfo:( declare_ns = true )->
@@ -40,7 +40,7 @@ module.exports = class Handler
     release_file = release_file.replace Handler.FILTER, '.js'
     output_dir = path.dirname release_file
 
-    relative_path = release_file.replace @tree.toaster.basepath, ''
+    relative_path = release_file.replace @tree.polvo.basepath, ''
     relative_path = relative_path.substr 1 if relative_path[0] is path.sep
 
     # this info is used when compiling or deleting from disk, see methods
