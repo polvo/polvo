@@ -76,8 +76,4 @@ module.exports = class Handler
   inject_definitions:( compiled )->
     # definition = 'define( \'~name\', [], function(){return ~compiled});'
     definition = 'define([], function(){return ~compiled});'
-    definition = definition.replace '~compiled', (@to_single_line compiled)
-    definition = definition.replace '~name', @filepath
-
-  to_single_line:( text )->
-    text
+    definition = definition.replace '~compiled', compiled
