@@ -38,7 +38,9 @@
     "xregexp": "2.0.0",
     "requirejs": "2.1.x",
     "source-map-support": "0.1.x",
-    "jade": "0.28.x"
+    "jade": "0.28.x",
+    "stylus": "0.32.x",
+    "nib": "~0.9.1"
   },
   "optionalDependencies": {
     "growl": "1.2.x"

@@ -18,6 +18,9 @@ CoffeeOptimizer = require './filetype/coffee/optimizer'
 JadeHandler = require './filetype/jade/handler'
 JadeOptimizer = require './filetype/jade/optimizer'
 
+StylusHandler = require './filetype/stylus/handler'
+StylusOptimizer = require './filetype/stylus/optimizer'
+
 module.exports = class Toast
 
   # requirements
@@ -52,12 +55,20 @@ module.exports = class Toast
                               @,
                               CoffeeHandler,
                               CoffeeOptimizer
+
       jade: new Tree @toaster,
                               @cli,
                               @config.jade,
                               @,
                               JadeHandler,
                               JadeOptimizer
+
+      stylus: new Tree @toaster,
+                        @cli,
+                        @config.stylus,
+                        @,
+                        StylusHandler,
+                        StylusOptimizer
 
   serve:->
     root = @config.server.root
