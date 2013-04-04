@@ -33,7 +33,7 @@
     "colors": "0.6.x",
     "connect": "2.7.x",
     "fs-util": "0.3.x",
-    "mocha": "1.8.x",
+    "mocha": "1.9.x",
     "optimist": "0.3.x",
     "should": "1.2.x",
     "uglify-js": "2.2.x",
@@ -42,7 +42,7 @@
     "source-map-support": "0.1.x",
     "jade": "0.28.x",
     "stylus": "0.32.x",
-    "nib": "~0.9.1"
+    "nib": "0.9.x"
   },
   "optionalDependencies": {
     "growl": "1.2.x"
