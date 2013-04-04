@@ -4,8 +4,7 @@
 mocha_phantom=../../node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee
 
 # polvo path
-# polvo=node_modules/coffee-polvo/bin/polvo
-polvo=polvo
+polvo=../../bin/polvo
 
 
 
