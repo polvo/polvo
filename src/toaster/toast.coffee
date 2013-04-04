@@ -1,129 +1,98 @@
-class Toast
+require('source-map-support').install()
 
-  # requires
-  fs = require "fs"
-  fsu = require "fs-util"
-  path = require "path"
-  exec = (require "child_process").exec
-  colors = require 'colors'
+# utils
+FnUtil = require './utils/fn-util'
+ArrayUtil = require './utils/array-util'
+StringUtil = require './utils/string-util'
+MinifyUtil = require './utils/minify-util'
+
+{log,debug,warn,error} = require './utils/log-util'
+
+
+# handlers and optimizers
+Tree = require './core/tree'
+
+CoffeeHandler = require './filetype/coffee/handler'
+CoffeeOptimizer = require './filetype/coffee/optimizer'
+
+JadeHandler = require './filetype/jade/handler'
+JadeOptimizer = require './filetype/jade/optimizer'
+
+StylusHandler = require './filetype/stylus/handler'
+StylusOptimizer = require './filetype/stylus/optimizer'
+
+module.exports = class Toast
+
+  # requirements
+  fs = require 'fs'
+  fsu = require 'fs-util'
+  path = require 'path'
   cs = require "coffee-script"
+  cp = require "child_process"
+  conn = require 'connect'
+  util = require 'util'
 
-  # variables
-  builders: null
+  conn: null
+  watchers: null
 
-  constructor: (@toaster) ->
+  filetype: null
 
-    # basepath
-    @basepath = @toaster.basepath
-    @builders = []
+  constructor:(@toaster, @cli, @config)->
+    # initialize
+    @init() if @cli.argv.c or @cli.argv.w or @cli.argv.r
 
-    if (config = @toaster.cli.argv["config"])?
-      config = JSON.parse( config ) unless config instanceof Object
-      @toast item for item in ( [].concat config )
-    else
-      config_file = @toaster.cli.argv["config-file"]
-      filepath = config_file || path.join @basepath, "toaster.coffee"
+    # starts watching if -w is given
+    @watch() if @cli.argv.w
 
-      if @toaster.cli.argv.w
-        watcher = fsu.watch filepath
-        watcher.on 'change', (f)=>
-          now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-          log "[#{now}] #{'Changed'.bold} #{filepath}".cyan
-          watcher.close()
-          @toaster.reset()
+    # starts serving static files
+    setTimeout (=> @serve()), 1 if @cli.argv.s
 
-      if fs.existsSync filepath
+  init:()->
+    @filetype = 
+      coffeescript: new Tree @toaster,
+                              @cli,
+                              @config.coffeescript,
+                              @,
+                              CoffeeHandler,
+                              CoffeeOptimizer
 
-        contents = fs.readFileSync filepath, "utf-8"
-        
-        try
-          code = cs.compile contents, {bare:1}
-        catch err
-          error err.message + " at 'toaster.coffee' config file."
+      jade: new Tree @toaster,
+                              @cli,
+                              @config.jade,
+                              @,
+                              JadeHandler,
+                              JadeOptimizer
 
-        fix_scope = /(^[\s\t]?)(toast)+(\()/mg
-        code = code.replace fix_scope, "$1this.$2$3"
-        eval code
-      else
-        error "File not found: ".yellow + " #{filepath.red}\n" +
-          "Try running:".yellow + " toaster -i".green +
-          " or type".yellow + " #{'toaster -h'.green} " +
-          "for more info".yellow
+      stylus: new Tree @toaster,
+                        @cli,
+                        @config.stylus,
+                        @,
+                        StylusHandler,
+                        StylusOptimizer
 
+  serve:->
+    root = @config.server.root
+    port = @config.server.port
+
+    # simple static server with 'connect'
+    @conn = (conn().use conn.static root ).listen port
+    address = 'http://localhost:' + port
+    log 'Server running at ' + address.green
   
-  toast:( srcpath, params = {} )=>
-    if srcpath instanceof Object
-      params = srcpath
-    else if (path.resolve srcpath) != srcpath
-      folder = path.join @basepath, srcpath
+  compile:->
+    for type_str, type of @filetype
+      do type.compile_files_to_disk
 
-    if params.release is null
-      error 'Release path not informed in config.'
-      return process.exit()
-    else
-      dir = path.dirname params.release
-      unless fs.existsSync (path.join @basepath, dir)
-        error "Release folder does not exist:\n\t#{dir.yellow}"
-        return process.exit()
+  watch:->
+    for type_str, type of @filetype
+      do type.watch
 
-    # configuration object shared between builders
-    if params.debug
-      debug = path.join @basepath, params.debug
-    else
-      debug = null
+  optimize:->
+    for type_str, type of @filetype
+      do type.optimize
 
-    config =
-        # RUNNING BUILDERS
-        is_building: false
-
-        # BASEPATH
-        basepath: @basepath
-        
-        # SRC FOLDERS
-        src_folders: []
-
-        # FILES CONTRAINER ARRAY
-        files: []
-        
-        # VENDORS
-        vendors: params.vendors ? []
-
-        # OPTIONS
-        exclude: params.exclude ? []
-        bare: params.bare ? false
-        packaging: params.packaging ? true
-        expose: params.expose ? null
-        minify: params.minify ? true
-
-        # HTTP FOLDER / RELEASE / DEBUG
-        httpfolder: params.httpfolder ? ""
-        release: path.join @basepath, params.release
-        debug: debug
-
-    # compute vendors full path
-    for v, i in config.vendors
-      vpath = config.vendors[i] = (path.resolve v)
-      if (path.resolve vpath) isnt vpath
-        config.vendors[i] = path.join @basepath, v
-
-    unless srcpath instanceof Object
-      srcpath = path.resolve( path.join @basepath, srcpath )
-      config.src_folders.push
-        path: srcpath
-        alias: params.alias || null
-
-    if params.folders?
-      for folder, alias of params.folders
-        if (path.resolve folder) != folder
-          folder = path.join @basepath, folder
-        config.src_folders.push {path: folder, alias: alias}
-
-    for item in config.src_folders
-      unless fs.existsSync item.path
-        error "Source folder doens't exist:\n\t#{item.path.red}\n" + 
-            "Check your #{'toaster.coffee'.yellow} and try again." +
-            "\n\t" + (path.join @basepath, "toaster.coffee" ).yellow
-        return process.exit()
-
-    builder = new toaster.core.Builder @toaster, @toaster.cli, config
-    @builders.push builder
+  reset:()->
+    # close all builder's watchers
+    @conn.close() if @conn?
+    for type_str, type of @filetype
+      do type.close_watchers

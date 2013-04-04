@@ -1,4 +1,6 @@
-class StringUtil
+require('source-map-support').install()
+
+module.exports = class StringUtil
 
   @titleize:(str)->
     words = str.match /[a-z]+/gi

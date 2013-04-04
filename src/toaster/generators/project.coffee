@@ -1,15 +1,16 @@
-#<< toaster/generators/question
-#<< toaster/generators/config
+require('source-map-support').install()
 
-class Project extends toaster.generators.Question
+Question = require './question'
+Config = require './config'
+
+{log,debug,warn,error} = require '../utils/log-util'
+
+module.exports = class Project extends Question
 
   # requirements
   path = require "path"
   fs = require "fs"
   fsu = require 'fs-util'
-
-  {FsUtil} = toaster.utils
-
 
   constructor:(@basepath)->
 
@@ -56,5 +57,5 @@ class Project extends toaster.generators.Question
     srcdir = srcdir.replace( target, "" ).substr 1
     releasefile = releasefile.replace( target, "" ).substr 1
 
-    config = new toaster.generators.Config target
+    config = new Config target
     config.write srcdir, releasefile, httpfolder

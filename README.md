@@ -3,7 +3,7 @@
 Minimalist build system for CoffeeScript.
 > Version 0.6.13
 
-[![Build Status](https://secure.travis-ci.org/serpentem/coffee-toaster.png)](http://travis-ci.org/serpentem/coffee-toaster)
+[![Build Status](https://secure.travis-ci.org/serpentem/coffee-toaster.png)](http://travis-ci.org/serpentem/coffee-toaster) [![Dependency Status](https://gemnasium.com/serpentem/coffee-toaster.png)](https://gemnasium.com/serpentem/coffee-toaster)
 
 # Features
 
@@ -52,11 +52,11 @@ CoffeeToaster was created initially as a base for creating the
    - [Initializing new app](#initializing-new-app)
    - [Initializing config file](#initializing-config-file)
  - [Usage](#usage)
-   - [Import directive](#import-directive)
-   - [Compile](#compile) `-c`
-   - [Watch](#watch) `-w`
-   - [Debug](#debug) `-cd`, `-wd`
-   - [Autorun](#autorun) `-a`, `-ad`
+    - [Import directive](#import-directive)
+    - [Compile](#compile) `-c`
+    - [Debug](#debug) `-d`, `-wd`   
+    - [Watch](#watch) `-wd`
+      - [Autorun](#autorun) `-a`, `-ad`
      - [Representative structure](#representative-structure)
    - [HTML inclusion](#html-inclusion)
    - [Advanced options](#advanced-options)
@@ -234,33 +234,26 @@ Think of it as a glue that you use to chain all of your files appropriately.
 <a name="compiling"/>
 ## Compile
 
-Compile your project according your [config file](#config-file).
+Compile the release file for your project according your [config file](#config-file).
 
 ````bash
 cd existing-project
 toaster -c
+toaster -cd
+toaster -ca
 ````
-
-<a name="watching"/>
-## Watch
-
-Starts Toaster in watching'n'compiling mode:
-
-````bash
-cd existing-project
-toaster -w
-````
-
-Any changes you make to your `src` files will trigger the `compile` action.
 
 <a name="debugging"/>
 ## Debug
+
+Compile the debug version of your project.
 
 In debug mode option `-d` all files will be compiled individually inside a
 folder called `toaster` in the same directory you've pointed your debug file,
 aiming to ease the debugging process.
 
 ````bash
+toaster -d
 toaster -wd
 toaster -cd
 ````
@@ -269,10 +262,13 @@ For example, if you have `release/app-debug.js`, a folder will be created at
 `release/toaster` and all your CoffeeScript files will be compiled to Javascript
 within.
 
+A boot-loader is always given to you so you can load all these files orderly
+inside the browser.
+
 <a name="representative-structure"/>
 ### Representative Structure
 
-Bellow is a representative directory structure after compiling in debug mode.
+Bellow is a representative directory structure of the debug output.
 
 ````
 /usage
@@ -305,37 +301,77 @@ directory, so you can debug it sanely.
 The debug file `www/js/app-debug.js` is the boot-loader responsible for loading
 all these individual compiled JS files into the right order.
 
+<a name="watching"/>
+## Watch
+
+Starts Toaster in watching mode:
+
+````bash
+toaster -wd # good
+toaster -wc # bad (though still works)
+````
+
+Any changes you make to your `src` files will trigger the `compile` action. When
+using with `-c` it'll compile your release file on every change. When using
+with `-d`, all your debug files individually. You can also combine them both.
+
+Using toaster `-w` among the option `-c` (for compiling you release file) may
+be not a good idea, because release files are normally minified and depending
+on the size of your app, the ammount of time needed to minify it can be more
+than you'd consider cool.
+
+It is, you can use it but you may face some slowness. A good usage of `-w`
+option with `-c` is to disable the `minify` option in your config file,
+specially if you're building for Node.
+
+Use it also with `-a`.
+
+````bash
+toaster -wca
+toaster -wcda
+````
+
 <a name="autorun"/>
 ## Autorun
 
-In autorun mode option `-a` the script is recompiled after each file change and 
-it is executed in a node.js child process. It is possible to use autorun in 
-combination with debug option `-d` to set the script breakpoint on the first line
+In autorun mode option `-a` the compiled `release` file is executed in a node.js
+child process. Its required to be used with `-c` option. It is also possible to
+use autorun in  combination with debug option `-d` to set the script breakpoint
+on the first line.
+
+***NOTE**: This is the only case that the conventional `-d` behaviour is other
+than compiling all js files individually.*
 
 ````bash
-toaster -a
-toaster -da
+toaster -ca
+toaster -cda
 ````
-of if you like the `watch` option
+
+If you wanna use it with `watch`, try:
 
 ````bash
-toaster -wa
-toaster -wda
+toaster -wca
+toaster -wcda
 ````
 
-to better debug your application via node.js you can use some tools like 
-[node-inspector](https://github.com/dannycoates/node-inspector)
-
-It is also possible to pass arguments to the compiled script
+It is also possible to pass arguments to the compiled script:
 
 ````bash
-toaster -wa argument argument2 argument3
-toaster -wda argument argument2 argument3
+toaster -ca argument argument2 argument3
+toaster -cda argument argument2 argument3
+toaster -wca argument argument2 argument3
+toaster -wcda argument argument2 argument3
 ````
 
-Please note that the `-a` arguments has to be the last of the group in order to 
-make it work: `toaster -ad argument` will not behave as expected and
-`toaster -da argument` should be used instead
+The passed args will be reused in the child process, you can acess them in your
+release script as you'd normally do through `process.argv`.
+
+***NOTE**: When passing arguments, make sure the `-a` option appear as the last
+option in the option's chain (-ca, -wca, etc). So `toaster -ac arg1 arg2` won't
+work while `toaster -ca arg1 arg2` will.
+
+To better debug your application via node.js you can use some tools like 
+[node-inspector](https://github.com/dannycoates/node-inspector).
 
 <a name="html-inclusion"/>
 ## HTML inclusion

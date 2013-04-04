@@ -1,78 +1,109 @@
-exports.run=()-> new Toaster
+require('source-map-support').install()
 
-#<< toaster/toast
-#<< toaster/cli
-#<< toaster/misc/inject-ns
+fs = require "fs"
+path = require "path"
+colors = require 'colors'
 
-exports.toaster = toaster
-exports.Toaster = class Toaster
+Cli = require './toaster/cli'
+Config = require './toaster/config'
+Toast = require './toaster/toast'
 
-  # requirements
-  fs = require "fs"
-  fsu = require "fs-util"
-  path = require "path"
-  exec = (require "child_process").exec
-  colors = require 'colors'
+ProjectGen = require './toaster/generators/project'
+ConfigGen = require './toaster/generators/config'
 
+{log,debug,warn,error} = require './toaster/utils/log-util'
+
+module.exports = class Toaster
+
+  @options = null 
+  @skip_initial_compile = false
+
+  toaster_base: null
+  toasts: null
   # variable - before filter container
-  before_build: null
+  before_compile: null
 
-  constructor:( basedir, options = null, skip_initial_build = false )->
+  constructor:( basedir, options = null, skip_initial_compile = false )->
+
+    @toaster_base = path.dirname __dirname
+
+    @options = options
+    @skip_initial_compile = skip_initial_compile
 
     @basepath = path.resolve( basedir || "." )
-    @cli = new toaster.Cli options
 
-    # increments basepath if some path is given for args -n, -i, -c, -w, -d
+    @cli = new Cli options
+
+    # increments basepath if some path is given for args -n, -i, -c, -w, -r
     # just one of these could have a path, so only the first found will be
     # considered.
-    for flag in ('nicwd'.split '')
+    for flag in ('nicwr'.split '')
       if (typeof (base = @cli.argv[flag]) is 'string')
         @basepath = path.resolve base
         break
 
     # injecting options into @cli.argv to maintain interoperability
-    if options?
-      @cli.argv[k] = v for k, v of options
+    if @options?
+      @cli.argv[k] = v for k, v of @options
 
     # printing version
     if @cli.argv.v
-      filepath = path.join __dirname, "/../package.json"
+      filepath = path.join __dirname, "../../package.json"
       contents = fs.readFileSync filepath, "utf-8"
       schema = JSON.parse contents
       return log schema.version
-    
+
     # scaffolding basic structure for new projects
     else if @cli.argv.n
-      new toaster.generators.Project( @basepath ).create @cli.argv.n
+      new ProjectGen( @basepath ).create @cli.argv.n
 
     # initializing a toaster file template into an existent project
     else if @cli.argv.i
-      new toaster.generators.Config( @basepath ).create()
+      new ConfigGen( @basepath ).create()
 
     # injecting namespace declarations
-    else if @cli.argv.ns
-      @toast = new toaster.Toast @
-      new toaster.misc.InjectNS @toast.builders
+    # else if @cli.argv.ns
+    #   @toast = new toaster.Config @
+    #   new toaster.misc.InjectNS @toast.compileers
 
-    # starting watching'n'compiling process
-    else if (base = @cli.argv.w || @cli.argv.c || @cli.argv.a)
-      config = if options and options.config then options.config else null
-      @toast = new toaster.Toast @
-      @build() unless skip_initial_build
+    # auto run mode
+    # else if @cli.argv.a and not @cli.argv.c
+    #   msg = "Option -a can't work without -w, usage: \n"
+    #   msg += "\ttoaster -wa"
+    #   error msg
+
+    # compile / release / watch / serve
+    else if (@cli.argv.c or @cli.argv.r or @cli.argv.w or @cli.argv.s)
+      @initialize_toasters()
+
+      unless skip_initial_compile
+        if (@cli.argv.c or @cli.argv.r or @cli.argv.w)
+          @compile()
 
     # showing help screen
     else
       return log @cli.opts.help()
 
-  # can be called by apps using toaster as lib, build the project with options
-  # to inject header and footer code which must to be in coffee as well and
-  # will be compiled together the app.
-  build:( header_code = "", footer_code = "" )->
-    for builder in @toast.builders
-      builder.build header_code, footer_code
+  initialize_toasters:( compile_at_startup )->
+    @toasts = []
+    @config = new Config @ #, @options, @skip_initial_compile
+    for conf in @config.confs
+      @toasts.push new Toast @, @cli, conf
+
+  # can be called by apps using toaster as lib, and compile the project with
+  # options to inject header and footer code which must to be in coffee as well
+  # and will be compiled together the app.
+  compile:( header_code = "", footer_code = "" )->
+    for toast in @toasts
+      if @cli.argv.c? or @cli.argv.w?
+        toast.compile header_code, footer_code
+      else if @cli.argv.r
+        toast.optimize header_code, footer_code
 
   # resets the toaster completely - specially used when the `toaster.coffee`
   # config file is edited :)
-  reset:()->
-    builder.reset() for builder in @toast.builders
-    exports.run()
+  reset:( options )->
+    toast.reset() for toast in @toasts
+    @options[ key ] = val for val, key of options if options?
+    @initialize_toasters true
+    @compile()

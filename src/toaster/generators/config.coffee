@@ -1,6 +1,10 @@
-#<< toaster/generators/question
+require('source-map-support').install()
 
-class Config extends toaster.generators.Question
+Question = require './question'
+
+{log,debug,warn,error} = require '../utils/log-util'
+
+module.exports = class Config extends Question
 
   # requirements
   path = require "path"

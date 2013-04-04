@@ -1,25 +1,37 @@
 .PHONY: build
 
-VERSION=`coffee build/bumper.coffee --version`
+CS=node_modules/coffee-script/bin/coffee
+MOCHA=node_modules/mocha/bin/mocha
+VERSION=`$(CS) build/bumper.coffee --version`
+
+
+
+setup:
+	npm link
 
 watch:
-	build/coffee-toaster/bin/toaster . -w
+	$(CS) -wmco lib src
 
-build:
-	build/coffee-toaster/bin/toaster . -c
+compile:
+	$(CS) -mco lib src
 
-test: build
-	node_modules/vows/bin/vows spec/*.coffee --spec
+
+
+test: test.clean
+	$(MOCHA) tests/* \
+		--compilers coffee:coffee-script \
+		--require should --reporter spec
 
 
 bump.minor:
-	coffee build/bumper.coffee --minor
+	$(CS) build/bumper.coffee --minor
 
 bump.major:
-	coffee build/bumper.coffee --major
+	$(CS) build/bumper.coffee --major
 
 bump.patch:
-	coffee build/bumper.coffee --patch
+	$(CS) build/bumper.coffee --patch
+
 
 
 publish:
