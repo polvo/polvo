@@ -1,13 +1,12 @@
-.PHONY: build
-
 CS=node_modules/coffee-script/bin/coffee
-MOCHA=node_modules/mocha/bin/mocha
 VERSION=`$(CS) build/bumper.coffee --version`
-
 
 
 setup:
 	npm link
+	@cd tests && make setup
+
+
 
 watch:
 	$(CS) -wmco lib src
@@ -17,10 +16,9 @@ compile:
 
 
 
-test: test.clean
-	$(MOCHA) tests/* \
-		--compilers coffee:coffee-script \
-		--require should --reporter spec
+test:
+	@cd tests && make test
+
 
 
 bump.minor:
@@ -47,3 +45,7 @@ re-publish:
 	git push origin $(VERSION)
 	git push origin master -f
 	npm publish -f
+
+
+
+.PHONY: build
