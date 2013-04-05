@@ -1,5 +1,6 @@
 path = require 'path'
 fs = require 'fs'
+fsu = require 'fs-util'
 
 {log,debug,warn,error} = require '../../utils/log-util'
 
@@ -103,11 +104,11 @@ module.exports = class Config
       @cs.output_dir = path.join @basepath, @cs.output_dir
 
     # if folder existence
-    unless fs.existsSync (path.dirname @cs.output_dir)
-      msg = "Path set in property `output_dir` doesn't exist:"
-      msg += "\n\t#{config.output_dir.yellow}"
-      msg += 'Check your config file.'
-      return error msg
+    unless fs.existsSync @cs.output_dir
+      fsu.mkdir_p @cs.output_dir
+      msg = "Config `output_dir` doesn't exist, creating one:"
+      msg += "\n\t#{@cs.output_dir.cyan}"
+      warn msg
 
     return yes
 
