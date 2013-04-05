@@ -5,7 +5,7 @@ mocha_phantom=../../node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee
 
 # phantom paths
 # tries to detect a working versin of phantomjs (in TravisCLI for example)
-ifdef `pahntomjs`
+ifdef `phantomjs`
 	phantom=phantomjs
 # and if it's not present, uses the embed phantom
 else
