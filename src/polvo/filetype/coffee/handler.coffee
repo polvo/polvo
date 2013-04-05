@@ -5,7 +5,7 @@ fsu = require 'fs-util'
 path = require 'path'
 cs = require "coffee-script"
 
-{XRegExp} = require 'XRegExp'
+{XRegExp} = require 'xregexp'
 ArrayUtil = require '../../utils/array-util'
 MinifyUtil = require '../../utils/minify-util'
 
