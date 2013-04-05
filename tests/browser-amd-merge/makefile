@@ -3,6 +3,15 @@
 # mocha paths
 mocha_phantom=../../node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee
 
+# phantom paths
+# tries to detect a working versin of phantomjs (in TravisCLI for example)
+ifdef `pahntomjs`
+	phantom=phantomjs
+# and if it's not present, uses the embed phantom
+else
+	phantom=../.phantomjs/bin/phantomjs
+endif
+
 # polvo path
 polvo=../../bin/polvo
 
@@ -34,7 +43,7 @@ test.dev:
 	@echo ''
 	@$(polvo) -c
 	@echo ''
-	@../.phantomjs/bin/phantomjs $(mocha_phantom) www/index.html
+	@$(phantom) $(mocha_phantom) www/index.html
 
 # testing release version
 test.release:
@@ -43,4 +52,4 @@ test.release:
 	@echo ''
 	@$(polvo) -r
 	@echo ''
-	@../.phantomjs/bin/phantomjs $(mocha_phantom) www/index.html
+	@$(phantom) $(mocha_phantom) www/index.html
