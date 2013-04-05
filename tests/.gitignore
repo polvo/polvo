@@ -1,10 +1,22 @@
-tests/.phantomjs
+.phantomjs
 
-!tests/browser-amd-layers/app/js/.gitkeep
-tests/browser-amd-layers/app/js
+sadf
+!browser-amd-layers/www/js/.gitkeep
+!browser-amd-layers/www/css/.gitkeep
 
-!tests/browser-amd-merge/app/js/.gitkeep
-tests/browser-amd-merge/app/js
+browser-amd-layers/www/js
+browser-amd-layers/www/css
 
-!tests/browser-none-merge/app/js/.gitkeep
-tests/browser-none-merge/app/js
+
+!browser-amd-merge/www/js/.gitkeep
+!browser-amd-merge/www/css/.gitkeep
+
+browser-amd-merge/www/js
+browser-amd-merge/www/css
+
+!browser-none-merge/www/js/.gitkeep
+!browser-none-merge/www/css/.gitkeep
+
+browser-none-merge/www/js
+browser-none-merge/www/css
+
