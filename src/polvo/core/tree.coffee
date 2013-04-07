@@ -18,7 +18,7 @@ module.exports = class Tree
   watchers = null
   optimizer: null
 
-  constructor:( @polvo, @cli, @config, @toast, HandlerClass, OptimizerClass )->
+  constructor:( @polvo, @cli, @config, @tentacle, HandlerClass, OptimizerClass )->
 
     @filter = HandlerClass.FILTER
     @init HandlerClass, OptimizerClass

@@ -27,7 +27,7 @@ module.exports = class Config
     # if config is json
     if (config = @polvo.cli.argv["config"])?
       config = JSON.parse( config ) unless config instanceof Object
-      @toast item for item in ( [].concat config )
+      @tentacle item for item in ( [].concat config )
       return
 
     # otherwise if it's file, evaluates it's path
