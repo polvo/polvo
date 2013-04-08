@@ -3,7 +3,7 @@ setup
   # ============================================================================
   # server setup
   server:
-    root: 'public'
+    root: 'www'
     port: 3000
 
   # ============================================================================
@@ -19,13 +19,13 @@ setup
 
   # ============================================================================
   # destination dir for everything
-  destination: 'public'
+  destination: 'www/js'
 
   # ============================================================================
   # module wrappers
-  # wrappers:
-  #   javascript: 'amd' # templates will follow
-  #   styles: 'amd'
+  wrappers:
+    javascript: 'amd' # templates will follow
+    style: 'amd'
 
   # ============================================================================
   # vendors
@@ -46,7 +46,7 @@ setup
 
   # # ============================================================================
   # # optimization settings
-  # optimization:
-  #     layers:
-  #       'main': ['boot']
-  #       'users': ['app/controllers/users']
+  optimization:
+    layers:
+      'main': ['boot']
+      'users': ['app/controllers/users']

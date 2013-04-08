@@ -8,8 +8,6 @@ path = require "path"
 colors = require 'colors'
 cs = require "coffee-script"
 
-CoffeeConfig = require './filetype/coffee/config'
-
 {log,debug,warn,error} = require './utils/log-util'
 
 
@@ -83,8 +81,11 @@ module.exports = class Config
     return unless @validate_excludes config
     return unless @validate_includes config
     return unless @validate_destination config
+    return unless @validate_wrappers config
 
     @confs.push config
+
+
 
 
 
@@ -148,4 +149,14 @@ module.exports = class Config
 
   validate_includes:( config )->
     config.include ?= []
+    return yes
+
+
+  validate_wrappers:( config )->
+    if config.wrappers is null
+      config.wrappers = javascript: 'amd', style: 'amd'
+    else
+      config.wrappers.javascript ?= 'amd'
+      config.wrappers.style ?= 'amd'
+
     return yes

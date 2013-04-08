@@ -53,7 +53,13 @@ module.exports = class Tentacle
     address = 'http://localhost:' + port
     log 'Server running at ' + address.green
   
+  clear_destination:->
+    # clear release folder
+    fsu.rm_rf @config.destination if fs.existsSync @config.destination
+    fsu.mkdir_p @config.destination
+
   compile:->
+    do @clear_destination
     for tree in @trees
       do tree.compile_files_to_disk
 
@@ -62,6 +68,7 @@ module.exports = class Tentacle
       do tree.watch
 
   optimize:->
+    # do @clear_destination
     console.log 'REVIEW!'
     # for tree in @trees
     #   do tree.optimize

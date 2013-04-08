@@ -40,19 +40,13 @@ module.exports = class Tree
         # continue unless include
         # <<<<<<<<<<<< HANDLE INCLUDE AND EXCLUDES
 
-  clear_destination:->
-    # clear release folder
-    fsu.rm_rf @config.destination if fs.existsSync @config.destination
-    fsu.mkdir_p @config.destination
+  
 
   # optimize all files covered by internal Handler
   optimize:->
-    do @clear_destination
     do @optimizer.optimize
 
   compile_files_to_disk:->
-    do @clear_destination
-
     for file in @files
       file.compile_to_disk @config
 
@@ -149,7 +143,7 @@ module.exports = class Tree
 
           # cli msg
           msg = "• #{type} changed".bold
-          log "[#{now}] #{msg} #{relative_path}"
+          log "[#{now}] #{msg} #{relative_path}".cyan
 
           if is_vendor
             @copy_vendors_to_release false, location
