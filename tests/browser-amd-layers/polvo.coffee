@@ -1,43 +1,52 @@
 setup
 
-  languages:
-    javascript: 'coffeescript'
-
+  # ============================================================================
+  # server setup
   server:
-    root: 'www'
+    root: 'public'
     port: 3000
 
-  coffeescript:
+  # ============================================================================
+  # source folders
+  sources: ['src']
 
-    dirs: ['src']
-    exclude: []
-    bare: true
-    output_dir: 'www/js'
+  # excluded folders
+  exclude: []
 
-    browser:
+  # included folders
+  include: []
 
-      module_system: 'amd'
-      main_module: 'boot'
 
-      base_url: 'js'
-      output_file: 'app.js'
+  # ============================================================================
+  # destination dir for everything
+  destination: 'public'
 
-      vendors:
-        'jquery': 'vendors/jquery.js'
-        'vendor_a': 'vendors/vendor_a.js'
-        'vendor_b': 'vendors/vendor_b.js'
-        'mocha': 'vendors/mocha.js'
-        'chai': 'vendors/chai.js'
+  # ============================================================================
+  # module wrappers
+  # wrappers:
+  #   javascript: 'amd' # templates will follow
+  #   styles: 'amd'
 
-      incompatible_vendors: [
-          'jquery',
-          'mocha',
-          'vendor_a',
-          'vendor_b'
-        ]
+  # ============================================================================
+  # vendors
+  # vendors:
 
-      optimize:
-        minify: false
-        layers:
-          'main': ['boot']
-          'users': ['app/controllers/users']
+  #   javascript:
+  #     jquery       : 'vendors/jquery.js'
+  #     vendor_a     : 'vendors/vendor_a.js'
+  #     vendor_b     : 'vendors/vendor_b.js'
+  #     mocha        : 'vendors/mocha.js'
+  #     chai         : 'vendors/chai.js'
+
+  #     # vendors incompatible with the current module wrapper - AMD in this case
+  #     incompatible : ['jquery', 'mocha', 'vendor_a', 'vendor_b']
+
+  #   # css:
+  #   #   'xyz':  'bla'
+
+  # # ============================================================================
+  # # optimization settings
+  # optimization:
+  #     layers:
+  #       'main': ['boot']
+  #       'users': ['app/controllers/users']

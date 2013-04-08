@@ -6,7 +6,7 @@ colors = require 'colors'
 
 Cli = require './polvo/cli'
 Config = require './polvo/config'
-Tentacle = require './polvo/tentacle'
+Tentacle = require './polvo/core/tentacle'
 
 ProjectGen = require './polvo/generators/project'
 ConfigGen = require './polvo/generators/config'
@@ -19,7 +19,8 @@ module.exports = class Polvo
   @skip_initial_compile = false
 
   polvo_base: null
-  configs: null
+  tentacles: null
+
   # variable - before filter container
   before_compile: null
 
@@ -74,16 +75,16 @@ module.exports = class Polvo
       return log @cli.opts.help()
 
   init:( compile_at_startup )->
-    @configs = []
-    @config = new Config @ #, @options, @skip_initial_compile
-    for conf in @config.confs
-      @configs.push new Tentacle @, @cli, conf
+    @tentacless = []
+    @tentacles = new Config @ #, @options, @skip_initial_compile
+    for conf in @tentacles.confs
+      @tentacless.push new Tentacle @, @cli, conf
 
   # can be called by apps using polvo as lib, and compile the project with
   # options to inject header and footer code which must to be in coffee as well
   # and will be compiled together the app.
   compile:( header_code = "", footer_code = "" )->
-    for config in @configs
+    for config in @tentacless
       if @cli.argv.c? or @cli.argv.w?
         config.compile header_code, footer_code
       else if @cli.argv.r
@@ -92,7 +93,7 @@ module.exports = class Polvo
   # resets the polvo completely - specially used when the `polvo.coffee`
   # config file is edited :)
   reset:( options )->
-    config.reset() for config in @configs
+    config.reset() for config in @tentacless
     @options[ key ] = val for val, key of options if options?
     @init true
     @compile()

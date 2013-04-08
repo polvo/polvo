@@ -9,86 +9,75 @@ FnUtil = require '../utils/fn-util'
 StringUtil = require '../utils/string-util'
 ArrayUtil = require '../utils/array-util'
 
+File = require './file'
+
 {log,debug,warn,error} = require '../utils/log-util'
 
 module.exports = class Tree
 
   files: []
-  filter: null
+
   watchers = null
   optimizer: null
 
-  constructor:( @polvo, @cli, @config, @tentacle, HandlerClass, OptimizerClass )->
-
-    @filter = HandlerClass.FILTER
-    @init HandlerClass, OptimizerClass
+  constructor:( @polvo, @cli, @config, @tentacle )->
+    do @init
 
   # collects all files covered by internal Handler
-  init:( HandlerClass, OptimizerClass )->
+  init:->
     @files = []
+    for src in @config.sources
+      for filepath in (fsu.find src, File.EXTENSIONS)
+        @files.push new File @polvo, @cli, @config, @tentacle, @, src, filepath
 
-    @optimizer = new OptimizerClass @polvo, @cli, @config, @
+        # HANDLE INCLUDE AND EXCLUDES >>>>>>>>>>>>>
+        # # check if file should be included or ignored
+        # include = true
+        # for pattern in @config.exclude
+        #   include &= !(pattern.test filepath)
 
-    # loops through all dirs and..
-    for dirpath in @config.dirs
+        # # if it should be included, add to @files array
+        # continue unless include
+        # <<<<<<<<<<<< HANDLE INCLUDE AND EXCLUDES
 
-      # collects all files
-      for filepath in (fsu.find dirpath, @filter)
-
-        # check if file should be included or ignored
-        include = true
-        for item in @config.exclude
-          include &= !(new RegExp( item ).test filepath)
-
-        # if it should be included, add to @files array
-        continue unless include
-
-        handler = new HandlerClass @polvo,
-                                @cli,
-                                @config,
-                                @,
-                                dirpath,
-                                filepath
-        @files.push handler
-
-  clear_output_dir:->
+  clear_destination:->
     # clear release folder
-    fsu.rm_rf @config.output_dir if fs.existsSync @config.output_dir
-    fsu.mkdir_p @config.output_dir
+    fsu.rm_rf @config.destination if fs.existsSync @config.destination
+    fsu.mkdir_p @config.destination
 
   # optimize all files covered by internal Handler
   optimize:->
-    do @clear_output_dir
+    do @clear_destination
     do @optimizer.optimize
 
   compile_files_to_disk:->
-    do @clear_output_dir
+    do @clear_destination
 
     for file in @files
       file.compile_to_disk @config
 
-    @optimizer.optimize_for_development?()
+    # @optimizer.optimize_for_development?()
 
   watch:()->
     # initialize watchers array
     @watchers = []
 
     # loops through all dirs
-    for dir in @config.dirs
+    for src in @config.sources
 
       # and watch them entirely
-      @watchers.push (watcher = fsu.watch dir, @filter)
-      watcher.on 'create', (FnUtil.proxy @_on_fs_change, false, dir, 'create')
-      watcher.on 'change', (FnUtil.proxy @_on_fs_change, false, dir, 'change')
-      watcher.on 'delete', (FnUtil.proxy @_on_fs_change, false, dir, 'delete')
+      @watchers.push (watcher = fsu.watch src, File.EXTENSIONS)
+      watcher.on 'create', (FnUtil.proxy @_on_fs_change, false, src, 'create')
+      watcher.on 'change', (FnUtil.proxy @_on_fs_change, false, src, 'change')
+      watcher.on 'delete', (FnUtil.proxy @_on_fs_change, false, src, 'delete')
 
     # watching vendors for changes
-    for vname, vpath of @config.vendors
-      @watchers.push (watcher = fsu.watch vpath)
-      dir = path.join (path.dirname vpath), '..'
-      watcher.on 'create', (FnUtil.proxy @_on_fs_change, true, dir, 'create')
-      watcher.on 'change', (FnUtil.proxy @_on_fs_change, true, dir, 'change')
-      watcher.on 'delete', (FnUtil.proxy @_on_fs_change, true, dir, 'delete')
+    # for vname, vpath of @config.vendors
+    #   @watchers.push (watcher = fsu.watch vpath)
+    #   src = path.join (path.dirname vpath), '..'
+    #   watcher.on 'create', (FnUtil.proxy @_on_fs_change, true, src, 'create')
+    #   watcher.on 'change', (FnUtil.proxy @_on_fs_change, true, src, 'change')
+    #   watcher.on 'delete', (FnUtil.proxy @_on_fs_change, true, src, 'delete')
 
   close_watchers:->
     for watcher in @watchers
@@ -116,7 +105,6 @@ module.exports = class Tree
     relative_path = location.replace dir, ''
     relative_path = (relative_path.substr 1) if relative_path[0] is path.sep
 
-
     # date for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
@@ -138,7 +126,7 @@ module.exports = class Tree
       when "delete"
 
         # removes files from array
-        file = ArrayUtil.find @files, 'filepath': relative_path
+        file = ArrayUtil.find @files, 'relative_path': relative_path
         return if file is null
 
         file.item.delete_from_disk()
@@ -152,7 +140,7 @@ module.exports = class Tree
       when "change"
 
         # updates file information
-        file = ArrayUtil.find @files, 'filepath': relative_path
+        file = ArrayUtil.find @files, 'relative_path': relative_path
 
         if file is null and is_vendor is false
           warn "Change file is apparently null, it shouldn't happened.\n"+
@@ -166,5 +154,5 @@ module.exports = class Tree
           if is_vendor
             @copy_vendors_to_release false, location
           else
-            file.item.getinfo()
+            file.item.refresh()
             file.item.compile_to_disk @config

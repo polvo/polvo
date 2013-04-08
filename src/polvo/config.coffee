@@ -78,24 +78,15 @@ module.exports = class Config
 
   setup:( config )=>
 
-    return unless @validate_languages config
     return unless @validate_server config
-
-    if config.languages.javascript is 'coffeescript'
-      new CoffeeConfig config, @basepath
-
-    # if languages.stylus?
-    #   new StylusConfig config.stylus
-    #  etc...
+    return unless @validate_sources config
+    return unless @validate_excludes config
+    return unless @validate_includes config
+    return unless @validate_destination config
 
     @confs.push config
 
 
-  validate_languages:( config )->
-    unless config.languages?
-      msg = "Property `languages` not specified, check your config file."
-      return error msg
-    return yes
 
   validate_server:( config )->
     return yes unless config.browser?
@@ -107,4 +98,54 @@ module.exports = class Config
 
     server.port ?= 3000
 
+    return yes
+
+  validate_sources:( config )->
+    if config.sources is null or config.sources.length is 0
+      msg = 'You need to inform at least one source, check your config file.'
+      return error msg
+
+    # expand and validates and all dir paths
+    for src, index in config.sources
+
+      # expanding absolute path
+      if src.indexOf( @basepath ) < 0
+        src = path.join @basepath, src
+
+      # if folder exists
+      if fs.existsSync src
+        config.sources[index] = src
+
+      # otherwise if folder is not found
+      else
+        msg = "Informed source doesn't exist:\n\t#{src.yellow}"
+        msg += '\nCheck your config file.'
+        return error msg
+
+    return yes
+
+  validate_destination:( config )->
+    if config.destination is null
+      msg = 'You need to inform a destination folder, check your config file.'
+      return error msg
+
+    # expanding absolute path
+    if config.destination.indexOf( @basepath ) < 0
+      config.destination = path.join @basepath, config.destination
+
+    # if folder exists
+    unless fs.existsSync config.destination
+      fsu.mkdir_p config.destination
+      msg = "Config `output_dir` doesn't exist, creating one:"
+      msg += "\n\t#{config.destination.cyan}"
+      warn msg
+
+    return yes
+
+  validate_excludes:( config )->
+    config.exclude ?= []
+    return yes
+
+  validate_includes:( config )->
+    config.include ?= []
     return yes
