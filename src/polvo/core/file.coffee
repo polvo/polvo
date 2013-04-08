@@ -23,7 +23,7 @@ module.exports = class File
   destination_folder: null
 
   constructor:( @polvo, @cli, @config, @tentacle, @tree, @src_dir, @absolute_path )->
-    {@compiler, @ext} = @_resolve_compiler()
+    @compiler = @_resolve_compiler()
     do @refresh
 
   refresh:->
@@ -76,7 +76,4 @@ module.exports = class File
   _resolve_compiler:->
     for ext, index in File.EXTENSIONS
       if ext.test @absolute_path
-        return {
-          ext: ext,
-          compiler: File.COMPILERS[index]
-        }
+        return File.COMPILERS[index]
