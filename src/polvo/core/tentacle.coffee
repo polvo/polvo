@@ -72,7 +72,7 @@ module.exports = class Tentacle
     do tree.watch for tree in @trees
 
   optimize:->
-    # do @compile
+    do @clear_destination
     do @optimizer.optimize
 
   get_all_files:->
