@@ -57,5 +57,5 @@ setup
   # # ============================================================================
   # # optimization settings
   optimize:
-    minify: true
+    minify: false
     merge: true
