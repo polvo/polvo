@@ -50,8 +50,6 @@ module.exports = class Tree
     for file in @files
       file.compile_to_disk @config
 
-    # @optimizer.optimize_for_development?()
-
   watch:()->
     # initialize watchers array
     @watchers = []
@@ -66,12 +64,14 @@ module.exports = class Tree
       watcher.on 'delete', (FnUtil.proxy @_on_fs_change, false, src, 'delete')
 
     # watching vendors for changes
-    # for vname, vpath of @config.vendors
-    #   @watchers.push (watcher = fsu.watch vpath)
-    #   src = path.join (path.dirname vpath), '..'
-    #   watcher.on 'create', (FnUtil.proxy @_on_fs_change, true, src, 'create')
-    #   watcher.on 'change', (FnUtil.proxy @_on_fs_change, true, src, 'change')
-    #   watcher.on 'delete', (FnUtil.proxy @_on_fs_change, true, src, 'delete')
+    for vname, vpath of @config.vendors.javascript
+      continue if vname is 'incompatible'
+      @watchers.push (watcher = fsu.watch vpath)
+      src = path.join (path.dirname vpath), '..'
+      
+      watcher.on 'create', (FnUtil.proxy @_on_fs_change, true, src, 'create')
+      watcher.on 'change', (FnUtil.proxy @_on_fs_change, true, src, 'change')
+      watcher.on 'delete', (FnUtil.proxy @_on_fs_change, true, src, 'delete')
 
   close_watchers:->
     for watcher in @watchers
@@ -132,7 +132,6 @@ module.exports = class Tree
 
       # when a file is updated
       when "change"
-
         # updates file information
         file = ArrayUtil.find @files, 'relative_path': relative_path
 
@@ -146,7 +145,7 @@ module.exports = class Tree
           log "[#{now}] #{msg} #{relative_path}".cyan
 
           if is_vendor
-            @copy_vendors_to_release false, location
+            @tentacle.optimizer.copy_vendors_to_release false, location
           else
             file.item.refresh()
             file.item.compile_to_disk @config

@@ -82,10 +82,9 @@ module.exports = class Config
     return unless @validate_includes config
     return unless @validate_destination config
     return unless @validate_wrappers config
+    return unless @validate_vendors config
 
     @confs.push config
-
-
 
 
 
@@ -137,8 +136,7 @@ module.exports = class Config
     # if folder exists
     unless fs.existsSync config.destination
       fsu.mkdir_p config.destination
-      msg = "Config `output_dir` doesn't exist, creating one:"
-      msg += "\n\t#{config.destination.cyan}"
+      msg = "Creating `destination` dir: #{config.destination.cyan}"
       warn msg
 
     return yes
@@ -159,4 +157,31 @@ module.exports = class Config
       config.wrappers.javascript ?= 'amd'
       config.wrappers.style ?= 'amd'
 
+    return yes
+
+   # vendors (optional)
+  validate_vendors:( config )->
+    for vname, vpath of config.vendors.javascript
+      # skip cdn vendors or incompatible vendors
+      if (/^http/m.test vpath) or (vname is 'incompatible')
+        continue
+
+      # expands absolute path as needed
+      if (vpath.indexOf @basepath) < 0
+        vpath = path.join @basepath, vpath
+
+      # if file is a symbolic link, expands it's realpath
+      # if (fs.lstatSync vpath).isSymbolicLink()
+      #   vpath = path.join (path.dirname vpath), (fs.readlinkSync vpath)
+
+      # check file existence
+      unless fs.existsSync vpath
+        # error "Local vendor not found. #{dir}\nCheck your config."
+        msg = 'Local vendor not found:'
+        msg += '\n\t' + vpath
+        msg += '\nCheck your config file.'
+        return error msg
+
+      config.vendors.javascript[vname] = vpath
+    
     return yes

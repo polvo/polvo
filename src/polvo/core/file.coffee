@@ -17,17 +17,22 @@ module.exports = class File
   @EXTENSIONS = [Coffeescript.EXT, Jade.EXT, Stylus.EXT]
   @COMPILERS = [Coffeescript, Jade, Stylus]
 
+  id: null
   name: null
-  dir: null
-  relative_path: null
+
   absolute_path: null
+  relative_path: null
 
   destination_path: null
   destination_folder: null
 
+  dependencies: null
+  baseclasses: null
+
   constructor:( @polvo, @cli, @config, @tentacle, @tree, @src_dir, @absolute_path )->
     @compiler = @_resolve_compiler()
     do @refresh
+    do @compile_to_str
 
   refresh:->
     @raw = fs.readFileSync @absolute_path, "utf-8"
@@ -41,6 +46,8 @@ module.exports = class File
     @relative_path = @relative_path.replace /^\//m, ''
     @relative_dir = @relative_dir.replace /^\//m, ''
     @relative_dir = '' if @relative_dir is '.'
+
+    @id = @compiler.strip_ext @relative_path
 
     # destination paths
     @out = {}
@@ -56,8 +63,12 @@ module.exports = class File
     # source relative path
     @out.relative_path = @out.relative_path.replace /^\//m, ''
 
-  compile_to_str:( after_compile )->
-    @compiler.compile @, after_compile
+  compile_to_str:( after_compile, exclude_anonymous_requires )->
+    @compiler.compile @, ( code )=>
+      code = @inject_dependencies code, exclude_anonymous_requires
+      if exclude_anonymous_requires
+        code = @exclude_anonymous_requires code
+      after_compile?(code)
 
   compile_to_disk:->
     # datetime for CLI notifications
@@ -75,6 +86,51 @@ module.exports = class File
       # notify user through cli
       msg = '✓ Compiled'.bold
       log "[#{now}] #{msg} #{@out.relative_path}".green
+
+  extract_dependencies:( js_code )->
+    @dependencies = []
+    @baseclasses = []
+
+    require_reg = /([^\s]+)?(?:\s*=\s*)?(?:require\s*\()(?:'|")(.+)(?:'|")/g
+
+    while matched = require_reg.exec js_code
+
+        # computes dep name and path
+        dep = 
+          name: matched[1]
+          id: matched[2]
+          vendor: matched[1] is undefined or (matched[2] of @config.vendors.javascript)
+          incompatible: matched[2] in @config.vendors.javascript.incompatible
+
+        # and add it to the dependencies array
+        if dep.is_vendor is true or dep.name is undefined
+          @dependencies.push dep
+        else
+          @dependencies.splice @dependencies_diff_head++, 0, dep
+
+  inject_dependencies:( js_code, exclude_anonymous_requires = false )->
+
+    @extract_dependencies js_code
+
+    if @dependencies.length
+      paths = []
+      for dep in @dependencies
+        if exclude_anonymous_requires and dep.incompatible
+          continue
+        else
+          paths.push dep.id
+      paths = ", '#{paths.join "', '"}'"
+    else
+      paths = ''
+    
+    search = "define(['require', 'exports', 'module']"
+    replace = "define('#{@id}', ['require', 'exports', 'module'#{paths}]"
+    
+    js_code.replace search, replace
+
+  exclude_anonymous_requires:( code )->
+    reg = /(^\s*require.+$)/mg
+    code.replace reg, "/* $1 */"
 
   _resolve_compiler:->
     for ext, index in File.EXTENSIONS

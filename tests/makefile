@@ -18,6 +18,7 @@ polvo=../bin/polvo
 # install phantomjs
 setup:
 	curl -O $(phantom_url) && unzip $(phantom_zip)
+	rm -rf .phantomjs
 	mv $(phantom_name) .phantomjs
 	rm $(phantom_zip)
 

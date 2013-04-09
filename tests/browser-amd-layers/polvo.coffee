@@ -10,16 +10,27 @@ setup
   # source folders
   sources: ['src']
 
-  # excluded folders
+  # excluded folders (if informed, all others will be included)
   exclude: []
 
-  # included folders
+  # included folders (if informed, all others will be excluded)
   include: []
-
 
   # ============================================================================
   # destination dir for everything
   destination: 'www/js'
+
+  # ============================================================================
+  # path to readh `js` folder through http starting from `/`
+  base_url: 'js'
+
+  # ============================================================================
+  # development and release files will have this name (inside destinaton folder)
+  index: 'app.js'
+
+  # ============================================================================
+  # main module to be loaded
+  main_module: 'boot'
 
   # ============================================================================
   # module wrappers
@@ -28,25 +39,23 @@ setup
     style: 'amd'
 
   # ============================================================================
-  # vendors
-  # vendors:
+  vendors:
 
-  #   javascript:
-  #     jquery       : 'vendors/jquery.js'
-  #     vendor_a     : 'vendors/vendor_a.js'
-  #     vendor_b     : 'vendors/vendor_b.js'
-  #     mocha        : 'vendors/mocha.js'
-  #     chai         : 'vendors/chai.js'
+    javascript:
+      jquery       : 'vendors/jquery.js'
+      vendor_a     : 'vendors/vendor_a.js'
+      vendor_b     : 'vendors/vendor_b.js'
+      mocha        : 'vendors/mocha.js'
+      chai         : 'vendors/chai.js'
 
-  #     # vendors incompatible with the current module wrapper - AMD in this case
-  #     incompatible : ['jquery', 'mocha', 'vendor_a', 'vendor_b']
+      # vendors incompatible with the current module wrapper - AMD in this case
+      incompatible : ['jquery', 'mocha', 'vendor_a', 'vendor_b']
 
-  #   # css:
-  #   #   'xyz':  'bla'
+    # css:
+    #   'xyz':  'bla'
 
   # # ============================================================================
   # # optimization settings
-  optimization:
-    layers:
-      'main': ['boot']
-      'users': ['app/controllers/users']
+  optimize:
+    minify: true
+    merge: true

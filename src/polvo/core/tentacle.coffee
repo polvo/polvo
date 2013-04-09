@@ -16,6 +16,7 @@ StringUtil = require './../utils/string-util'
 MinifyUtil = require './../utils/minify-util'
 
 Tree = require './tree'
+Optimizer = require './optimizer'
 
 {log,debug,warn,error} = require './../utils/log-util'
 
@@ -23,7 +24,7 @@ Tree = require './tree'
 module.exports = class Tentacle
 
   trees: null
-  compiler: null
+  optimizer: null
 
   conn: null
   watchers: null
@@ -40,6 +41,7 @@ module.exports = class Tentacle
     setTimeout (=> @serve()), 1 if @cli.argv.s
 
   init:()->
+    @optimizer = new Optimizer @polvo, @cli, @config, @
     @trees = []
     for src of @config.sources
       @trees.push (new Tree @polvo, @cli, @config, @)
@@ -63,15 +65,21 @@ module.exports = class Tentacle
     for tree in @trees
       do tree.compile_files_to_disk
 
+    do @optimizer.copy_vendors_to_release
+    do @optimizer.write_amd_loader
+
   watch:->
-    for tree in @trees
-      do tree.watch
+    do tree.watch for tree in @trees
 
   optimize:->
-    # do @clear_destination
-    console.log 'REVIEW!'
-    # for tree in @trees
-    #   do tree.optimize
+    # do @compile
+    do @optimizer.optimize
+
+  get_all_files:->
+    buffer = []
+    for tree in @trees
+      buffer = buffer.concat tree.files
+    buffer
 
   reset:()->
     # close all builder's watchers

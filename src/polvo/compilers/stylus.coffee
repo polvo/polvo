@@ -30,3 +30,6 @@ module.exports = class Stylus
 
   @translate_ext = ( filepath )->
     return filepath.replace @EXT, '$1$2.js'
+
+  @strip_ext:( filepath )->
+    return filepath.replace @EXT, '$1$2'

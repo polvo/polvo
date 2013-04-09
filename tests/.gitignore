@@ -1,22 +1,4 @@
 .phantomjs
 
-sadf
-!browser-amd-layers/www/js/.gitkeep
-!browser-amd-layers/www/css/.gitkeep
-
-browser-amd-layers/www/js
-browser-amd-layers/www/css
-
-
-!browser-amd-merge/www/js/.gitkeep
-!browser-amd-merge/www/css/.gitkeep
-
-browser-amd-merge/www/js
-browser-amd-merge/www/css
-
-!browser-none-merge/www/js/.gitkeep
-!browser-none-merge/www/css/.gitkeep
-
-browser-none-merge/www/js
-browser-none-merge/www/css
-
+browser-amd-layers/www
+browser-amd-merge/www

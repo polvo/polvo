@@ -47,4 +47,4 @@ test.release:
 	@echo ''
 	@$(polvo) -r
 	@echo ''
-	
+	$(phantom) $(mocha_phantom) www/index.html

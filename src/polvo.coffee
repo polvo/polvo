@@ -84,11 +84,11 @@ module.exports = class Polvo
   # options to inject header and footer code which must to be in coffee as well
   # and will be compiled together the app.
   compile:( header_code = "", footer_code = "" )->
-    for config in @tentacless
+    for tentacle in @tentacless
       if @cli.argv.c? or @cli.argv.w?
-        config.compile header_code, footer_code
+        tentacle.compile header_code, footer_code
       else if @cli.argv.r
-        config.optimize header_code, footer_code
+        tentacle.optimize header_code, footer_code
 
   # resets the polvo completely - specially used when the `polvo.coffee`
   # config file is edited :)
