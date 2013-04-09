@@ -10,7 +10,7 @@ module.exports = class Coffeescript
 
   AMD_WRAPPER = """
   // rendered with stylus
-  define('~name', [~deps], function(){
+  define(['require', 'exports', 'module'], function(require, exports, module){
     ~code
   });"""
 
@@ -23,11 +23,7 @@ module.exports = class Coffeescript
       msg = "#{msg.white} @ " + "#{@filepath}".bold.red
       return error msg
 
-    name = file.relative_path.replace @EXT, ''
-    wrapped = AMD_WRAPPER.replace '~name', name
-    wrapped = wrapped.replace '~deps', ''
-    wrapped = wrapped.replace '~code', compiled
-
+    wrapped = AMD_WRAPPER.replace '~code', compiled
     after_compile wrapped
 
   @translate_ext:( filepath )->

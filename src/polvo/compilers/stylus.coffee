@@ -11,9 +11,9 @@ module.exports = class Stylus
 
   AMD_WRAPPER = """
   // rendered with stylus
-  define('~name',[], function(){
-    var style = document.createElement('~css');
-    style.appendChild(document.createTextNode(''));
+  define(['require', 'exports', 'module'], function(require, exports, module){
+    var style = module.exports = document.createElement('style');
+    style.appendChild(document.createTextNode('~css'));
     return style;
   });"""
 
@@ -24,9 +24,8 @@ module.exports = class Stylus
       .import( 'nib' )
       .render (err, css)=>
         return error err if err?
-        name = file.relative_path.replace @EXT, '$1$2'
-        wrapped = (AMD_WRAPPER.replace '~name', name)
-        wrapped = wrapped.replace '~css', (css.replace /\n|\r|\s/g, '')
+
+        wrapped = AMD_WRAPPER.replace '~css', (css.replace /\n|\r|\s/g, '')
         after_compile wrapped
 
   @translate_ext = ( filepath )->
