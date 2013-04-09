@@ -1,1 +1,1 @@
-class AppView
+module.exports = class AppView

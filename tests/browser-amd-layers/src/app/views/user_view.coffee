@@ -5,7 +5,7 @@ describe 'UserView (app/views/user_view.coffee)', ->
   it 'All depdendencies should have been loaded', ->
     should.exist AppView
 
-class UserView extends AppView
+module.exports = class UserView extends AppView
 
   constructor:( @data )->
     @dom = """

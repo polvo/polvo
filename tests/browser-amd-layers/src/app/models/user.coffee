@@ -7,7 +7,7 @@ describe 'User (app/models/user.coffee)', ->
   it 'All depdendencies should have been loaded', ->
     should.exist AppModel
 
-class User extends AppModel
+module.exports = class User extends AppModel
   _all = []
 
   constructor:( @first_name, @last_name )->

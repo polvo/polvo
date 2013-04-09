@@ -1,1 +1,1 @@
-class AppModel
+module.exports = class AppModel

@@ -1,1 +1,1 @@
-class AppController
+module.exports = class AppController

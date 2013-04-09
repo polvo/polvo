@@ -7,7 +7,7 @@ describe 'Users (app/controllers/users.coffee)', ->
     should.exist AppController
     should.exist UserView
 
-class Users extends AppController
+module.exports = class Users extends AppController
   render:( users )->
 
       describe 'Users.render (app/controllers/users.coffee)', ->

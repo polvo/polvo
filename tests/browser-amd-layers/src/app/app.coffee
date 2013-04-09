@@ -12,7 +12,7 @@ describe 'App (app/app.coffee)', ->
 
 
 # defining app
-class App
+module.exports = class App
   constructor:->
 
     new User 'anderson', 'arboleya'
