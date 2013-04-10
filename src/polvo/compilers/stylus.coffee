@@ -10,7 +10,7 @@ module.exports = class Stylus
   @EXT = /(\/)([^\/_]+)(\.styl)$/m
 
   AMD_WRAPPER = """
-  // Compiled by Polvo, using stylus
+  // Compiled by Polvo, using Stylus
   define(['require', 'exports', 'module'], function(require, exports, module){
     var style = module.exports = document.createElement('style');
     style.appendChild(document.createTextNode('~css'));

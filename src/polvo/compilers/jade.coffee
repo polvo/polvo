@@ -9,7 +9,7 @@ module.exports = class Jade
   @EXT = /(\/)([^\/_]+)(\.jade)$/m
 
   AMD_WRAPPER = """
-  // Compiled by Polvo, using coffeescript
+  // Compiled by Polvo, using Jade
   define(['require', 'exports', 'module'], function(require, exports, module){
     return exports.module = ~code
   });"""
