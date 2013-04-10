@@ -1,4 +1,3 @@
 .phantomjs
 
-browser-amd-layers/www
-browser-amd-merge/www
+coffeescript-jade-stylus/www/js
