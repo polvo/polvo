@@ -13,7 +13,7 @@ module.exports = class Coffeescript
 
   AMD_WRAPPER = """
   ###
-    rendered with coffeescript
+    Compiled by Polvo, using coffeescript
   ###
   ~global_code
   define ['require', 'exports', 'module'], (require, exports, module)->
