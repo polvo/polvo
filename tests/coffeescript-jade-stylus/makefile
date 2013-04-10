@@ -38,7 +38,7 @@ test.dev:
 	@echo ''
 	@$(polvo) -c
 	@echo ''
-	$(phantom) $(mocha_phantom) www/index.html
+	@$(phantom) $(mocha_phantom) www/index.html
 
 # testing release version
 test.release:
@@ -47,4 +47,4 @@ test.release:
 	@echo ''
 	@$(polvo) -r
 	@echo ''
-	$(phantom) $(mocha_phantom) www/index.html
+	@$(phantom) $(mocha_phantom) www/index.html
