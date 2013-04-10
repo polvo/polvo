@@ -117,20 +117,9 @@ module.exports = class Optimizer
 
 
   merge_files:( after_merge )->
-    # for f in @tentacle.files()
-    #   console.log '----------'
-    #   console.log 'id: ' + f.id
-    #   console.log 'name: ' + f.name
-    #   console.log 'absolute_path: ' + f.absolute_path
-    #   console.log 'relative_path: ' + f.relative_path
-    #   console.log 'destination_path: ' + f.destination_path
-    #   console.log 'destination_folder: ' + f.destination_folder
-    # return ''
-
     buffer = []
     for file in (@reorder @tentacle.get_all_files())
       file.compile_to_str (( code ) => buffer.push code), true
-
     buffer.join '\n'
 
 
