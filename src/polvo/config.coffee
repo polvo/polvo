@@ -76,16 +76,19 @@ module.exports = class Config
 
   setup:( config )=>
 
-    return unless @validate_server config
-    return unless @validate_sources config
-    return unless @validate_excludes config
-    return unless @validate_includes config
-    return unless @validate_destination config
-    return unless @validate_wrappers config
-    return unless @validate_vendors config
+    passed = true
+    passed and= a = @validate_server config
+    passed and= b = @validate_sources config
+    passed and= c = @validate_excludes config
+    passed and= d = @validate_includes config
+    passed and= e = @validate_destination config
+    passed and= f = @validate_wrappers config
+    passed and= g = @validate_vendors config
 
-    @confs.push config
-
+    unless passed
+      process.exit()
+    else
+      @confs.push config
 
 
   validate_server:( config )->
@@ -101,7 +104,7 @@ module.exports = class Config
     return yes
 
   validate_sources:( config )->
-    if config.sources is null or config.sources.length is 0
+    unless config.sources? and config.sources.length
       msg = 'You need to inform at least one source, check your config file.'
       return error msg
 
@@ -125,7 +128,7 @@ module.exports = class Config
     return yes
 
   validate_destination:( config )->
-    if config.destination is null
+    unless config.destination?
       msg = 'You need to inform a destination folder, check your config file.'
       return error msg
 
@@ -151,7 +154,7 @@ module.exports = class Config
 
 
   validate_wrappers:( config )->
-    if config.wrappers is null
+    unless config.wrappers?
       config.wrappers = javascript: 'amd', style: 'amd'
     else
       config.wrappers.javascript ?= 'amd'
@@ -161,7 +164,7 @@ module.exports = class Config
 
    # vendors (optional)
   validate_vendors:( config )->
-    for vname, vpath of config.vendors.javascript
+    for vname, vpath of config?.vendors?.javascript
       # skip cdn vendors or incompatible vendors
       if (/^http/m.test vpath) or (vname is 'incompatible')
         continue
