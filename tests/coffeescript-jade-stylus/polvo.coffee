@@ -1,12 +1,15 @@
 setup
+  
+  # ----------------------------------------------------------------------------
+  # SERVER
 
-  # ============================================================================
-  # server setup
   server:
     root: 'www'
     port: 3000
 
-  # ============================================================================
+  # ----------------------------------------------------------------------------
+  # FOLDERS
+
   # source folders
   sources: ['src']
 
@@ -16,29 +19,28 @@ setup
   # included folders (if informed, all others will be excluded)
   include: []
 
-  # ============================================================================
+  # ----------------------------------------------------------------------------
+  # OUTPUT
+  
   # destination dir for everything
   destination: 'www/js'
 
-  # ============================================================================
-  # path to readh `js` folder through http starting from `/`
-  base_url: 'js'
-
-  # ============================================================================
-  # development and release files will have this name (inside destinaton folder)
+  # main file to be included in your html, development and release files will
+  # have this name (inside destinaton folder)
   index: 'app.js'
 
-  # ============================================================================
+  # ----------------------------------------------------------------------------
+  # AMD CONFIGS
+
+  # path to reach the `js` folder through http starting from `/`
+  base_url: 'js'
+
   # main module to be loaded
   main_module: 'boot'
 
-  # ============================================================================
-  # module wrappers
-  wrappers:
-    javascript: 'amd' # templates will follow
-    style: 'amd'
+  # ----------------------------------------------------------------------------
+  # VENDORS
 
-  # ============================================================================
   vendors:
 
     javascript:
@@ -48,14 +50,15 @@ setup
       mocha        : 'vendors/mocha.js'
       chai         : 'vendors/chai.js'
 
-      # vendors incompatible with the current module wrapper - AMD in this case
+      # vendors that doesn't implements AMD
       incompatible : ['jquery', 'mocha', 'vendor_a', 'vendor_b']
 
-    # css:
-    #   'xyz':  'bla'
+    css:
+      'xyz':  'bla'
 
-  # # ============================================================================
-  # # optimization settings
+  # ----------------------------------------------------------------------------
+  # OPTIMIZATION
+
   optimize:
     minify: false
     merge: true
