@@ -1,13 +1,14 @@
 require('source-map-support').install()
 
 cs = require 'coffee-script'
+path = require 'path'
 {XRegExp} = require 'xregexp'
 
 {log,debug,warn,error} = require './../utils/log-util'
 
 module.exports = class Coffeescript
 
-  @EXT = /\.(lit)?coffee(\.md)?$/m
+  @EXT = /\.(lit|coffee)(\.md)?$/m
 
   LITERATE = /\.(litcoffee|coffee\.md)$/m
 
@@ -35,6 +36,7 @@ module.exports = class Coffeescript
     # compile options
     bare = 1
     literate = LITERATE.test file.relative_path
+    sourceMap = 1
 
     if literate
       # strip out literate comments
@@ -51,18 +53,37 @@ module.exports = class Coffeescript
     contents = contents.replace '~global_code', global_code
 
     try
-      compiled = cs.compile contents, {bare}
+      temp = cs.compile contents, {bare, sourceMap}
+
+      # compiled javascript
+      compiled = temp.js
+
+      compiled += """
+      /*
+      //@ sourceMappingURL=#{path.basename file.out.absolute_map_path}
+      */"""
+
+      # source map
+      map = JSON.parse temp.v3SourceMap
+
+      # injecting paths into source maps
+      map.file = file.compiler.translate_ext file.name
+      map.sources = [path.basename file.name]
+
     catch err
       # catches and shows it, and abort the compilation
       return error err.message + ' at ' + file.relative_path
 
-    after_compile compiled
+    after_compile compiled, (JSON.stringify map, null, 2), contents
 
   @translate_ext:( filepath )->
     return filepath.replace @EXT, '.js'
 
   @strip_ext:( filepath )->
     return filepath.replace @EXT, ''
+
+  @translate_map_ext:( filepath )->
+    return filepath.replace @EXT, '.map'
 
   @reindent:( code )->
     # detect file identation style..

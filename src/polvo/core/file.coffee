@@ -51,37 +51,51 @@ module.exports = class File
 
     # destination paths
     @out = {}
-    @out.absolute_path = path.join @config.destination, @relative_path
+    @out.absolute_src_path = path.join @config.destination, @relative_path
+
+    if @compiler.translate_map_ext?
+      # console.log '--------' + @out.absolute_path
+      # console.log 'js path - ' + 
+      @out.absolute_map_path = @compiler.translate_map_ext @out.absolute_src_path
+      # console.log 'map path - ' + @out.absolute_map_path
 
     # changing extension for absolute path
-    @out.absolute_path = @compiler.translate_ext @out.absolute_path
+    @out.absolute_path = @compiler.translate_ext @out.absolute_src_path
 
     # computing other paths
     @out.absolute_dir = path.dirname @out.absolute_path
     @out.relative_path = @out.absolute_path.replace @config.destination, ''
-
-    # source relative path
     @out.relative_path = @out.relative_path.replace /^\//m, ''
 
+
   compile_to_str:( after_compile, exclude_anonymous_requires )->
-    @compiler.compile @, ( code )=>
-      code = @inject_dependencies code, exclude_anonymous_requires
+    @compiler.compile @, ( js, map, src )=>
+      js = @inject_dependencies js, exclude_anonymous_requires
       if exclude_anonymous_requires
-        code = @exclude_anonymous_requires code
-      after_compile?(code)
+        js = @exclude_anonymous_requires js
+      after_compile?(js, map, src)
 
   compile_to_disk:->
     # datetime for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
     # get compiled file
-    @compile_to_str (compiled)=>
+    @compile_to_str (js, src_map, src)=>
       # create container folder if it doesnt exist yet
       unless fs.existsSync @out.absolute_dir
         fsu.mkdir_p @out.absolute_dir
 
       # write compile file inside of it
-      fs.writeFileSync @out.absolute_path, compiled
+      fs.writeFileSync @out.absolute_path, js
+
+      # if source maps have been generated
+      if src_map? and @out.absolute_map_path?
+        fs.writeFileSync @out.absolute_map_path, src_map
+
+      # if source is given, put it side by side with the js in order to
+      # provide easy source-mapping
+      if src?
+        fs.writeFileSync @out.absolute_src_path, src
 
       # notify user through cli
       msg = '✓ Compiled'.bold
