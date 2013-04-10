@@ -92,14 +92,15 @@ module.exports = class Config
 
 
   validate_server:( config )->
-    return yes unless config.browser?
+    return yes if config is null
 
-    unless config.server.root?
+    unless config?.server?.root?
       msg = 'You need to inform the `root` property in your server config.'
       msg += '\nCheck your config file.'
       return error msg
 
-    server.port ?= 3000
+    config.server.root = path.resolve config.server.root
+    config.server.port ?= 3000
 
     return yes
 
