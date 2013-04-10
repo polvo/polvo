@@ -7,7 +7,9 @@ cs = require 'coffee-script'
 
 module.exports = class Coffeescript
 
-  @EXT = /\.(lit)?(coffee)(\.md)?$/m
+  @EXT = /\.(lit)?coffee(\.md)?$/m
+
+  LITERATE = /\.(litcoffee|coffee\.md)$/m
 
   AMD_WRAPPER = """
   ###
@@ -30,20 +32,29 @@ module.exports = class Coffeescript
     # remove the block from the cache
     clean = raw.replace global_code, ''
 
-    # merge everything
-    contents = AMD_WRAPPER.replace '~global_code', global_code
-    contents = contents.replace '~code', (@reindent clean)
+    # compile options
+    bare = 1
+    literate = LITERATE.test file.relative_path
+
+    if literate
+      # strip out literate comments
+      indented = true
+      contents = clean.replace /^[^\s]+.+$/mg, ''
+    else
+      # reindent code
+      contents = @reindent clean
+
+    # wrap code with AMD signature
+    contents = AMD_WRAPPER.replace '~code', contents
+
+    # inject code outside amd wrapper as needed
+    contents = contents.replace '~global_code', global_code
 
     try
-      compiled = cs.compile contents, bare: 1
+      compiled = cs.compile contents, {bare}
     catch err
       # catches and shows it, and abort the compilation
-      # msg = err.message.replace '"', '\\"'
-      # msg = "#{msg.white} @ " + "#{@filepath}".bold.red
       return error err.message + ' at ' + file.relative_path
-
-    # wrapped = AMD_WRAPPER.replace '~code', compiled
-    # wrapped = "#{global_code}\n\n#{wrapped}"
 
     after_compile compiled
 
