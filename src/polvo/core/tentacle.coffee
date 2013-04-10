@@ -43,8 +43,8 @@ module.exports = class Tentacle
   init:()->
     @optimizer = new Optimizer @polvo, @cli, @config, @
     @trees = []
-    for src of @config.sources
-      @trees.push (new Tree @polvo, @cli, @config, @)
+    # for src of @config.sources
+    @trees.push (new Tree @polvo, @cli, @config, @)
 
   serve:->
     root = @config.server.root
