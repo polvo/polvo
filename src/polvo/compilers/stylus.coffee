@@ -13,7 +13,12 @@ module.exports = class Stylus
   // Compiled by Polvo, using Stylus
   define(['require', 'exports', 'module'], function(require, exports, module){
     var style = module.exports = document.createElement('style');
+    var head = document.getElementsByTagName('head')[0];
+
+    style.id = '~id';
     style.appendChild(document.createTextNode('~css'));
+    head.insertBefore(style, head.lastChild);
+
     return style;
   });"""
 
@@ -25,7 +30,8 @@ module.exports = class Stylus
       .render (err, css)=>
         return error err if err?
 
-        wrapped = AMD_WRAPPER.replace '~css', (css.replace /\n|\r|\s/g, '')
+        wrapped = AMD_WRAPPER.replace '~css', (css.replace /\n|\r/g, '')
+        wrapped = wrapped.replace /~id/g, file.id
         after_compile wrapped
 
   @translate_ext = ( filepath )->
