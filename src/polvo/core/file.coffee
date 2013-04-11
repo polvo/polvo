@@ -107,20 +107,20 @@ module.exports = class File
 
     require_reg = /([^\s]+)?(?:\s*=\s*)?(?:require\s*\()(?:'|")(.+)(?:'|")/g
 
-    while matched = require_reg.exec js_code
+    while (matched = require_reg.exec js_code)
 
-        # computes dep name and path
-        dep = 
-          name: matched[1]
-          id: matched[2]
-          vendor: matched[1] is undefined or (matched[2] of @config.vendors.javascript)
-          incompatible: matched[2] in @config.vendors.javascript.incompatible
+      # computes dep name and path
+      dep = 
+        name: matched[1]
+        id: matched[2]
+        vendor: matched[1] is undefined or (matched[2] of @config.vendors.javascript)
+        incompatible: matched[2] in @config.vendors.javascript.incompatible
 
-        # and add it to the dependencies array
-        if dep.is_vendor is true or dep.name is undefined
-          @dependencies.push dep
-        else
-          @dependencies.splice @dependencies_diff_head++, 0, dep
+      # and add it to the dependencies array
+      if dep.is_vendor is true or dep.name is undefined
+        @dependencies.push dep
+      else
+        @dependencies.splice @dependencies_diff_head++, 0, dep
 
   inject_dependencies:( js_code, exclude_anonymous_requires = false )->
 
