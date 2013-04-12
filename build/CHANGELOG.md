@@ -1,11 +1,17 @@
 # Changelog
 
-0.1.0 - Complete port of Coffee-Toaster to Polvo.
+## 0.2.0 - 04/12/2013
+ * Added Stylus support
+ * Added Jade support
+
+## 0.1.0 - 04/04/2013
+
+ * Complete port of Coffee-Toaster to Polvo.
 
 
 # Past forked Project
 
-## 0.6.12 - ?
+## 0.6.12 - **NEVER** - *Coffee-Toaster was discontinued*.
  * Fixing `Toaster.reset` when using Toaster as lib, initializing it with the
 options hash.
  * Properly segmenting compilation and execution with more combinations using
