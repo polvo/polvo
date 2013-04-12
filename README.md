@@ -6,55 +6,64 @@ Polyvalent cephalopod mollusc.
 
 [![Build Status](https://secure.travis-ci.org/serpentem/polvo.png)](http://travis-ci.org/serpentem/polvo) [![Dependency Status](https://gemnasium.com/serpentem/polvo.png)](https://gemnasium.com/serpentem/polvo)
 
-# What the f?
+# What the ★★★★?
 
-Yet another application assembler for the browser.
+Polvo is an application assembler for the browser.
 
-# Hello World
+ 1.  You write code using CJS signature for `scripts` and plain schemes according the syntax provided by your pre-compiled language of choice for HTML `templates` and `styles`.
 
-A brief 1 min screencast showing the basics.
+ 1. Polvo will compile everything to *`.js`* files as AMD modules, *including your styles*.
 
-![Screencast at Vimeo](https://secure-b.vimeocdn.com/ts/589/314/58931491_640.jpg)
+ 1. You can require all your **scripts**, **templates** and **styles** using CJS require's.
+ 
+ 1. You end up with a 100% modular application that can be easily optimized as needed.
 
-# Supported Languages & Features
+<a name="supported-languages"></a>
+## Supported Languages
 
- * For javascript:
-   1. CoffeeScript
-     <br/>✓ Literate Coffeescript
-     <br/>✖ ~~Source Maps~~ `todo`
-   1. *~~TypeScript~~* `todo`
-   1. *~~JavaScript~~* `todo`
- * Styles
-   1. Stylus
-   1. *~~Less~~* `todo`
-   1. *~~CSS~~* `todo`
- * Templates
-   1. Jade
-   1. *~~Handlebars~~* `todo`
-   1. *~~HTML~~* `todo`
+Some of them is yet ~~to be done~~.
 
-# How it works
+### Javascript
+ 1. CoffeeScript
+   > ✓ Literate Coffeescript
+   <br/>✓ Source Maps
+ 1. *~~TypeScript~~*
+ 1. *~~LiveScript~~*
+ 1. *~~Pure Javascript~~*
+ 1. *continues..*
 
-  1. You code using CJS signature for `scripts`, or plain schemes using the syntax provided by your pre-compiled language of choice regarding `templates` and `styles`.
-  
-  1. Polvo will compile everything to *`.js`* files as AMD modules, including your styles.
-  
-You can require `scripts`, `templates` and `styles` modularly in the same fashion way, no matter what.
+### Styles
+ 1. Stylus
+ 	> ✓ `nib` available
+ 1. *~~Less~~*
+ 1. *~~Pure CSS~~*
+ 1. *continues..*
 
-## Goals
+### Templates
+ 1. Jade
+ 1. *~~Handlebars~~*
+ 1. *~~Pure HTML~~*
+ 1. *continues..*
 
-The goal is to provide a confortable enviorment for using **any** pre-compiled language you want, ending up with a hundred percent modular application that can be optimized using *different approaches* [1].
+<a name="features"></a>
+## Features
+ * Watch'n'compile in `development` mode
+ * Optimization routines for `release` mode
+ * Live reload
+ * Live syntax-check
+ * Vendors management
+ * Source Maps *(`coffeescript` only)*
+ * Broken and circular-loop dependencies validation
+ * Growl support for notifications
+ * Minify support
+ * ~~Scaffolding routines~~
 
-By now the only one available is `merge`, that will merge everything into one single file or even inject the code buffer into a `script` tag whithin your `index.html` page -- *this will result in a single request per page*.
+<a name="examples"></a>
+## Examples
 
-* [1] *Other optimization approaches is under development.*
+There are no examples yet, but you can check the [tests](https://github.com/serpentem/polvo/tree/master/tests) provided for real example usages.
 
-# Examples
+<a name="history"></a>
+## History
 
-Check the [tests](https://github.com/serpentem/polvo/tree/master/tests) provided for real example usages.
-
-# History
-
-Polvo started as a natural evolution of [Coffee Toaster](http://github.com/serpentem/coffee-toaster) -- *CoffeeScript build system*.
-
-As Toaster became too specific, Polvo comes out be a more flexible build tool.
+> Polvo started as a natural evolution of [Coffee Toaster](http://github.com/serpentem/coffee-toaster) -- *a build system for CoffeeScript*. As Toaster became too specific about CoffeeScript, Polvo comes out to be a more inclusive build tool covering more languages around the same goal.
