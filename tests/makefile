@@ -24,16 +24,6 @@ setup:
 
 test:
 	@echo '**********************************************************************'
-	@echo Testing [browser-amd-layers]
+	@echo Testing [coffee-script-jade-stylus]
 	@echo '**********************************************************************'
-	@cd browser-amd-layers && make test
-
-	@echo '**********************************************************************'
-	@echo Testing [browser-amd-merge]
-	@echo '**********************************************************************'
-	@cd browser-amd-merge && make test
-
-	@echo '**********************************************************************'
-	@echo Testing [browser-none-merge]
-	@echo '**********************************************************************'
-	@cd browser-none-merge && make test
+	@cd coffee-script-jade-stylus && make test
