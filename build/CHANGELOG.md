@@ -1,8 +1,15 @@
 # Changelog
 
+## 0.2.1 - 04/12/2013
+ * Fixing lib version evaluation
+ * Removing options not yet ready
+ * Fixing memory leak with `source-map-support` for NodeJS
+
 ## 0.2.0 - 04/12/2013
  * Added Stylus support
  * Added Jade support
+ * Added SourceMaps support for CoffeeScript
+ * Added support for Literate CoffeeScript (files ending with `.coffee.md` and `.litcoffee`)
 
 ## 0.1.0 - 04/04/2013
 
