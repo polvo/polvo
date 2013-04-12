@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 Question = require './question'
 Config = require './config'
 

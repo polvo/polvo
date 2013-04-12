@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 jade = require 'jade'
 
 {log,debug,warn,error} = require './../utils/log-util'

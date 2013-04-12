@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 # requires
 fs = require "fs"
 fsu = require "fs-util"

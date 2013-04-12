@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 stylus = require 'stylus'
 nib = require 'nib'
 

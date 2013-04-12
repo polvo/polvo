@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 cs = require 'coffee-script'
 path = require 'path'
 {XRegExp} = require 'xregexp'

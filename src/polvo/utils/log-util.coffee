@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 # requirements
 os = require 'os'
 

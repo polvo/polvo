@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 path = require 'path'
 fs = require 'fs'
 util = require 'util'

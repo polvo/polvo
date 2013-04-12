@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 ObjectUtil = require '../utils/object_util'
 
 module.exports = class ArrayUtil
