@@ -24,6 +24,6 @@ setup:
 
 test:
 	@echo '**********************************************************************'
-	@echo Testing [coffee-script-jade-stylus]
+	@echo Testing [coffeescript-jade-stylus]
 	@echo '**********************************************************************'
-	@cd coffee-script-jade-stylus && make test
+	@cd coffeescript-jade-stylus && make test
