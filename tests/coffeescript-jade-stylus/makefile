@@ -15,7 +15,7 @@ polvo=../../bin/polvo
 # TARGETS ----------------------------------------------------------------------
 
 # starts watching'compiling project, serving it locally at http://localhost:3000
-dev:
+watch:
 	@$(polvo) -ws
 
 # optimize project for release
