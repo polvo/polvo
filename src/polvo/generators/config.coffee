@@ -10,27 +10,72 @@ module.exports = class Config extends Question
 
   # variables
   tpl: """
-# => SRC FOLDER
-toast '%src%'
+setup
 
-  # EXCLUDED FOLDERS (optional)
-  # exclude: ['folder/to/exclude', 'another/folder/to/exclude', ... ]
+  # ----------------------------------------------------------------------------
+  # SERVER
 
-  # => VENDORS (optional)
-  # vendors: ['vendors/x.js', 'vendors/y.js', ... ]
+  server:
+    root: 'www'
+    port: 3000
 
-  # => OPTIONS (optional, default values listed)
-  # bare: false
-  # packaging: true
-  # expose: ''
-  # minify: true
+  # ----------------------------------------------------------------------------
+  # FOLDERS
 
-  # => HTTPFOLDER (optional), RELEASE / DEBUG (required)
-  httpfolder: '%httpfolder%'
-  release: '%release%'
-  debug: '%debug%'
+  # source folders
+  sources: ['src']
+
+  # excluded folders (if informed, all others will be included)
+  exclude: []
+
+  # included folders (if informed, all others will be excluded)
+  include: []
+
+  # ----------------------------------------------------------------------------
+  # OUTPUT
+
+  # destination dir for everything
+  destination: 'www/js'
+
+  # main file to be included in your html, development and release files will
+  # have this name (inside destinaton folder)
+  index: 'app.js'
+
+  # ----------------------------------------------------------------------------
+  # AMD CONFIGS
+
+  # path to reach the `js` folder through http starting from `/`
+  base_url: 'js'
+
+  # main module to be loaded
+  main_module: 'boot'
+
+  # ----------------------------------------------------------------------------
+  # VENDORS
+
+  vendors:{}
+
+  # javascript:
+  #   jquery       : 'vendors/jquery.js'
+  #   vendor_a     : 'vendors/vendor_a.js'
+  #   vendor_b     : 'vendors/vendor_b.js'
+  #   mocha        : 'vendors/mocha.js'
+  #   chai         : 'vendors/chai.js'
+
+      # vendors that doesn't implements AMD
+      #incompatible : ['jquery', 'mocha', 'vendor_a', 'vendor_b']
+
+  # css:
+  #   'xyz':  'bla'
+
+  # ----------------------------------------------------------------------------
+  # OPTIMIZATION
+
+  optimize:
+    minify: false
+    merge: true
 """
-  
+
   constructor:(@basepath)->
 
 
@@ -53,7 +98,7 @@ toast '%src%'
     filepath = path.join @basepath, "polvo.coffee"
 
     rgx = /(\/)?((\w+)(\.*)(\w+$))/
-    parts = rgx.exec release 
+    parts = rgx.exec release
     filename = parts[2]
 
     if filename.indexOf(".") > 0
@@ -78,7 +123,7 @@ toast '%src%'
     else
       @save filepath, buffer
       process.exit()
-  
+
   save:(filepath, contents)->
     fs.writeFileSync filepath, contents
     log "#{'Created'.green.bold} #{filepath}"
