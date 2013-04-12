@@ -25,8 +25,8 @@ Some of them is yet ~~to be done~~.
 
 ### Javascript
  1. CoffeeScript
-   > ✓ Literate Coffeescript
-   <br/>✓ Source Maps
+   1. ✓ Literate Coffeescript
+   1. ✓ Source Maps
  1. *~~TypeScript~~*
  1. *~~LiveScript~~*
  1. *~~Pure Javascript~~*
@@ -34,7 +34,7 @@ Some of them is yet ~~to be done~~.
 
 ### Styles
  1. Stylus
- 	> ✓ `nib` available
+     1. ✓ `nib` available
  1. *~~Less~~*
  1. *~~Pure CSS~~*
  1. *continues..*
@@ -49,7 +49,7 @@ Some of them is yet ~~to be done~~.
 ## Features
  * Watch'n'compile in `development` mode
  * Optimization routines for `release` mode
- * Live reload
+ * ~~Live reload~~
  * Live syntax-check
  * Vendors management
  * Source Maps *(`coffeescript` only)*
