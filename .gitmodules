@@ -1,3 +1,0 @@
-[submodule "tests/theoricus-demo-app"]
-	path = tests/theoricus-demo-app
-	url = git@github.com:serpentem/theoricus-demo-app
