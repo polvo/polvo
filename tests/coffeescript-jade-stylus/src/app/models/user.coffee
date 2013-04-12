@@ -1,5 +1,4 @@
-AppModel = require 'app/app_model'
-
+AppModel = require 'app/models/app_model'
 
 
 # testing dependencies

@@ -1,5 +1,5 @@
-AppController = require 'app/app_controller'
-UserView = require 'app/views/user_view'
+AppController = require 'app/controllers/app_controller'
+UserView = require 'app/views/user'
 
 # testing dependencies
 describe 'Users (app/controllers/users.coffee)', ->

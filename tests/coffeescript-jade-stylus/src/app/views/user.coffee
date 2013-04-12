@@ -1,14 +1,14 @@
-AppView = require 'app/app_view'
+AppView = require 'app/views/app_view'
 
-template = require 'app/views/test'
-styles = require 'app/views/styles-test'
+Template = require 'templates/user'
+Styles = require 'styles/user'
 
 # testing dependencies
-describe 'UserView (app/views/user_view.coffee)', ->
+describe 'UserView (app/views/user.coffee)', ->
   it 'All depdendencies should have been loaded', ->
     should.exist AppView
-    should.exist template
-    should.exist styles
+    should.exist Template
+    should.exist Styles
 
 module.exports = class UserView extends AppView
 
