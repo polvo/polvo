@@ -49,7 +49,7 @@ module.exports = class Polvo
 
     # printing version
     if @cli.argv.v
-      filepath = path.join __dirname, "../../package.json"
+      filepath = path.join __dirname, "./../package.json"
       contents = fs.readFileSync filepath, "utf-8"
       schema = JSON.parse contents
       return log schema.version
