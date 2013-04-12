@@ -10,7 +10,7 @@ Polyvalent cephalopod mollusc.
 
 Polvo is an application assembler for the browser.
 
- 1.  You write code using CJS signature for `scripts` and plain schemes according the syntax provided by your pre-compiled language of choice for HTML `templates` and `styles`.
+ 1.  You write code using CJS signature for `scripts` and plain schemes according the syntax provided by your pre-compiled language of choice for *html*-`templates` and `styles`.
 
  1. Polvo will compile everything to *`.js`* files as AMD modules, *including your styles*.
 
