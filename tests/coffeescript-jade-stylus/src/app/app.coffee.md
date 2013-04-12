@@ -1,4 +1,4 @@
-Um monte de texto inútil!
+Some literate comments here just in order to test it.
 
   require 'jquery'
 
@@ -12,6 +12,7 @@ Um monte de texto inútil!
       should.exist Users
       should.exist User
 
+A little more here.
 
   # defining app
   module.exports = class App
@@ -24,3 +25,5 @@ Um monte de texto inútil!
 
       users = new Users
       users.render user_list
+
+And a final note here.
