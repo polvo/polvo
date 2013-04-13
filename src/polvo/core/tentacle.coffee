@@ -4,7 +4,7 @@ fsu = require 'fs-util'
 path = require 'path'
 cs = require "coffee-script"
 cp = require "child_process"
-conn = require 'connect'
+connect = require 'connect'
 util = require 'util'
 
 # utils
@@ -49,7 +49,7 @@ module.exports = class Tentacle
     port = @config.server.port
 
     # simple static server with 'connect'
-    @conn = (conn().use conn.static root ).listen port
+    @conn = connect().use(connect.static root).listen port
     address = 'http://localhost:' + port
     log 'Server running at ' + address.green
   
