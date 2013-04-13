@@ -4,6 +4,7 @@ jade = require 'jade'
 
 module.exports = class Jade
 
+  @TYPE = 'template'
   @EXT = /(\/)([^\/_]+)(\.jade)$/m
 
   AMD_WRAPPER = """

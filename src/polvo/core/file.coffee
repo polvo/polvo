@@ -15,6 +15,7 @@ module.exports = class File
   @COMPILERS = [Coffeescript, Jade, Stylus]
 
   id: null
+  type: null
   name: null
 
   absolute_path: null
@@ -28,6 +29,7 @@ module.exports = class File
 
   constructor:( @polvo, @cli, @config, @tentacle, @tree, @src_dir, @absolute_path )->
     @compiler = @_resolve_compiler()
+    @type = @compiler.TYPE
     do @refresh
     do @compile_to_str
 

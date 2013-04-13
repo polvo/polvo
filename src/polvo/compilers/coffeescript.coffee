@@ -6,6 +6,7 @@ path = require 'path'
 
 module.exports = class Coffeescript
 
+  @TYPE = 'javascript'
   @EXT = /\.(lit|coffee)(\.md)?$/m
 
   LITERATE = /\.(litcoffee|coffee\.md)$/m

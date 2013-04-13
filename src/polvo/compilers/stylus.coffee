@@ -5,6 +5,7 @@ nib = require 'nib'
 
 module.exports = class Stylus
 
+  @TYPE = 'style'
   @EXT = /(\/)([^\/_]+)(\.styl)$/m
 
   AMD_WRAPPER = """
