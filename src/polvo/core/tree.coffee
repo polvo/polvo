@@ -111,8 +111,8 @@ module.exports = class Tree
         log "[#{now}] #{msg} #{relative_path}".cyan
 
         # initiate file and adds it to the array
-        @files.push script = new Script @, dir, location
-        script.compile_to_disk @config
+        file = new File @polvo, @cli, @config, @tentacle, @, dir, location
+        do file.compile_to_disk
 
       # when a file is deleted
       when "delete"
