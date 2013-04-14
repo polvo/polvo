@@ -15,12 +15,13 @@ polvo=../bin/polvo
 
 # TARGETS ----------------------------------------------------------------------
 
-# install phantomjs
+# install phantomjs locally (but only if it's yet installed)
 setup:
-	curl -O $(phantom_url) && unzip $(phantom_zip)
-	rm -rf .phantomjs
-	mv $(phantom_name) .phantomjs
-	rm $(phantom_zip)
+	@if ! [ -d .phantomjs ]; \
+	then \
+		curl -O $(phantom_url) && unzip $(phantom_zip); \
+		mv $(phantom_name) .phantomjs && rm $(phantom_zip); \
+	fi
 
 test:
 	@echo '**********************************************************************'
