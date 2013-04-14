@@ -49,7 +49,7 @@ Some of them is yet ~~to be done~~.
 ## Features
  * Watch'n'compile in `development` mode
  * Optimization routines for `release` mode
- * ~~Live reload~~
+ * Live Reload when developing
  * Live syntax-check
  * Vendors management
  * Source Maps *(`coffeescript` only)*

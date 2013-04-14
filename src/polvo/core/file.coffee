@@ -96,6 +96,8 @@ module.exports = class File
       if src?
         fs.writeFileSync @out.absolute_src_path, src
 
+      @tentacle.notify_socket @
+
       # notify user through cli
       msg = '✓ Compiled'.bold
       log "[#{now}] #{msg} #{@out.relative_path}".green

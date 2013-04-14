@@ -6,6 +6,7 @@ cs = require "coffee-script"
 cp = require "child_process"
 connect = require 'connect'
 util = require 'util'
+io = require 'socket.io'
 
 # utils
 FnUtil = require './../utils/fn-util'
@@ -21,6 +22,7 @@ Optimizer = require './optimizer'
 
 module.exports = class Tentacle
 
+  socket: null
   trees: null
   optimizer: null
 
@@ -50,9 +52,21 @@ module.exports = class Tentacle
 
     # simple static server with 'connect'
     @conn = connect().use(connect.static root).listen port
+
+    # plugging socket io (only for development mode - excludes -r option)
+    unless @cli.argv.r
+      @socket = io.listen @conn
+      @socket.set 'log level', 1
+
     address = 'http://localhost:' + port
     log 'Server running at ' + address.green
   
+  notify_socket:( file )->
+    return unless @socket?
+    file_type = file.type
+    file_id = file.id
+    @socket.sockets.emit 'refresh', {file_type, file_id}
+
   clear_destination:->
     # clear release folder
     fsu.rm_rf @config.destination if fs.existsSync @config.destination
