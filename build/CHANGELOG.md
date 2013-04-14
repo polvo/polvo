@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.2 - 04/12/2013
+ * Adding LiveReload for development mode
+
 ## 0.2.1 - 04/12/2013
  * Fixing lib version evaluation
  * Removing options not yet ready
