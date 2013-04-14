@@ -43,7 +43,7 @@
     "fs-util": "0.3.x",
     "jade": "0.28.x",
     "nib": "0.9.x",
-    "optimist": "0.3.x",
+    "optimist": "0.4.x",
     "requirejs": "2.1.x",
     "socket.io": "0.9.x",
     "source-map-support": "0.1.x",
