@@ -2,15 +2,18 @@ CS=node_modules/coffee-script/bin/coffee
 VERSION=`$(CS) build/bumper.coffee --version`
 
 
-install: setup compile
-
+postinstall: setup.tests
+	npm install coffee-script
+	make compile
 
 
 setup:
-	@cd tests && make setup
-
-setup.dev:
 	npm link
+
+
+
+setup.tests:
+	@cd tests && make setup
 
 
 

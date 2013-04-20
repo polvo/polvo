@@ -16,7 +16,7 @@
   "main": "./src/polvo",
   "scripts": {
     "test": "make test",
-    "postinstall": "make install"
+    "postinstall": "make postinstall"
   },
 
   "dirs": {
