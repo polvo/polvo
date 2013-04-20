@@ -3,7 +3,9 @@ path = require 'path'
 
 filepath = path.join __dirname, "../package.json"
 json = JSON.parse (fs.readFileSync filepath, "utf-8")
+
 version = json.version
+cs_version = json.dependencies['coffee-script']
 
 [major,minor,patch] = version.split '.'
 
@@ -22,6 +24,9 @@ switch process.argv[2]
 		break
 	when '--version'
 		console.log version
+		process.exit()
+	when '--csversion'
+		console.log cs_version
 		process.exit()
 
 new_version = "#{major}.#{minor}.#{patch}"
