@@ -9,13 +9,14 @@ postinstall: setup.tests
 
 
 
-setup:
+setup: setup.tests
 	npm link
-
-
 
 setup.tests:
 	@cd tests && make setup
+
+test:
+	@cd tests && make test
 
 
 
@@ -24,11 +25,6 @@ watch:
 
 compile:
 	$(CS) -mco lib src
-
-
-
-test:
-	@cd tests && make test
 
 
 
