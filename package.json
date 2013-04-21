@@ -1,6 +1,6 @@
 {
   "name": "polvo",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
   "description": "Ambitious build system.",
 
@@ -41,7 +41,7 @@
     "colors": "0.6.x",
     "connect": "2.7.x",
     "fs-util": "0.3.x",
-    "jade": "0.28.x",
+    "jade": "0.29.x",
     "nib": "0.9.x",
     "optimist": "0.4.x",
     "requirejs": "2.1.x",
