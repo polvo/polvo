@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3 - 04/21/2013
+ * Fixing post-install script
+ * Improving builtin server for Single Page Applications
+
 ## 0.2.2 - 04/12/2013
  * Adding LiveReload for development mode
 
