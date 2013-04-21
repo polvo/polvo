@@ -49,9 +49,13 @@ module.exports = class Tentacle
   serve:->
     root = @config.server.root
     port = @config.server.port
+    index = path.join root, 'index.html'
 
     # simple static server with 'connect'
-    @conn = connect().use(connect.static root).listen port
+    @conn = connect()
+              .use( connect.static root )
+              .use( (req, res)-> res.end (fs.readFileSync index, 'utf-8') )
+              .listen port
 
     # plugging socket io (only for development mode - excludes -r option)
     unless @cli.argv.r
