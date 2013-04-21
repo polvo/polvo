@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.2.3 - 04/21/2013
+ * Upgrading jade dependency.
+
+## 0.2.3 - 04/21/2013
  * Fixing post-install script
  * Improving builtin server for Single Page Applications
 
