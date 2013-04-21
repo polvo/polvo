@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.3 - 04/21/2013
+## 0.2.4 - 04/21/2013
  * Upgrading jade dependency.
 
 ## 0.2.3 - 04/21/2013
