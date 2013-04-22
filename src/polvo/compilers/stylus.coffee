@@ -5,6 +5,7 @@ nib = require 'nib'
 
 module.exports = class Stylus
 
+  @NAME = 'stylus'
   @TYPE = 'style'
   @EXT = /(\/)([^\/_]+)(\.styl)$/m
 

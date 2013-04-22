@@ -4,6 +4,7 @@ jade = require 'jade'
 
 module.exports = class Jade
 
+  @NAME = 'jade'
   @TYPE = 'template'
   @EXT = /(\/)([^\/_]+)(\.jade)$/m
 
