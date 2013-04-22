@@ -22,7 +22,7 @@ watch:
 
 build:
 	echo $(PWD)
-	$(CS) -mco lib src
+	# $(CS) -mco lib src
 
 
 
