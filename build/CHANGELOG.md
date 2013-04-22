@@ -2,6 +2,7 @@
 
 ## 0.2.5 - 04/22/2013
  * Handing 404 links
+ * Automatically injecting helpers for the used compilers
 
 ## 0.2.4 - 04/21/2013
  * Upgrading jade dependency.

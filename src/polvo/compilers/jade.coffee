@@ -1,3 +1,5 @@
+path = require 'path'
+fs = require 'fs'
 jade = require 'jade'
 
 {log,debug,warn,error} = require './../utils/log-util'
@@ -26,6 +28,11 @@ module.exports = class Jade
     
     wrapped = AMD_WRAPPER.replace '~code', compiled.toString()
     after_compile wrapped
+
+  @fetch_helpers:->
+    filepath = path.join __dirname, '..', '..', '..', 'node_modules', 'jade'
+    filepath = path.join filepath, 'runtime.js'
+    fs.readFileSync filepath, 'utf-8'
 
   @translate_ext:( filepath )->
     return filepath.replace @EXT, '$1$2.js'

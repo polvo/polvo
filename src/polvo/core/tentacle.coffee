@@ -25,6 +25,7 @@ module.exports = class Tentacle
   socket: null
   trees: null
   optimizer: null
+  compilers: null
 
   conn: null
   watchers: null
@@ -40,11 +41,13 @@ module.exports = class Tentacle
     # starts serving static files
     setTimeout (=> @serve()), 1 if @cli.argv.s
 
+
   init:()->
-    @optimizer = new Optimizer @polvo, @cli, @config, @
+    @compilers = {}
     @trees = []
-    # for src of @config.sources
     @trees.push (new Tree @polvo, @cli, @config, @)
+    @optimizer = new Optimizer @polvo, @cli, @config, @
+
 
   serve:->
     root = @config.server.root
@@ -69,7 +72,11 @@ module.exports = class Tentacle
 
     address = 'http://localhost:' + port
     log 'Server running at ' + address.green
-  
+
+  use:( compiler )->
+    return if @compilers[compiler.NAME]?
+    @compilers[compiler.NAME] = compiler
+
   notify_socket:( file )->
     return unless @socket?
     file_type = file.type

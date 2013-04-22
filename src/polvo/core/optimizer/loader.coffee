@@ -32,7 +32,7 @@ module.exports = class Loader
 
     loader += """\n\n
       /*************************************************************************
-       * Automatic configuration by Polvo.
+       * POLVO - Automatic RJS configuration >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       *************************************************************************/
 
       require.config({
@@ -42,7 +42,7 @@ module.exports = class Loader
       require( ['#{@config.main_module}'] );
 
       /*************************************************************************
-       * Automatic configuration by Polvo.
+       * <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< POLVO - Automatic configuration
       *************************************************************************/
     """
 
@@ -55,13 +55,36 @@ module.exports = class Loader
     fs.writeFileSync release_path, loader
 
   get_amd_loader:->
+
+    # fetching compiler's helpers before anything else
+    helpers = ''
+    for name, compiler of @tentacle.compilers
+      if compiler.fetch_helpers
+        helpers += '\n\n// ~~ ' + name
+        helpers += do compiler.fetch_helpers
+
+    # fetches rjs loader
     rjs_path = path.join @node_modules, 'requirejs', 'require.js'
-    fs.readFileSync rjs_path, 'utf-8'
+    rjs = fs.readFileSync rjs_path, 'utf-8'
+
+    # merges and return everything
+    initializer = """\n\n
+      /*************************************************************************
+       * POLVO - Compiler's Helpers >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      *************************************************************************/
+      #{helpers}
+
+
+      /*************************************************************************
+       * <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< POLVO - Compiler's Helpers
+      *************************************************************************/
+      #{rjs}
+    """
 
   get_socketio:->
     initializer = """\n\n
       /*************************************************************************
-       * Socket Initializer for LiveReload by Polvo.
+       * >>>>>>>>>>>>>>>>>>>>>>>>>>>>> POLVO - Socket Initializer for LiveReload
       *************************************************************************/
 
       var refresher = io.connect("http://localhost");
@@ -76,7 +99,7 @@ module.exports = class Loader
       });
 
       /*************************************************************************
-       * Socket Initializer for LiveReload by Polvo.
+       * <<<<<<<<<<<<<<<<<<<<<<<<<<<<< POLVO - Socket Initializer for LiveReload
       *************************************************************************/
     """
 
@@ -85,3 +108,6 @@ module.exports = class Loader
     
     io = fs.readFileSync io_path, 'utf-8'
     io += "\n\n\n#{initializer}\n\n\n"
+
+  get_compilers_helpers:->
+    initializer = ""

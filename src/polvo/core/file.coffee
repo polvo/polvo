@@ -30,6 +30,8 @@ module.exports = class File
   constructor:( @polvo, @cli, @config, @tentacle, @tree, @src_dir, @absolute_path )->
     @compiler = @_resolve_compiler()
     @type = @compiler.TYPE
+    @tentacle.use @compiler
+
     do @refresh
     do @compile_to_str
 
