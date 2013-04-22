@@ -54,8 +54,13 @@ module.exports = class Tentacle
     # simple static server with 'connect'
     @conn = connect()
               .use( connect.static root )
-              .use( (req, res)-> res.end (fs.readFileSync index, 'utf-8') )
-              .listen port
+              .use( (req, res)->
+                if ~(req.url.indexOf '.')
+                  res.statusCode = 404
+                  res.end 'File not found: ' + req.url
+                else
+                  res.end (fs.readFileSync index, 'utf-8')
+              ).listen port
 
     # plugging socket io (only for development mode - excludes -r option)
     unless @cli.argv.r

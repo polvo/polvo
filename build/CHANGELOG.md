@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.5 - 04/22/2013
+ * Handing 404 links
+
 ## 0.2.4 - 04/21/2013
  * Upgrading jade dependency.
 
