@@ -16,7 +16,7 @@
   "main": "./src/polvo",
   "scripts": {
     "test": "make test",
-    "postinstall": "node build/postinstall.js"
+    "postinstall": "coffee -mco lib src"
   },
 
   "dirs": {
