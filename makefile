@@ -21,8 +21,8 @@ watch:
 	$(CS) -wmco lib src
 
 build:
-	echo $(PWD)
-	# $(CS) -mco lib src
+	# echo $(PWD)
+	coffee -mco lib src
 
 
 
