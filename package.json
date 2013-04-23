@@ -16,7 +16,7 @@
   "main": "./src/polvo",
   "scripts": {
     "test": "make test",
-    "prepublish": "make prepublish"
+    "postinstall": "node build/postinstall.js"
   },
 
   "dirs": {

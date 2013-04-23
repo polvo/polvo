@@ -2,17 +2,11 @@ CS=node_modules/coffee-script/bin/coffee
 VERSION=`$(CS) build/bumper.coffee --version`
 
 
-# called only by NPM
-prepublish: setup.tests
-	make build CS=coffee
 
-
-
-setup: setup.tests
+setup:
 	npm link
-
-setup.tests:
 	@cd tests && make setup
+
 
 test:
 	@cd tests && make test
