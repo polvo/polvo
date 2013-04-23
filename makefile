@@ -2,7 +2,9 @@ CS=node_modules/coffee-script/bin/coffee
 VERSION=`$(CS) build/bumper.coffee --version`
 
 
-postinstall: setup.tests build
+# called only by NPM
+prepublish: setup.tests
+	make build CS=coffee
 
 
 
@@ -21,8 +23,7 @@ watch:
 	$(CS) -wmco lib src
 
 build:
-	# echo $(PWD)
-	coffee -mco lib src
+	$(CS) -mco lib src
 
 
 
