@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.6 - 04/23/2013
+ * Fixing postinstall routine (works corss-platform)
+
 ## 0.2.5 - 04/22/2013
  * Handing 404 links
  * Automatically injecting helpers for the used compilers
