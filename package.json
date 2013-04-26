@@ -14,9 +14,9 @@
   ],
 
   "main": "./src/polvo",
+
   "scripts": {
-    "test": "make test",
-    "postinstall": "coffee -mco lib src"
+    "test": "make test"
   },
 
   "dirs": {
