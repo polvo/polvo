@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.7 - 04/26/2013
+ * Removing postinstall routine in favor of greater compatibility.
+
 ## 0.2.6 - 04/23/2013
  * Fixing postinstall routine (works corss-platform)
 
