@@ -40,7 +40,6 @@ module.exports = class Coffeescript
 
     if literate
       # strip out literate comments
-      indented = true
       contents = clean.replace /^[^\s]+.+$/mg, ''
     else
       # reindent code
@@ -97,4 +96,4 @@ module.exports = class Coffeescript
         identation = "  "
 
     # and reident content (will be wrapped by AMD closures)
-    indented = code.replace /^/mg, "#{identation}"
+    return code.replace /^/mg, "#{identation}"
