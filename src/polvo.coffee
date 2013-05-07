@@ -19,6 +19,7 @@ module.exports = class Polvo
   @skip_initial_compile = false
 
   polvo_base: null
+  config: null
   tentacles: null
 
   # variable - before filter container
@@ -74,17 +75,17 @@ module.exports = class Polvo
     else
       return log @cli.opts.help()
 
-  init:( compile_at_startup )->
-    @tentacless = []
-    @tentacles = new Config @ #, @options, @skip_initial_compile
-    for conf in @tentacles.confs
-      @tentacless.push new Tentacle @, @cli, conf
+  init:->
+    @tentacles = []
+    @config = new Config @ #, @options, @skip_initial_compile
+    for conf in @config.confs
+      @tentacles.push new Tentacle @, @cli, conf
 
   # can be called by apps using polvo as lib, and compile the project with
   # options to inject header and footer code which must to be in coffee as well
   # and will be compiled together the app.
   compile:( header_code = "", footer_code = "" )->
-    for tentacle in @tentacless
+    for tentacle in @tentacles
       if @cli.argv.c? or @cli.argv.w?
         tentacle.compile header_code, footer_code
       else if @cli.argv.r
@@ -93,7 +94,7 @@ module.exports = class Polvo
   # resets the polvo completely - specially used when the `polvo.coffee`
   # config file is edited :)
   reset:( options )->
-    config.reset() for config in @tentacless
+    config.reset() for config in @config
     @options[ key ] = val for val, key of options if options?
     @init true
     @compile()
