@@ -48,7 +48,7 @@
     "socket.io": "0.9.x",
     "source-map-support": "0.1.x",
     "stylus": "0.32.x",
-    "uglify-js": "2.2.x",
+    "uglify-js": "2.3.x",
     "xregexp": "2.0.0"
   },
 
@@ -60,6 +60,6 @@
     "mocha-phantomjs": "2.0.x",
     "mocha": "1.9.x",
     "should": "1.2.x",
-    "chai": "1.5.x"
+    "chai": "1.6.x"
   }
 }
