@@ -61,7 +61,7 @@ module.exports = class Stylus
         files = files.concat tree.files
 
     # loop through them
-    has_import_reg = /^[^\/]*@import\s/m
+    has_import_reg = /(?!\/\/)@import\s/m
 
     for f in files
 
@@ -75,7 +75,7 @@ module.exports = class Stylus
       continue unless has_import_reg.test f.raw
 
       # loop through all found imports on file
-      all_import_reg = /[^\/]*(?:@import\s(?:"|'))(.+)(?:"|')/gm
+      all_import_reg = /(?!\/\/)@import\s+(?:"|')(\S+)(?:"|')/g
       while (match = all_import_reg.exec f.raw)?
 
         # translate paths (relative -> absolute)
