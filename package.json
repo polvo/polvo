@@ -20,7 +20,7 @@
   },
 
   "dirs": {
-    "polvo": "src/polvo"
+    "polvo": "lib/"
   },
 
   "repository": {
