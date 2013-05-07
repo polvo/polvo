@@ -46,7 +46,7 @@ module.exports = class Tree
 
   compile_files_to_disk:->
     for file in @files
-      file.compile_to_disk @config
+      do file.compile_to_disk
 
   watch:()->
     # initialize watchers array
@@ -145,5 +145,5 @@ module.exports = class Tree
           if is_vendor
             @tentacle.optimizer.copy_vendors_to_release false, location
           else
-            file.item.refresh()
-            file.item.compile_to_disk @config
+            do file.item.refresh
+            file.item.compile_to_disk true
