@@ -28,6 +28,9 @@ module.exports = class File
   baseclasses: null
 
   constructor:( @polvo, @cli, @config, @tentacle, @tree, @src_dir, @absolute_path )->
+
+    Coffeescript.POLVO = Jade.POLVO = Stylus.POLVO = @polvo
+
     @compiler = @_resolve_compiler()
     @type = @compiler.TYPE
     @tentacle.use @compiler
@@ -68,15 +71,15 @@ module.exports = class File
     @out.relative_path = @out.absolute_path.replace @config.destination, ''
     @out.relative_path = @out.relative_path.replace /^\//m, ''
 
-
-  compile_to_str:( after_compile, exclude_anonymous_requires )->
+  compile_to_str:( after_compile, exclude_anonymous_reqs, compile_dependents )->
     @compiler.compile @, ( js, map, src )=>
-      js = @inject_dependencies js, exclude_anonymous_requires
-      if exclude_anonymous_requires
-        js = @exclude_anonymous_requires js
+      js = @inject_dependencies js, exclude_anonymous_reqs
+      if exclude_anonymous_reqs
+        js = @exclude_anonymous_reqs js
       after_compile?(js, map, src)
+    , compile_dependents
 
-  compile_to_disk:->
+  compile_to_disk:( compile_dependents )->
     # datetime for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
@@ -103,6 +106,7 @@ module.exports = class File
       # notify user through cli
       msg = '✓ Compiled'.bold
       log "[#{now}] #{msg} #{@out.relative_path}".green
+    , null, compile_dependents
 
   extract_dependencies:( js_code )->
     @dependencies = []
@@ -125,14 +129,14 @@ module.exports = class File
       else
         @dependencies.splice @dependencies_diff_head++, 0, dep
 
-  inject_dependencies:( js_code, exclude_anonymous_requires = false )->
+  inject_dependencies:( js_code, exclude_anonymous_reqs = false )->
 
     @extract_dependencies js_code
 
     if @dependencies.length
       paths = []
       for dep in @dependencies
-        if exclude_anonymous_requires and dep.incompatible
+        if exclude_anonymous_reqs and dep.incompatible
           continue
         else
           paths.push dep.id
@@ -145,7 +149,7 @@ module.exports = class File
     
     js_code.replace search, replace
 
-  exclude_anonymous_requires:( code )->
+  exclude_anonymous_reqs:( code )->
     reg = /(^\s*require.+$)/mg
     code.replace reg, "/* $1 */"
 
