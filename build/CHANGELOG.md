@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.8 - 05/07/2013
+ * Properly handling partials (files starting with '_') for Stylus and Jade.
+ * Upgrading 'chai' and 'uglify-js' dependencies.
+
 ## 0.2.7 - 04/26/2013
  * Removing postinstall routine in favor of greater compatibility.
 
@@ -32,7 +36,6 @@
  * Added support for Literate CoffeeScript (files ending with `.coffee.md` and `.litcoffee`)
 
 ## 0.1.0 - 04/04/2013
-
  * Complete port of Coffee-Toaster to Polvo.
 
 
