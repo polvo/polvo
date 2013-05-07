@@ -90,7 +90,7 @@ module.exports = class Stylus
           do import_dir_parts.shift
           do parent_dir_parts.pop
 
-        abs_path = [
+        abs_path = path.normalize [
           parent_dir_parts.join '/'
           import_dir_parts.join '/'
           import_file
