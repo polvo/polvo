@@ -90,10 +90,14 @@ module.exports = class Loader
       var refresher = io.connect("http://localhost");
       refresher.on("refresh", function(data)
       {
+        var el;
+
         if(data.file_type == 'javascript')
           return location.reload();
         
         // forcing reload of style        
+        el = document.getElementById( data.file_id );
+        el.parentNode.removeChild( el );
         require.undef( data.file_id );
         require([data.file_id]);
       });
