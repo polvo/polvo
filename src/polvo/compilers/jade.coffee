@@ -62,9 +62,6 @@ module.exports = class Jade
 
     for f in files
 
-      # ignores files that starts with '_'
-      continue if /^_/m.test f.name
-
       # ignores also files that has different types
       continue if f.type isnt @TYPE
 
@@ -95,4 +92,10 @@ module.exports = class Jade
 
         # compile current file (f) if it depends on changed file (file)
         if "#{abs_path}.jade" is file.absolute_path
-          do f.compile_to_disk
+
+          # if file in question is another partial, recursively walk it up
+          # compiling everything from backwards passing compile_dependents=true,
+          # otherwise if file isn't another partial (starting with '_', just
+          # compiles it normally passing compile_dependents=false
+          compile_dependents = /^_/m.test f.name
+          f.compile_to_disk compile_dependents
