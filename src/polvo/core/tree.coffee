@@ -112,16 +112,17 @@ module.exports = class Tree
 
         # initiate file and adds it to the array
         file = new File @polvo, @cli, @config, @tentacle, @, dir, location
+        @files.push file
         do file.compile_to_disk
 
       # when a file is deleted
       when "delete"
 
         # removes files from array
-        file = ArrayUtil.find @files, 'relative_path': relative_path
+        file = ArrayUtil.find @files, {relative_path}
         return if file is null
 
-        file.item.delete_from_disk()
+        do file.item.delete_from_disk
         @files.splice file.index, 1
 
         # cli msg
@@ -131,7 +132,7 @@ module.exports = class Tree
       # when a file is updated
       when "change"
         # updates file information
-        file = ArrayUtil.find @files, 'relative_path': relative_path
+        file = ArrayUtil.find @files, {relative_path}
 
         if file is null and is_vendor is false
           warn "Change file is apparently null, it shouldn't happened.\n"+
