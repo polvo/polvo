@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.2 - 05/08/2013
+ * Fixing stupid engine version error in 'package.json'
+
 ## 0.3.1 - 05/08/2013
  * Fixing CSS live reload, removing the element first instead of just adding
  the changed one
