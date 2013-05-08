@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9 - 05/08/2013
+ * Fixing handling of newly created files
+ * Adding properly handling for deleted files
+
 ## 0.2.8 - 05/07/2013
  * Properly handling partials (files starting with '_') for Stylus and Jade.
  * Upgrading 'chai' and 'uglify-js' dependencies.
