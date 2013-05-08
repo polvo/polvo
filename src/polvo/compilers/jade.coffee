@@ -58,7 +58,7 @@ module.exports = class Jade
         files = files.concat tree.files
 
     # loop through them
-    has_import_reg = /(?!\/\/)include\s/
+    has_import_reg = /^(?!\/\/)include\s/m
 
     for f in files
 
@@ -72,7 +72,7 @@ module.exports = class Jade
       continue unless has_import_reg.test f.raw
 
       # loop through all found imports on file
-      all_import_reg = /(?!\/\/)include\s+(\S+)/g
+      all_import_reg = /^(?!\/\/)include\s+(\S+)/mg
       while (match = all_import_reg.exec f.raw)?
 
         # translate paths (relative -> absolute)
