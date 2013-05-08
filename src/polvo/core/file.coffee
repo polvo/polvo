@@ -79,6 +79,19 @@ module.exports = class File
       after_compile?(js, map, src)
     , compile_dependents
 
+  delete_from_disk:->
+    # js
+    if fs.existsSync @out.absolute_path
+      fs.unlinkSync @out.absolute_path
+
+    # src file (coffee uses it)
+    if fs.existsSync @out.absolute_src_path
+      fs.unlinkSync @out.absolute_src_path
+
+    # source maps (coffee uses it)
+    if fs.existsSync @out.absolute_map_path
+      fs.unlinkSync @out.absolute_src_path
+
   compile_to_disk:( compile_dependents )->
     # datetime for CLI notifications
     now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
