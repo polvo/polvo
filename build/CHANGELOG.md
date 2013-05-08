@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.0 - 05/08/2013
+ * Handling partials dependency chain recursively.
+
 ## 0.2.9 - 05/08/2013
  * Fixing handling of newly created files
  * Adding properly handling for deleted files
