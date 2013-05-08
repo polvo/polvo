@@ -58,10 +58,7 @@ module.exports = class File
     @out.absolute_src_path = path.join @config.destination, @relative_path
 
     if @compiler.translate_map_ext?
-      # console.log '--------' + @out.absolute_path
-      # console.log 'js path - ' + 
       @out.absolute_map_path = @compiler.translate_map_ext @out.absolute_src_path
-      # console.log 'map path - ' + @out.absolute_map_path
 
     # changing extension for absolute path
     @out.absolute_path = @compiler.translate_ext @out.absolute_src_path
