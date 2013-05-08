@@ -87,7 +87,7 @@ module.exports = class File
 
     # source maps (coffee uses it)
     if fs.existsSync @out.absolute_map_path
-      fs.unlinkSync @out.absolute_src_path
+      fs.unlinkSync @out.absolute_map_path
 
   compile_to_disk:( compile_dependents )->
     # datetime for CLI notifications
