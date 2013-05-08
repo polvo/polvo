@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 05/08/2013
+ * Fixing CSS live reload, removing the element first instead of just adding
+ the changed one
+
 ## 0.3.0 - 05/08/2013
  * Handling partials dependency chain recursively.
 
