@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.3 - 05/15/2013
+ * Fixing livereload approach for templates [[merging #4](https://github.com/serpentem/polvo/pull/4)]
+
 ## 0.3.2 - 05/08/2013
  * Fixing stupid engine version error in 'package.json'
 
