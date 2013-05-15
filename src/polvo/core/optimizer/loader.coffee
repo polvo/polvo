@@ -90,11 +90,13 @@ module.exports = class Loader
       var refresher = io.connect("http://localhost");
       refresher.on("refresh", function(data)
       {
+        var el;
+
+        // refresh approach for javascript and templates
         if(data.file_type == 'javascript' || data.file_type == 'template' )
           return location.reload();
        
-        var el;
-      
+        // refresh approach for styles
         if(data.file_type == 'style') {
           el = document.getElementById( data.file_id );
           el.parentNode.removeChild( el );
