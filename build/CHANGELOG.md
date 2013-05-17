@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.4 - 05/17/2013
+ * Dumb hotfix, publishing compiled file as src maps for `core/optimizer/loader`
+
 ## 0.3.3 - 05/15/2013
  * Fixing livereload approach for templates [[merging #4](https://github.com/serpentem/polvo/pull/4)]
 
