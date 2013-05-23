@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.6 - 05/23/2013
+ * Fixing optimization routine for apps using multiple languages
+
 ## 0.3.5 - 05/23/2013
  * Fixing live reload to work across any machine or device viewing the app
 
