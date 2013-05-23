@@ -35,6 +35,9 @@ module.exports = class File
     @type = @compiler.TYPE
     @tentacle.use @compiler
 
+    @dependencies = []
+    @baseclasses = []
+
     do @refresh
     do @compile_to_str
 
