@@ -87,7 +87,8 @@ module.exports = class Loader
        * >>>>>>>>>>>>>>>>>>>>>>>>>>>>> POLVO - Socket Initializer for LiveReload
       *************************************************************************/
 
-      var refresher = io.connect("http://localhost");
+      var host = window.location.protocol + '//' + window.location.hostname;
+      var refresher = io.connect( host );
       refresher.on("refresh", function(data)
       {
         var el;
