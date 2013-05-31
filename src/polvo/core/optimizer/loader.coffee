@@ -88,7 +88,7 @@ module.exports = class Loader
       *************************************************************************/
 
       var host = window.location.protocol + '//' + window.location.hostname;
-      var refresher = io.connect( host );
+      var refresher = io.connect( host, {port: 53211} );
       refresher.on("refresh", function(data)
       {
         var el;
