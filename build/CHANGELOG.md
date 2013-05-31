@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.7 - 05/31/2013
+ * Detaching socket.io from polvo server in order to provide livereload across
+ different applications running in different servers (rails for instance, etc)
+
 ## 0.3.6 - 05/23/2013
  * Fixing optimization routine for apps using multiple languages
 
