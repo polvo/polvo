@@ -60,7 +60,7 @@ module.exports = class Loader
     helpers = ''
     for name, compiler of @tentacle.compilers
       if compiler.fetch_helpers
-        helpers += '\n\n// ~~ ' + name
+        helpers += '\n\n// ~~ ' + name + '\n'
         helpers += do compiler.fetch_helpers
 
     # fetches rjs loader
