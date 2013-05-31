@@ -41,7 +41,7 @@
     "colors": "0.6.x",
     "connect": "2.7.x",
     "fs-util": "0.3.x",
-    "jade": "0.30.x",
+    "jade": "0.31.x",
     "nib": "0.9.x",
     "optimist": "0.5.x",
     "requirejs": "2.1.x",
