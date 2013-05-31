@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.8 - 05/31/2013
+ * Fixing helpers merging routine with a simple line break (how did this never
+ broken anything till now? oh my..)
+
 ## 0.3.7 - 05/31/2013
  * Detaching socket.io from polvo server in order to provide livereload across
  different applications running in different servers (rails for instance, etc)
