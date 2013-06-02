@@ -85,18 +85,18 @@ module.exports = class Coffeescript
     return filepath.replace @EXT, '.map'
 
   @reindent:( code )->
-    # detect file identation style..
-    match_identation = /^(\s+).*$/mg
-    identation = ''
-    while not (identation.match /^[ \t]{2,}/m)?
-      identation = (match_identation.exec code)
-      if identation?
-        identation = identation[1]
+    # detect file indentation style..
+    match_indentation = /^(\s+).*$/mg
+    indentation = ''
+    while not (indentation.match /^[ \t]{2,}/m)?
+      indentation = (match_indentation.exec code)
+      if indentation?
+        indentation = indentation[1]
       else
-        identation = "  "
+        indentation = "  "
 
     # removing any new line
-    identation = identation.replace /[\r\n]/g, ''
+    indentation = indentation.replace /[\r\n]/g, ''
 
     # and reident content (will be wrapped by AMD closures)
-    return code.replace /^/mg, "#{identation}"
+    return code.replace /^/mg, "#{indentation}"
