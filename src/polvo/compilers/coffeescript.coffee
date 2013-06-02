@@ -95,5 +95,8 @@ module.exports = class Coffeescript
       else
         identation = "  "
 
+    # removing any new line
+    identation = identation.replace /[\r\n]/g, ''
+
     # and reident content (will be wrapped by AMD closures)
     return code.replace /^/mg, "#{identation}"
