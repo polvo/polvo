@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.9 - 06/02/2013
+ * Fixing indentation / apply of coffeescript files during compile.
+
 ## 0.3.8 - 05/31/2013
  * Fixing helpers merging routine with a simple line break (how did this never
  broken anything till now? oh my..)
