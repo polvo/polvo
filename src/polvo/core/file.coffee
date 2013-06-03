@@ -3,6 +3,8 @@ fs = require 'fs'
 fsu = require 'fs-util'
 
 Coffeescript = require './../compilers/coffeescript'
+Javascript = require './../compilers/javascript'
+
 Jade = require './../compilers/jade'
 Stylus = require './../compilers/stylus'
 
@@ -11,8 +13,19 @@ Stylus = require './../compilers/stylus'
 
 module.exports = class File
 
-  @EXTENSIONS = [Coffeescript.EXT, Jade.EXT, Stylus.EXT]
-  @COMPILERS = [Coffeescript, Jade, Stylus]
+  @EXTENSIONS = [
+    Coffeescript.EXT
+    Javascript.EXT
+    Jade.EXT
+    Stylus.EXT
+  ]
+
+  @COMPILERS = [
+    Coffeescript,
+    Javascript,
+    Jade,
+    Stylus
+  ]
 
   id: null
   type: null
@@ -29,7 +42,10 @@ module.exports = class File
 
   constructor:( @polvo, @cli, @config, @tentacle, @tree, @src_dir, @absolute_path )->
 
-    Coffeescript.POLVO = Jade.POLVO = Stylus.POLVO = @polvo
+    Coffeescript.POLVO =
+    Javascript.POLVO =
+    Jade.POLVO =
+    Stylus.POLVO = @polvo
 
     @compiler = @_resolve_compiler()
     @type = @compiler.TYPE
