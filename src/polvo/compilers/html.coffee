@@ -81,7 +81,10 @@ module.exports = class Html
         ].join '/'
 
         # compile current file (f) if it depends on changed file (file)
-        if "#{abs_path}.styl" is file.absolute_path
+        cond1 = "#{abs_path}.html" is file.absolute_path
+        cond2 = "#{abs_path}.htm" is file.absolute_path
+
+        if cond1 or cond2
           
           # if file in question is another partial, recursively walk it up
           # compiling everything from backwards passing compile_dependents=true,
