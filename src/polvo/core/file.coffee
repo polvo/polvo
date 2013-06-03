@@ -9,6 +9,7 @@ Jade = require './../compilers/jade'
 Html = require './../compilers/html'
 
 Stylus = require './../compilers/stylus'
+Style = require './../compilers/style'
 
 
 {log,debug,warn,error} = require './../utils/log-util'
@@ -24,16 +25,18 @@ module.exports = class File
     Html.EXT
 
     Stylus.EXT
+    Style.EXT
   ]
 
   @COMPILERS = [
-    Coffeescript,
-    Javascript,
+    Coffeescript
+    Javascript
 
-    Jade,
-    Html,
+    Jade
+    Html
 
     Stylus
+    Style
   ]
 
   id: null
