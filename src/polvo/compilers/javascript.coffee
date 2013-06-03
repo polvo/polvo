@@ -1,10 +1,9 @@
-cs = require 'coffee-script'
 path = require 'path'
 {XRegExp} = require 'xregexp'
 
 {log,debug,warn,error} = require './../utils/log-util'
 
-module.exports = class Coffeescript
+module.exports = class javascript
 
   @NAME = 'javascript'
   @TYPE = 'javascript'
