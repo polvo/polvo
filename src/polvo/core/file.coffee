@@ -6,7 +6,10 @@ Coffeescript = require './../compilers/coffeescript'
 Javascript = require './../compilers/javascript'
 
 Jade = require './../compilers/jade'
+Html = require './../compilers/html'
+
 Stylus = require './../compilers/stylus'
+
 
 {log,debug,warn,error} = require './../utils/log-util'
 
@@ -16,14 +19,20 @@ module.exports = class File
   @EXTENSIONS = [
     Coffeescript.EXT
     Javascript.EXT
+
     Jade.EXT
+    Html.EXT
+
     Stylus.EXT
   ]
 
   @COMPILERS = [
     Coffeescript,
     Javascript,
+
     Jade,
+    Html,
+
     Stylus
   ]
 
@@ -44,7 +53,10 @@ module.exports = class File
 
     Coffeescript.POLVO =
     Javascript.POLVO =
+
     Jade.POLVO =
+    Html.POLVO =
+
     Stylus.POLVO = @polvo
 
     @compiler = @_resolve_compiler()
