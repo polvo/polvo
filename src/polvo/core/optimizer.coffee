@@ -4,7 +4,6 @@ util = require 'util'
 
 fsu = require 'fs-util'
 
-ArrayUtil = require '../utils/array-util'
 FnUtil = require '../utils/fn-util'
 ArrayUtil = require '../utils/array-util'
 StringUtil = require '../utils/string-util'
