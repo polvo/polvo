@@ -199,7 +199,7 @@ module.exports = class Optimizer
           # the specific dependency and run reorder recursively
           # until everything is beautiful
           else
-            files.splice index, 0, dependency.item
+            files.splice file_index, 0, dependency.item
             files.splice dependency.index + 1, 1
             @reorder files, true
             break
