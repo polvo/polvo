@@ -156,7 +156,7 @@ module.exports = class Optimizer
       @missing = {}
 
     # looping through all files
-    for file, i in files
+    for file, file_index in files
 
       # if theres no dependencies, go to next file
       if !file.dependencies.length && !file.baseclasses.length
@@ -176,7 +176,8 @@ module.exports = class Optimizer
         dependency_index = dependency.index if dependency?
 
         # continue if the dependency was already initialized
-        continue if dependency_index < i && dependency?
+        if dependency_index < file_index && dependency?
+          continue
 
         # if it's found
         if dependency?
