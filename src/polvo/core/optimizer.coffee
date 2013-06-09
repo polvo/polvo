@@ -169,9 +169,6 @@ module.exports = class Optimizer
 
         id = dep.id
 
-        # skip vendors
-        continue if dep.vendor
-
         # search for dependency
         dependency = ArrayUtil.find files, 'id': id
         dependency_index = dependency.index if dependency?
