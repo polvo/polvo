@@ -149,23 +149,25 @@ module.exports = class Optimizer
   missing = {}
   reorder: (files, cycling = false) ->
 
-    # if cycling is true or @missing is null, initializes empty array
-    # for holding missing dependencies
-    # 
-    # cycling means the reorder method is being called recursively,
-    # no other methods call it with cycling = true
-    @missing = {} if cycling is false
+    # if cycling is true initializes empty array to keep missing dependencies
+    # cycling=true means the reorder method is being called recursively,
+    # no other methods call it with cycling=true
+    if cycling is false
+      @missing = {}
 
     # looping through all files
     for file, i in files
 
       # if theres no dependencies, go to next file
-      continue if !file.dependencies.length && !file.baseclasses.length
-      
+      if !file.dependencies.length && !file.baseclasses.length
+        continue
+
       # otherwise loop thourgh all file dependencies
       for dep, index in file.dependencies
 
-        continue if dep.vendor
+        # skip vendors
+        if dep.vendor
+          continue
 
         id = dep.id
 
