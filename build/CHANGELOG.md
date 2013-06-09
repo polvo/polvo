@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.10 - 06/09/2013
+ * Fixing critical error in `Optimizer.reorder` (don't know how things were
+ working before, ask God)
+ * Cleaning up a bunch of things in Optimizar
+
 ## 0.3.9 - 06/02/2013
  * Fixing indentation / apply of coffeescript files during compile.
 
