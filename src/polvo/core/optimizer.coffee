@@ -148,7 +148,6 @@ module.exports = class Optimizer
 
   missing = {}
   reorder: (files, cycling = false) ->
-    # log "Module.reorder"
 
     # if cycling is true or @missing is null, initializes empty array
     # for holding missing dependencies
@@ -161,10 +160,6 @@ module.exports = class Optimizer
     for file, i in files
 
       # if theres no dependencies, go to next file
-      # console.log '...'
-      # console.log file.id
-      # console.log file.dependencies
-      # console.log file.baseclasses
       continue if !file.dependencies.length && !file.baseclasses.length
       
       # otherwise loop thourgh all file dependencies
