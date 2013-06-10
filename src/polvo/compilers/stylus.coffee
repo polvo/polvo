@@ -14,13 +14,26 @@ module.exports = class Stylus
   AMD_WRAPPER = """
   // Compiled by Polvo, using Stylus
   define(['require', 'exports', 'module'], function(require, exports, module){
-    var style = module.exports = document.createElement('style');
+
     var head = document.getElementsByTagName('head')[0];
+    var style = module.exports = document.createElement('style');
+    var content = '~css'
 
-    style.id = '~id';
-    style.appendChild(document.createTextNode('~css'));
+    style.setAttribute('id', '~id');
+    style.setAttribute('type', 'text/css');
+
+    // MODERN BROWSERS?
+    try
+    { 
+      style.appendChild(document.createTextNode(content));
+
+    // IE8? (weird things happens without this on IEs)
+    } catch( e )
+    {
+      style.styleSheet.cssText = content; // IE8
+    }
+
     head.insertBefore(style, head.lastChild);
-
     return style;
   });"""
 
