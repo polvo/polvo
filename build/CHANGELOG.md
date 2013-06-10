@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.11 - 06/10/2013
+ * Adding approach for creating and applying dynamic styles tags in IE8
+
 ## 0.3.10 - 06/09/2013
  * Fixing critical error in `Optimizer.reorder` (don't know how things were
  working before, ask God)
