@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.12 - 06/18/2013
+ * Adding almond to the party, using it instead of standard requirejs for
+ optimized builds (saving some kbs)
+
 ## 0.3.11 - 06/10/2013
  * Adding approach for creating and applying dynamic styles tags in IE8
 
