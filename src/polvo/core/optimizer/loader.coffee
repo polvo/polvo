@@ -23,8 +23,8 @@ module.exports = class Loader
     # all the necessary configs and a hash map containing the layer location
     # for each module that was merged into it.
 
-    loader = @get_socketio()
-    loader += @get_amd_loader()
+    loader = do @get_socketio
+    loader += do @get_amd_loader
 
     if paths?
       paths = (util.inspect paths).replace /\s/g, ''
@@ -54,7 +54,7 @@ module.exports = class Loader
 
     fs.writeFileSync release_path, loader
 
-  get_amd_loader:->
+  get_amd_loader:( release_mode )->
 
     # fetching compiler's helpers before anything else
     helpers = ''
@@ -63,9 +63,17 @@ module.exports = class Loader
         helpers += '\n\n// ~~ ' + name + '\n'
         helpers += do compiler.fetch_helpers
 
-    # fetches rjs loader
-    rjs_path = path.join @node_modules, 'requirejs', 'require.js'
-    rjs = fs.readFileSync rjs_path, 'utf-8'
+    # if release_mode is true, will use almond
+    if release_mode
+      # fetches almond loader
+      rjs_path = path.join @node_modules, 'almond', 'almond.js'
+      rjs = fs.readFileSync rjs_path, 'utf-8'
+
+    # otherwise will use default require js, tough its a development version
+    else
+      # fetches rjs loader
+      rjs_path = path.join @node_modules, 'requirejs', 'require.js'
+      rjs = fs.readFileSync rjs_path, 'utf-8'
 
     # merges and return everything
     initializer = """\n\n

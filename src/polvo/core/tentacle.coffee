@@ -93,8 +93,7 @@ module.exports = class Tentacle
     for tree in @trees
       do tree.compile_files_to_disk
 
-    do @optimizer.copy_vendors_to_release
-    do @optimizer.write_amd_loader
+    @optimizer.write_amd_loader false
 
   watch:->
     do tree.watch for tree in @trees

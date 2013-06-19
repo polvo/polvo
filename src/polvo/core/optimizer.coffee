@@ -26,10 +26,11 @@ module.exports = class Optimizer
     @vendors_js = new VendorsJS @polvo, @cli, @config, @tentacle, @
 
   copy_vendors_to_release:( all, specific, log_time )->
-    @vendors_paths = @vendors_js.copy_to_release all, specific, log_time
+    @vendors_js.copy_to_release all, specific, log_time
 
-  write_amd_loader:->
-    @loader.write_amd_loader @vendors_paths
+  write_amd_loader:( release_mode )->
+    paths = do @copy_vendors_to_release
+    @loader.write_amd_loader paths, release_mode
 
   optimize:->
     # if merge is set, optimization will just merge everything
@@ -124,7 +125,7 @@ module.exports = class Optimizer
     console.log 'Merging files..'.grey
 
     buffer = "//---------------------------------------- amd loader\n\n\n"
-    buffer += @loader.get_amd_loader()
+    buffer += @loader.get_amd_loader true
 
     buffer += "//---------------------------------------- vendors\n\n\n"
     buffer += @vendors_js.merge_to_str() + '\n\n'

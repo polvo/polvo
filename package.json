@@ -2,7 +2,7 @@
   "name": "polvo",
   "version": "0.3.11",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
-  "description": "Ambitious build system.",
+  "description": "Polyvalent cephalopod mollusc. (aka Ambitious app assember)",
 
   "keywords": [
     "build",
@@ -37,6 +37,7 @@
   },
 
   "dependencies": {
+    "almond": "0.2.x",
     "coffee-script": "1.6.x",
     "colors": "0.6.x",
     "connect": "2.7.x",
