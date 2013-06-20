@@ -72,6 +72,9 @@ module.exports = class Tentacle
     address = 'http://localhost:' + port
     log 'Server running at '.cyan + address
 
+    if process.send
+      process.send channel: null, msg: 'server.started'
+
   use:( compiler )->
     return if @compilers[compiler.NAME]?
     @compilers[compiler.NAME] = compiler
