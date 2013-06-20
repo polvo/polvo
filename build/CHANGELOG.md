@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.14 - 06/20/2013
+ * Fixing dumb rush-written code (aka adding method params)
+ * Adding `status.compiled` notification for parent processes
+
 ## 0.3.13 - 06/20/2013
  * Cleaning up all log messages
  * Handling `console.*` differently when running as a forked process
