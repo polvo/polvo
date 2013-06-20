@@ -122,7 +122,7 @@ module.exports = class Optimizer
 
 
   merge_everything:->
-    console.log 'Merging files..'.grey
+    log 'Merging files..'.grey
 
     buffer = "//---------------------------------------- amd loader\n\n\n"
     buffer += @loader.get_amd_loader true
@@ -137,7 +137,7 @@ module.exports = class Optimizer
     buffer += "require( ['#{@config.main_module}'] );"
 
     if @config.optimize?.minify
-      console.log 'Minifying..'.grey
+      log 'Minifying..'.grey
       buffer = MinifyUtil.min buffer
 
     location = path.join @config.destination, @config.index
