@@ -9,13 +9,13 @@ icon_warn = __dirname + '/../images/warning.png'
 icon_error = __dirname + '/../images/error.png'
 
 
-log_to_stdout = ->
+log_to_stdout = ( msg ) ->
   if process.send
     process.send channel: 'stdout', msg: msg
   else
     console.log msg
 
-log_to_stderr = ->
+log_to_stderr = ( msg )->
   if process.send
     process.send channel: 'stderr', msg: msg
   else
