@@ -9,21 +9,28 @@ icon_warn = __dirname + '/../images/warning.png'
 icon_error = __dirname + '/../images/error.png'
 
 
+log_to_stdout = ->
+  if process.send
+    process.send channel: 'stdout', msg: msg
+  else
+    console.log msg
+
+log_to_stderr = ->
+  if process.send
+    process.send channel: 'stderr', msg: msg
+  else
+    console.error msg
+
 
 # LOGGING METHODS
 exports.log = ( msg, send_to_growl = false ) ->
   msg = "#{msg.white}"
-  console.log msg
-  return msg
-
-exports.debug = ( msg, send_to_growl = false ) ->
-  msg = "#{'DEBUG'.bold} #{msg}".magenta
-  console.debug msg
+  log_to_stdout msg
   return msg
 
 exports.error = ( msg, send_to_growl = true, file = null ) ->
   msg = "#{'ERROR'.bold} #{msg}".red
-  console.error msg
+  log_to_stderr msg
 
   if send_to_growl && growl?
 
@@ -44,7 +51,7 @@ exports.error = ( msg, send_to_growl = true, file = null ) ->
 
 exports.warn = ( msg, send_to_growl = true ) ->
   msg = "#{'WARNING'.bold} #{msg}".yellow
-  console.warn msg
+  log_to_stderr msg
 
   if send_to_growl && growl?
 
