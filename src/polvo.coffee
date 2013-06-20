@@ -91,6 +91,9 @@ module.exports = class Polvo
       else if @cli.argv.r
         tentacle.optimize header_code, footer_code
 
+    if process.send
+      process.send channel: null, msg: 'status.compiled'
+
   # resets the polvo completely - specially used when the `polvo.coffee`
   # config file is edited :)
   reset:( options )->
