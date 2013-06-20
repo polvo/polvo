@@ -51,12 +51,6 @@ module.exports = class VendorsJS
       from = from.substr 1 if from[0] is path.sep
       to = to.substr 1 if to[0] is path.sep
 
-      # date for CLI notifications
-      now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-
-      msg = if log_time then "[#{now}] " else ""
-      msg += "#{'✓ Vendor copied: '.bold}#{from} -> #{to}"
-
-      log msg.green
+      log "✓ #{to}".green
 
     return paths

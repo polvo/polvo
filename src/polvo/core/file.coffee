@@ -93,8 +93,6 @@ module.exports = class File
       fs.unlinkSync @out.absolute_map_path
 
   compile_to_disk:( compile_dependents )->
-    # datetime for CLI notifications
-    now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
 
     # get compiled file
     @compile_to_str (js, src_map, src)=>
@@ -117,8 +115,7 @@ module.exports = class File
       @tentacle.notify_socket @
 
       # notify user through cli
-      msg = '✓ Compiled'.bold
-      log "[#{now}] #{msg} #{@out.relative_path}".green
+      log "✓ #{@out.relative_path}".green
     , null, compile_dependents
 
   extract_dependencies:( js_code )->
