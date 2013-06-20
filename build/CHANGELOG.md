@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.13 - 06/20/2013
+ * Cleaning up all log messages
+ * Handling `console.*` differently when running as a forked process
+ * Adding notifications when running as forked process, to provide useful info
+ to parent processes
+
 ## 0.3.12 - 06/18/2013
  * Adding almond to the party, using it instead of standard requirejs for
  optimized builds (saving some kbs)
