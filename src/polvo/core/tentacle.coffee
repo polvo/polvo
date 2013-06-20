@@ -70,7 +70,7 @@ module.exports = class Tentacle
       @socket = io.listen 53211, {'log level': 0}
 
     address = 'http://localhost:' + port
-    log 'Server running at ' + address.green
+    log 'Server running at '.cyan + address
 
   use:( compiler )->
     return if @compilers[compiler.NAME]?
