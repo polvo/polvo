@@ -67,8 +67,7 @@ module.exports = class Tentacle
 
     # plugging socket io (only for development mode - excludes -r option)
     unless @cli.argv.r
-      @socket = io.listen 53211
-      @socket.set 'log level', 1
+      @socket = io.listen 53211, {'log level': 0}
 
     address = 'http://localhost:' + port
     log 'Server running at ' + address.green
