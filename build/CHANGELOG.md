@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.15 - 06/30/2013
+ * Addiong `stdio` flag, useful for libraries forking `polvo` as a child process
+
 ## 0.3.14 - 06/20/2013
  * Fixing dumb rush-written code (aka adding method params)
  * Adding `status.compiled` notification for parent processes
