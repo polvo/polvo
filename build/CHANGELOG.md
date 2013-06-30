@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.16 - 06/30/2013
+* Upgrading outdated dependencies
+
 ## 0.3.15 - 06/30/2013
  * Addiong `stdio` flag, useful for libraries forking `polvo` as a child process
 

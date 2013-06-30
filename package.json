@@ -1,6 +1,6 @@
 {
   "name": "polvo",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
   "description": "Polyvalent cephalopod mollusc. (aka Ambitious app assember)",
 
@@ -40,15 +40,15 @@
     "almond": "0.2.x",
     "coffee-script": "1.6.x",
     "colors": "0.6.x",
-    "connect": "2.7.x",
+    "connect": "2.8.x",
     "fs-util": "0.3.x",
-    "jade": "0.31.x",
+    "jade": "0.32.x",
     "nib": "0.9.x",
-    "optimist": "0.5.x",
+    "optimist": "0.6.x",
     "requirejs": "2.1.x",
     "socket.io": "0.9.x",
     "source-map-support": "0.1.x",
-    "stylus": "0.32.x",
+    "stylus": "0.33.x",
     "uglify-js": "2.3.x",
     "xregexp": "2.0.0"
   },
