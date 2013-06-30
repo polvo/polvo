@@ -39,8 +39,8 @@ module.exports = class Cli
       .alias('s', 'server')
       .describe('s', "Serves project statically, options in config file.")
 
-      # .alias('a', 'autorun')
-      # .describe('a', 'Execute the script in node.js after compilation.')
+      .describe('stdio', 'Pipe stdio when forking `polvo` as a chikld process.')
+      .boolean( 'stdio' )
 
       .alias('j', 'config')
       .string( 'j' )

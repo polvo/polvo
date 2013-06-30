@@ -34,7 +34,8 @@ module.exports = class Polvo
 
     @basepath = path.resolve( basedir || "." )
 
-    @cli = new Cli options
+    global.cli = @cli = new Cli options
+    # console.log '::: ', global.cli
 
     # increments basepath if some path is given for args -n, -i, -c, -w, -r
     # just one of these could have a path, so only the first found will be

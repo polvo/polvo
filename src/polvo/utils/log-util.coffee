@@ -10,13 +10,13 @@ icon_error = __dirname + '/../images/error.png'
 
 
 log_to_stdout = ( msg ) ->
-  if process.send
+  if process.send and not global.cli.argv.stdio
     process.send channel: 'stdout', msg: msg
   else
     console.log msg
 
 log_to_stderr = ( msg )->
-  if process.send
+  if process.send and not global.cli.argv.stidio
     process.send channel: 'stderr', msg: msg
   else
     console.error msg
