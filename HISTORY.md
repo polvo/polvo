@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.17 - 07/01/2013
+* Simplifying whole test structure, updating testing libraries, fixing
+everything, green sign
+
 ## 0.3.16 - 06/30/2013
 * Upgrading outdated dependencies
 
