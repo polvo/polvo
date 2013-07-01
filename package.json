@@ -58,8 +58,8 @@
   },
 
   "devDependencies": {
-    "mocha-phantomjs": "2.0.x",
-    "mocha": "1.8.x",
+    "mocha-phantomjs": "3.0.x",
+    "mocha": "1.9.x",
     "should": "1.2.x",
     "chai": "1.6.x"
   }
