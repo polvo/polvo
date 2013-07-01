@@ -1,15 +1,11 @@
 CS=node_modules/coffee-script/bin/coffee
 VERSION=`$(CS) build/bumper.coffee --version`
-
-
+MOCHA_PHAMTOM=node_modules/mocha-phantomjs/bin/mocha-phantomjs
+POLVO=bin/polvo
 
 setup:
 	npm link
 	@cd tests && make setup
-
-
-test:
-	@cd tests && make test
 
 
 
@@ -19,6 +15,27 @@ watch:
 build:
 	$(CS) -mco lib src
 
+
+
+test: test.dev test.release
+
+
+test.dev:
+	@echo ''
+	@echo '★  testing `development` version'
+	@echo ''
+	@$(POLVO) -c tests
+	@echo ''
+	@$(MOCHA_PHAMTOM) tests/www/index.html
+
+# testing release version
+test.release:
+	@echo ''
+	@echo '★  testing `release` version'
+	@echo ''
+	@$(POLVO) -r tests
+	@echo ''
+	@$(MOCHA_PHAMTOM) tests/www/index.html
 
 
 bump.minor:
