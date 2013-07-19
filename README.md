@@ -24,25 +24,29 @@ Polvo is an application assembler for the browser.
 Some of them is yet ~~to be done~~.
 
 ### Javascript
+ 1. Pure Javascript
  1. CoffeeScript
-   1. ✓ Literate Coffeescript
-   1. ✓ Source Maps
+    1. ✓ Literate Coffeescript
+    1. ✓ Source Maps
  1. *~~TypeScript~~*
  1. *~~LiveScript~~*
- 1. *~~Pure Javascript~~*
  1. *continues..*
 
 ### Styles
+ 1. Pure CSS
  1. Stylus
      1. ✓ `nib` available
  1. *~~Less~~*
- 1. *~~Pure CSS~~*
+ 1. *~~SASS~~*
  1. *continues..*
 
 ### Templates
+ 1. Pure HTML
+    1. ✓ `partials` supported
  1. Jade
+    1. ✓ `partials` supported
  1. *~~Handlebars~~*
- 1. *~~Pure HTML~~*
+ 1. *~~Eco~~*
  1. *continues..*
 
 <a name="features"></a>
