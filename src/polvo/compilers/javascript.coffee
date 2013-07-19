@@ -14,10 +14,10 @@ module.exports = class javascript
     Assembled by Polvo
   */
   ~global_code
-  define( ['require', 'exports', 'module'], function(require, exports, module)
+  define(['require', 'exports', 'module'], function(require, exports, module)
   {
   ~code
-  })
+  });
   """
 
   @compile:( file, after_compile )->
@@ -41,7 +41,7 @@ module.exports = class javascript
     after_compile contents
 
   @translate_ext:( filepath )->
-    return filepath.replace @EXT, '.js'
+    return filepath
 
   @strip_ext:( filepath )->
     return filepath.replace @EXT, ''
