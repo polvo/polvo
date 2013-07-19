@@ -13,7 +13,7 @@ module.exports = class Jade
   AMD_WRAPPER = """
   // Compiled by Polvo, using Jade
   define(['require', 'exports', 'module'], function(require, exports, module){
-    return exports.module = ~code
+    module.exports = ~code
   });"""
 
   @compile:( file, after_compile, compile_dependents )->

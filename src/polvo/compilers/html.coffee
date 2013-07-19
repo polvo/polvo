@@ -13,7 +13,7 @@ module.exports = class Html
   // Assembed by Polvo
   define(['require', 'exports', 'module'], function(require, exports, module)
   {
-    return exports.module = function()
+    module.exports = function()
     {
       return "~code";
     }
