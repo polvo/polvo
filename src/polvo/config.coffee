@@ -48,9 +48,8 @@ module.exports = class Config
       
       watcher = fsu.watch filepath
       watcher.on 'change', (f)=>
-        now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
         filepath = filepath.replace @polvo.basepath, ''
-        log "[#{now}] #{'Changed'.bold} #{filepath}".cyan
+        log "#{'Changed'.bold} #{filepath}".cyan
         log "~> Reloading Polvo.".bold
         watcher.close()
         @polvo.reset()

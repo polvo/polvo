@@ -97,9 +97,6 @@ module.exports = class Tree
     relative_path = location.replace dir, ''
     relative_path = (relative_path.substr 1) if relative_path[0] is path.sep
 
-    # date for CLI notifications
-    now = ("#{new Date}".match /[0-9]{2}\:[0-9]{2}\:[0-9]{2}/)[0]
-
     # switch over created, deleted, updated and watching
     switch ev
 
@@ -108,7 +105,7 @@ module.exports = class Tree
 
         # cli filepath
         msg = "+ #{type} created".bold
-        log "[#{now}] #{msg} #{relative_path}".cyan
+        log "#{msg} #{relative_path}".cyan
 
         # initiate file and adds it to the array
         file = new File @polvo, @cli, @config, @tentacle, @, dir, location
@@ -127,7 +124,7 @@ module.exports = class Tree
 
         # cli msg
         msg = "- #{type} deleted".bold
-        log "[#{now}] #{msg} #{relative_path}".red
+        log "#{msg} #{relative_path}".red
 
       # when a file is updated
       when "change"
@@ -141,7 +138,7 @@ module.exports = class Tree
 
           # cli msg
           msg = "• #{type} changed".bold
-          log "[#{now}] #{msg} #{relative_path}".cyan
+          log "#{msg} #{relative_path}".cyan
 
           if is_vendor
             @tentacle.optimizer.copy_vendors_to_release false, location

@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.3.17 - 07/01/2013
+* Simplifying whole test structure, updating testing libraries, fixing
+everything, green sign
+
+## 0.3.16 - 06/30/2013
+* Upgrading outdated dependencies
+
+## 0.3.15 - 06/30/2013
+ * Addiong `stdio` flag, useful for libraries forking `polvo` as a child process
+
+## 0.3.14 - 06/20/2013
+ * Fixing dumb rush-written code (aka adding method params)
+ * Adding `status.compiled` notification for parent processes
+
+## 0.3.13 - 06/20/2013
+ * Cleaning up all log messages
+ * Handling `console.*` differently when running as a forked process
+ * Adding notifications when running as forked process, to provide useful info
+ to parent processes
+
+## 0.3.12 - 06/18/2013
+ * Adding almond to the party, using it instead of standard requirejs for
+ optimized builds (saving some kbs)
+
+## 0.3.11 - 06/10/2013
+ * Adding approach for creating and applying dynamic styles tags in IE8
+
+## 0.3.10 - 06/09/2013
+ * Fixing critical error in `Optimizer.reorder` (don't know how things were
+ working before, ask God)
+ * Cleaning up a bunch of things in Optimizar
+
 ## 0.3.9 - 06/02/2013
  * Fixing indentation / apply of coffeescript files during compile.
 

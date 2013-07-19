@@ -56,22 +56,24 @@ module.exports = class Tentacle
 
     # simple static server with 'connect'
     @conn = connect()
-              .use( connect.static root )
-              .use( (req, res)->
-                if ~(req.url.indexOf '.')
-                  res.statusCode = 404
-                  res.end 'File not found: ' + req.url
-                else
-                  res.end (fs.readFileSync index, 'utf-8')
-              ).listen port
+      .use( connect.static root )
+      .use( (req, res)->
+        if ~(req.url.indexOf '.')
+          res.statusCode = 404
+          res.end 'File not found: ' + req.url
+        else
+          res.end (fs.readFileSync index, 'utf-8')
+      ).listen port
 
     # plugging socket io (only for development mode - excludes -r option)
     unless @cli.argv.r
-      @socket = io.listen 53211
-      @socket.set 'log level', 1
+      @socket = io.listen 53211, {'log level': 0}
 
     address = 'http://localhost:' + port
-    log 'Server running at ' + address.green
+    log 'Server running at '.cyan + address
+
+    if process.send
+      process.send channel: null, msg: 'server.started'
 
   use:( compiler )->
     return if @compilers[compiler.NAME]?
@@ -93,8 +95,7 @@ module.exports = class Tentacle
     for tree in @trees
       do tree.compile_files_to_disk
 
-    do @optimizer.copy_vendors_to_release
-    do @optimizer.write_amd_loader
+    @optimizer.write_amd_loader false
 
   watch:->
     do tree.watch for tree in @trees

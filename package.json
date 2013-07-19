@@ -1,8 +1,8 @@
 {
   "name": "polvo",
-  "version": "0.3.9",
+  "version": "0.3.17",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
-  "description": "Ambitious build system.",
+  "description": "Polyvalent cephalopod mollusc. (aka Ambitious app assember)",
 
   "keywords": [
     "build",
@@ -37,17 +37,18 @@
   },
 
   "dependencies": {
+    "almond": "0.2.x",
     "coffee-script": "1.6.x",
     "colors": "0.6.x",
-    "connect": "2.7.x",
+    "connect": "2.8.x",
     "fs-util": "0.3.x",
-    "jade": "0.31.x",
+    "jade": "0.32.x",
     "nib": "0.9.x",
-    "optimist": "0.5.x",
+    "optimist": "0.6.x",
     "requirejs": "2.1.x",
     "socket.io": "0.9.x",
     "source-map-support": "0.1.x",
-    "stylus": "0.32.x",
+    "stylus": "0.33.x",
     "uglify-js": "2.3.x",
     "xregexp": "2.0.0"
   },
@@ -57,8 +58,8 @@
   },
 
   "devDependencies": {
-    "mocha-phantomjs": "2.0.x",
-    "mocha": "1.8.x",
+    "mocha-phantomjs": "3.0.x",
+    "mocha": "1.9.x",
     "should": "1.2.x",
     "chai": "1.6.x"
   }
