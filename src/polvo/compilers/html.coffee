@@ -13,7 +13,10 @@ module.exports = class Html
   // Assembed by Polvo
   define(['require', 'exports', 'module'], function(require, exports, module)
   {
-    return exports.module = "~code";
+    return exports.module = function()
+    {
+      return "~code";
+    }
   });"""
 
   @compile:( file, after_compile, compile_dependents )->
@@ -29,8 +32,10 @@ module.exports = class Html
     contents = file.raw.replace /\n/g, ' \\\n'
 
     include = /^\s*(?!<\!--)<include\s+src=(?:"|')([^"']+)(?:"|')\s*\/>/gm
+    template = (contents.replace include, '')
+    template = template.replace /"/g, '\\"'
 
-    wrapped = AMD_WRAPPER.replace '~code', (contents.replace include, '')
+    wrapped = AMD_WRAPPER.replace '~code', template
     after_compile wrapped
 
   @translate_ext:( filepath )->
