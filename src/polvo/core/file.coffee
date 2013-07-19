@@ -70,7 +70,6 @@ module.exports = class File
     @baseclasses = []
 
     do @refresh
-    do @compile_to_str
 
   refresh:->
     @raw = fs.readFileSync @absolute_path, "utf-8"
