@@ -18,7 +18,7 @@ module.exports = class Styles
     var head = document.getElementsByTagName('head')[0];
 
     style.id = '~id';
-    style.appendChild(document.createTextNode('~css'));
+    style.appendChild(document.createTextNode("~css"));
     head.insertBefore(style, head.lastChild);
 
     return style;
@@ -40,11 +40,12 @@ module.exports = class Styles
     reg = /^\s*(?!\/\/)\@import\s+url\s*\((?:'|")([^"']+)(?:'|")\s*\);?/mg
     clean = file.raw.replace reg, ''
 
-    # remove line breaks
+    # remove line breaks and escapes double quotes
     clean = clean.replace /\n|\r/g, ''
+    style = clean.replace /"/g, '\\"'
 
     # wraps everything
-    wrapped = AMD_WRAPPER.replace '~css', clean
+    wrapped = AMD_WRAPPER.replace '~css', style
     wrapped = wrapped.replace /~id/g, file.id
 
     # move forward
