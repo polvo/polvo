@@ -1,11 +1,14 @@
 # Changelog
 
+## 0.4.0 - 07/19/2013
+ * Adding support for pure CSS, HTML and JS files
+
 ## 0.3.17 - 07/01/2013
-* Simplifying whole test structure, updating testing libraries, fixing
+ * Simplifying whole test structure, updating testing libraries, fixing
 everything, green sign
 
 ## 0.3.16 - 06/30/2013
-* Upgrading outdated dependencies
+ * Upgrading outdated dependencies
 
 ## 0.3.15 - 06/30/2013
  * Addiong `stdio` flag, useful for libraries forking `polvo` as a child process
