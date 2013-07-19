@@ -6,7 +6,7 @@ Polyvalent cephalopod mollusc.
 
 [![Stories in Ready](http://badge.waffle.io/serpentem/polvo.png)](http://waffle.io/serpentem/polvo) [![Build Status](https://secure.travis-ci.org/serpentem/polvo.png)](http://travis-ci.org/serpentem/polvo) [![Dependency Status](https://gemnasium.com/serpentem/polvo.png)](https://gemnasium.com/serpentem/polvo)
 
-# What the bbbb?
+# What the ★★★★?
 
 Polvo is an application assembler for the browser.
 
@@ -26,8 +26,8 @@ Some of them is yet ~~to be done~~.
 ### Javascript
  1. Pure Javascript
  1. CoffeeScript
-    1. b Literate Coffeescript
-    1. b Source Maps
+    1. ✓ Literate Coffeescript
+    1. ✓ Source Maps
  1. *~~TypeScript~~*
  1. *~~LiveScript~~*
  1. *continues..*
@@ -35,16 +35,16 @@ Some of them is yet ~~to be done~~.
 ### Styles
  1. Pure CSS
  1. Stylus
-     1. b `nib` available
+     1. ✓ `nib` available
  1. *~~Less~~*
  1. *~~SASS~~*
  1. *continues..*
 
 ### Templates
  1. Pure HTML
-    1. b `partials` supported
+    1. ✓ `partials` supported
  1. Jade
-    1. b `partials` supported
+    1. ✓ `partials` supported
  1. *~~Handlebars~~*
  1. *~~Eco~~*
  1. *continues..*
