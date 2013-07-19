@@ -55,7 +55,11 @@ module.exports = class Stylus
       .render (err, css)=>
         return error err if err?
 
-        wrapped = AMD_WRAPPER.replace '~css', (css.replace /\n|\r/g, '')
+        # remove line breaks and escapes double quotes
+        clean = css.replace /\n|\r/g, ''
+        style = clean.replace /"/g, '\\"'
+
+        wrapped = AMD_WRAPPER.replace '~css', style
         wrapped = wrapped.replace /~id/g, file.id
         after_compile wrapped
 
