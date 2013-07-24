@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1 - 07/24/2013
+ * Fixing regex to find partial's dependents for `stylus` and `jade`
+
 ## 0.4.0 - 07/19/2013
  * Adding support for pure CSS, HTML and JS files
 
