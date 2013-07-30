@@ -1,4 +1,8 @@
-0.4.2 / 2013-07-24
+0.4.3 / 2013-07-30
+===================
+ * Fixing regexp to match only exact `require(...)` calls
+
+0.4.2 / 2013-07-29
 ===================
  * Upgrading dependencies
  * Applying gemnasium conventions to `History.md` file
