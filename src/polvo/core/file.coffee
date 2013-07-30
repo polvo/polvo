@@ -190,7 +190,7 @@ module.exports = class File
     js_code.replace search, replace
 
   exclude_anonymous_reqs:( code )->
-    reg = /(^\s*require.+$)/mg
+    reg = /(^\s*require\s*\(.+$)/mg
     code.replace reg, "/* $1 */"
 
   _resolve_compiler:->
