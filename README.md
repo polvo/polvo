@@ -4,9 +4,7 @@ Polyvalent cephalopod mollusc.
 
 [![Stories in Ready](http://badge.waffle.io/serpentem/polvo.png)](http://waffle.io/serpentem/polvo)
 
-> Version 0.4.2
-
-[![Build Status](https://secure.travis-ci.org/serpentem/polvo.png)](http://travis-ci.org/serpentem/polvo) [![Dependency Status](https://gemnasium.com/serpentem/polvo.png)](https://gemnasium.com/serpentem/polvo)
+[![Build Status](https://secure.travis-ci.org/serpentem/polvo.png)](http://travis-ci.org/serpentem/polvo) [![Dependency Status](https://gemnasium.com/serpentem/polvo.png)](https://gemnasium.com/serpentem/polvo) [![NPM version](https://badge.fury.io/js/polvo.png)](http://badge.fury.io/js/polvo)
 
 # What the ★★★★?
 
