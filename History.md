@@ -1,3 +1,7 @@
+0.4.2 / 2013-07-24
+===================
+ * Upgrading dependencies
+ * Applying gemnasium conventions to `History.md` file
 
 0.4.1 / 2013-07-24
 ===================
