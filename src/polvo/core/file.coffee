@@ -173,13 +173,15 @@ module.exports = class File
 
     @extract_dependencies js_code
 
+    paths = []
     if @dependencies.length
-      paths = []
       for dep in @dependencies
         if exclude_anonymous_reqs and dep.incompatible
           continue
         else
           paths.push dep.id
+
+    if paths.length
       paths = ", '#{paths.join "', '"}'"
     else
       paths = ''
