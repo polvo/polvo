@@ -1,3 +1,8 @@
+0.4.4 / 2013-08-07
+===================
+ * Fixing optimization routine to properly handle cases when one single dep is
+ required, and this dep is not in AMD format (very specific case)
+
 0.4.3 / 2013-07-30
 ===================
  * Fixing regexp to match only exact `require(...)` calls
