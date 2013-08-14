@@ -1,4 +1,4 @@
-require 'js-yaml'
+yml = require 'js-yaml'
 path = require 'path'
 dirs = require './dirs'
 

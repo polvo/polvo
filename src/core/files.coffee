@@ -55,12 +55,6 @@ module.exports = new class Files
 
     return if type == "dir" and action == "create"
 
-    # include = true
-    # include &= !(new RegExp( item ).test location) for item in @config.exclude
-    # return unless include
-
-    # type = StringUtil.titleize f.type
-
     switch action
 
       when "create"
@@ -92,8 +86,5 @@ module.exports = new class Files
           msg = "• #{type} changed".bold
           console.log "#{msg} #{location}".cyan
 
-        # if vendor
-        #   @tentacle.optimizer.copy_vendors_to_release false, location
-        # else
-        file.refresh()
+        file.refresh() if not vendor
         compiler.build()
