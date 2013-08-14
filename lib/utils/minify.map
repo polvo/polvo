@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "minify.js",
+  "sourceRoot": "../..",
+  "sources": [
+    "src/utils/minify.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;CAAA,KAAA;;CAAA,CAAA,CAAS,GAAT,CAAS,IAAA;;CAAT,CAEA,CAAa,IAAN,EAAQ,GAAF;CACX,OAAA,aAAA;CAAA,EAAA,CAAA,CAAM,CAAM,MAAN;CAAN,EACS,CAAT,EAAA,MAAS;CADT,EAEG,CAAH,CAAA,CAAA;CACkB,EAAP,GAAM,EAAjB,GAAA;CANF,EAEa;;CAFb,CAQA,CAAA,IAAO,EAAS,GAAF;CAAA,UACZ;CATF,EAQc;CARd"
+}
