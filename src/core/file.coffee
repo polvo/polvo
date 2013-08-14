@@ -35,7 +35,7 @@ module.exports = class File
 
   refresh:->
     @raw = fs.readFileSync @filepath, "utf-8"
-    @deps = []
+    @resolve_deps @deps = []
     @compile()
 
   compile:( done )->
@@ -47,6 +47,9 @@ module.exports = class File
         @compiled = @compiled.replace('~code', compiled)
       
       done?(@)
+
+  resolve_deps = (deps) ->
+    
 
   get_compiler = ->
     return plugin if plugin.ext.test @filepath for plugin in plugins
