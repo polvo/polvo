@@ -6,7 +6,7 @@ plugins = require '../utils/plugins'
 scan = require '../scanner/scan'
 MicroEvent = require '../event/microevent'
 
-prefix = "require.register('~path', function(require, exports, module){"
+prefix = "require.register('~path', function(exports, require, module){"
 sufix = "});"
 
 
@@ -49,23 +49,19 @@ module.exports = class File extends MicroEvent
       if @type is 'css'
         @wrapped = @compiled
       if @type is 'js'
-        @wrapped = prefix.replace '~path', @relativepath
+        outpath = @relativepath.replace @compiler.ext, '.js'
+        @wrapped = prefix.replace '~path', outpath
         @wrapped += "\n"
-        # @wrapped += @compiled
+        @wrapped += @compiled
+        # console.log '@compiled', @compiled
         @wrapped += "\n"
         @wrapped += sufix
 
       done?(@)
 
   scan_deps:->
-    deps = scan @filepath, @compiled, true
-    @emit 'deps', deps
+    @emit 'deps', deps = scan @filepath, @compiled, true
     deps
-
-    # relative = []
-    # for relative in absolute
-    #   deps.push path.relative @filepath, dep
-    # deps
 
   get_compiler:->
     for plugin in plugins
