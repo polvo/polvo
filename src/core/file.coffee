@@ -7,7 +7,7 @@ scan = require '../scanner/scan'
 MicroEvent = require '../event/microevent'
 
 prefix = "require.register('~path', function(exports, require, module){"
-sufix = "});"
+sufix = "}, ~deps);"
 
 
 module.exports = class File extends MicroEvent
@@ -19,6 +19,7 @@ module.exports = class File extends MicroEvent
   id: null
   type: null
   deps: null
+  aliases: null
 
   uncompiled: null
   compiled: null
@@ -40,28 +41,33 @@ module.exports = class File extends MicroEvent
   refresh:->
     @raw = fs.readFileSync @filepath, "utf-8"
     @compile =>
-      @deps = @scan_deps()
+      @scan_deps()
+      @make_aliases()
+      @wrap()
 
   compile:( done )->
+    @compiler.compile @filepath, @raw, ( @compiled, @map )=> done?(@)
 
-    @compiler.compile @filepath, @raw, ( @compiled, @map, @uncompiled )=>
-
-      if @type is 'css'
-        @wrapped = @compiled
-      if @type is 'js'
-        outpath = @relativepath.replace @compiler.ext, '.js'
-        @wrapped = prefix.replace '~path', outpath
-        @wrapped += "\n"
-        @wrapped += @compiled
-        # console.log '@compiled', @compiled
-        @wrapped += "\n"
-        @wrapped += sufix
-
-      done?(@)
+  wrap:->
+    if @type is 'css'
+      @wrapped = @compiled
+    if @type is 'js'
+      id = @relativepath.replace @compiler.ext, ''
+      @wrapped = prefix.replace '~path', id
+      @wrapped += "\n"
+      @wrapped += @compiled
+      @wrapped += "\n"
+      @wrapped += sufix.replace '~deps', JSON.stringify @aliases
 
   scan_deps:->
-    @emit 'deps', deps = scan @filepath, @compiler.exts, @compiled
-    deps
+    @deps = scan @filepath, @compiler.exts, @compiled
+    @emit 'deps', (location for id, location of @deps)
+
+
+  make_aliases:->
+    @aliases = {}
+    for id, depath of @deps
+      @aliases[id] = dirs.relative(depath).replace /\.[^\.]+$/, ''
 
   get_compiler:->
     for plugin in plugins
