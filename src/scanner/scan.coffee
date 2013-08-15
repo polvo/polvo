@@ -8,11 +8,11 @@ resolve = require './resolve'
 
 
 module.exports = (filepath, exts, raw)->
+  aliased = {}
+  for dep in filter_deps esprima.parse raw
+    aliased[dep] = resolve filepath, dep, exts
 
-  deps = filter_deps esprima.parse raw
-  for dep, index in deps
-    deps[index] = resolve filepath, dep, exts
-  deps
+  aliased
 
 
 filter_deps = (node, found = [])->
