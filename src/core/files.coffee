@@ -52,13 +52,6 @@ module.exports = new class Files
       watcher.on 'change', (file)=> @onfschange no, dirpath, 'change', file
       watcher.on 'delete', (file)=> @onfschange no, dirpath, 'delete', file
 
-    for name, location of config.vendors.js
-      watchers.push (watcher = fsu.watch location)
-      watcher.on 'create', (file)=> @onfschange yes, dirpath, 'create', file
-      watcher.on 'change', (file)=> @onfschange yes, dirpath, 'change', file
-      watcher.on 'delete', (file)=> @onfschange yes, dirpath, 'delete', file
-
-
   close_watchers:->
     for watcher in @watchers
       watcher.close()
