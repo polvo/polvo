@@ -3,13 +3,15 @@ fs = require 'fs'
 
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
-resolve = module.exports = (dirpath, filepath, id)->
-  
+resolve = module.exports = (filepath, id)->
+
   # removes js extension to normalize id
   id = id.replace /\.js$/m, ''
 
   # try to resolve its real path
   file = resolve_id filepath, id
+
+  dirpath = path.dirname filepath
 
   # return normalized path if file is found
   return (path.resolve file) if file?
@@ -90,6 +92,16 @@ resolve_module = (filepath, id)->
 
     # if there's no main entry, tries to get the index file
     return file if (file = resolve_dir file)?
+
+  
+  # if there's no json, move on with other searches
+  idpath = (path.join nmods, id)
+
+  # tries to get file as is
+  return file if (file = resolve_file idpath)?
+
+  # and finally as index
+  return file if (file = resolve_dir idpath)?
 
 
 # searches for the closest node_modules folder in the parent dirs

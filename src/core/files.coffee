@@ -13,7 +13,7 @@ Cli = require '../cli'
 module.exports = new class Files
 
   {argv} = cli = new Cli
-  exts = plugin.ext for plugin in plugins
+  exts = (plugin.ext for plugin in plugins)
 
   files: null
   watchers: null
@@ -23,10 +23,25 @@ module.exports = new class Files
     @files = []
     for dirpath in config.input
       for filepath in fsu.find dirpath, exts
-        @files.push (new File filepath)
+        @new_file filepath
 
     @watch() if argv.watch
 
+  has_compiler:(filepath)->
+    (return yes if ext.test filepath) for ext in exts
+    return no
+
+  new_file:(filepath)->
+    return if not @has_compiler filepath
+    return if _.find @files, {filepath}
+
+    file = new File filepath
+    file.on 'deps', @new_deps
+    file.init()
+    @files.push file
+
+  new_deps:(deps)=>
+    @new_file dep for dep in deps
 
   watch:->
     watchers = []
@@ -58,11 +73,10 @@ module.exports = new class Files
     switch action
 
       when "create"
-        @files.push new File location
+        @new_file filepath
         msg = "+ #{type} created".bold
         console.log "#{msg} #{location}".cyan        
         compiler.build()
-
 
       when "delete"
         file = _.find @files, filepath: location

@@ -17,4 +17,5 @@ module.exports = ->
         res.end (fs.readFileSync index, 'utf-8')
     ).listen port
 
-  console.log "Listening at http://localhost:#{port}"
+  address = 'http://localhost:' + port
+  console.log "♫  #{address}".cyan
