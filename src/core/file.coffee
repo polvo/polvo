@@ -60,7 +60,7 @@ module.exports = class File extends MicroEvent
       @wrapped += sufix.replace '~deps', JSON.stringify @aliases
 
   scan_deps:->
-    @deps = scan @filepath, @compiler.exts, @compiled
+    @deps = scan @filepath, @compiled
     @emit 'deps', (location for id, location of @deps)
 
 

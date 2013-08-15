@@ -7,10 +7,10 @@ esprima = require 'esprima'
 resolve = require './resolve'
 
 
-module.exports = (filepath, exts, raw)->
+module.exports = (filepath, raw)->
   aliased = {}
   for dep in filter_deps esprima.parse raw
-    aliased[dep] = resolve filepath, dep, exts
+    aliased[dep] = resolve filepath, dep
 
   aliased
 

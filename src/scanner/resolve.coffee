@@ -1,15 +1,22 @@
 path = require 'path'
 fs = require 'fs'
 
+plugins = require '../utils/plugins'
+
+exts = []
+for plugin in plugins
+  exts = exts.concat plugin.exts
+
+
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
-resolve = module.exports = (filepath, id, exts)->
+resolve = module.exports = (filepath, id)->
 
   # removes js extension to normalize id
   id = id.replace /\.js$/m, ''
 
   # try to resolve its real path
-  file = resolve_id filepath, id, exts
+  file = resolve_id filepath, id
 
   dirpath = path.dirname filepath
 
@@ -24,12 +31,12 @@ resolve = module.exports = (filepath, id, exts)->
 
 # Resolves the required id/path
 # ------------------------------------------------------------------------------
-resolve_id = (filepath, id, exts)->
+resolve_id = (filepath, id)->
 
   # for globals, always go on for module
   if id[0] isnt '.'
     # console.log '+ (module-0)'
-    return resolve_module filepath, id, exts
+    return resolve_module filepath, id
 
   # breaks id path nodes (if there's some)
   segs = [].concat (id.split '/')
@@ -43,18 +50,18 @@ resolve_id = (filepath, id, exts)->
     idpath = path.resolve idpath, seg
 
   # file.js
-  return file if (file = resolve_file idpath, exts)
+  return file if (file = resolve_file idpath)
 
   # module
-  return file if (file = resolve_module filepath, id, exts)
+  return file if (file = resolve_module filepath, id)
 
   # dir/index.js
-  return file if (file = resolve_index idpath, exts)
+  return file if (file = resolve_index idpath)
 
 
 # tries to get the file by its name
 # ------------------------------------------------------------------------------
-resolve_file = ( filepath, exts )->
+resolve_file = ( filepath )->
   for ext in exts
     tmp =  filepath
     tmp += ext if (path.extname filepath) is ''
@@ -64,14 +71,14 @@ resolve_file = ( filepath, exts )->
 
 # tries to get the index file inside a directory
 # ------------------------------------------------------------------------------
-resolve_index = ( dirpath, exts )->
+resolve_index = ( dirpath )->
   filepath = path.join dirpath, 'index.js'
   return filepath if fs.existsSync filepath
   return null
 
 
 # ------------------------------------------------------------------------------
-resolve_module = (filepath, id, exts)->
+resolve_module = (filepath, id)->
   # console.log '[resolve_module]', filepath, id
   nmods = closest_node_modules filepath
 
@@ -85,25 +92,25 @@ resolve_module = (filepath, id, exts)->
 
       # trying to get it as is
       main = path.join (path.dirname json), main
-      if (file = resolve_file main, exts)?
+      if (file = resolve_file main)?
         return file 
 
       # or as a folder with an index file inside
       dir = path.join (path.dirname json), dir
-      return file if (file = resolve_index main, exts)?
+      return file if (file = resolve_index main)?
 
     # if there's no main entry, tries to get the index file
-    return file if (file = resolve_index file, exts)?
+    return file if (file = resolve_index file)?
 
   
   # if there's no json, move on with other searches
   idpath = (path.join nmods, id)
 
   # tries to get file as is
-  return file if (file = resolve_file idpath, exts)?
+  return file if (file = resolve_file idpath)?
 
   # and finally as index
-  return file if (file = resolve_index idpath, exts)?
+  return file if (file = resolve_index idpath)?
 
 
 # searches for the closest node_modules folder in the parent dirs
