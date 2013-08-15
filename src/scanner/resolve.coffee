@@ -88,10 +88,10 @@ resolve_module = (filepath, id)->
 
       # or as a folder with an index file inside
       dir = path.join (path.dirname json), dir
-      return file if (file = resolve_dir main)?
+      return file if (file = resolve_index main)?
 
     # if there's no main entry, tries to get the index file
-    return file if (file = resolve_dir file)?
+    return file if (file = resolve_index file)?
 
   
   # if there's no json, move on with other searches
@@ -101,7 +101,7 @@ resolve_module = (filepath, id)->
   return file if (file = resolve_file idpath)?
 
   # and finally as index
-  return file if (file = resolve_dir idpath)?
+  return file if (file = resolve_index idpath)?
 
 
 # searches for the closest node_modules folder in the parent dirs
