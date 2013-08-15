@@ -60,7 +60,7 @@ module.exports = class File extends MicroEvent
       done?(@)
 
   scan_deps:->
-    @emit 'deps', deps = scan @filepath, @compiled, true
+    @emit 'deps', deps = scan @filepath, @compiler.exts, @compiled
     deps
 
   get_compiler:->

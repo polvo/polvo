@@ -7,13 +7,13 @@ esprima = require 'esprima'
 resolve = require './resolve'
 
 
-module.exports = (filepath, raw, deep)->
+module.exports = (filepath, exts, raw)->
 
   deps = filter_deps esprima.parse raw
   for dep, index in deps
-    deps[index] = resolve filepath, dep
+    deps[index] = resolve filepath, dep, exts
   deps
- 
+
 
 filter_deps = (node, found = [])->
 
