@@ -21,18 +21,26 @@ module.exports = new class Files
 
 
   constructor:->
+    @collect()
+
+  collect:->
     @files = []
     for dirpath in config.input
       for filepath in fsu.find dirpath, exts
-        @new_file filepath
+        @create_file filepath
 
     @watch() if argv.watch
+
+  restart:( file )->
+    watcher.close() for watcher in @watchers
+    @collect()
+    @compile file
 
   has_compiler:(filepath)->
     (return yes if ext.test filepath) for ext in exts
     return no
 
-  new_file:(filepath)->
+  create_file:(filepath)->
     return if not @has_compiler filepath
     return file if file = _.find @files, {filepath}
 
@@ -42,14 +50,19 @@ module.exports = new class Files
     @files.push file
     file
 
+  delete_file:(filepath)->        
+    file = _.find @files, {filepath}
+    @restart file
+    return file
+
   new_deps:(deps)=>
-    @new_file dep for dep in deps
+    @create_file dep for dep in deps
 
   watch:->
-    watchers = []
+    @watchers = []
 
     for dirpath in config.input
-      watchers.push (watcher = fsu.watch dirpath, exts)
+      @watchers.push (watcher = fsu.watch dirpath, exts)
       watcher.on 'create', (file)=> @onfschange no, dirpath, 'create', file
       watcher.on 'change', (file)=> @onfschange no, dirpath, 'change', file
       watcher.on 'delete', (file)=> @onfschange no, dirpath, 'delete', file
@@ -67,17 +80,14 @@ module.exports = new class Files
     switch action
 
       when "create"
-        file = @new_file location
+        file = @create_file location
         msg = "+ #{type} created".bold
         console.log "#{msg} #{dirs.relative location}".cyan
         @compile file
 
       when "delete"
-        file = _.find @files, filepath: location
-        index = _.indexOf @files, filepath: location
-
-        if file?
-          @files.splice index, 1
+        file = @delete_file location
+        if file
           msg = "- #{type} deleted".bold
           console.log "#{msg} #{dirs.relative location}".red
           @compile file
