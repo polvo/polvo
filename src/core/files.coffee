@@ -44,7 +44,8 @@ module.exports = new class Files
     return file if file = _.find @files, {filepath}
 
     file = new File filepath
-    file.on 'new:dependencies', @on_new_dependencies
+    file.on 'new:dependencies', @bulk_create_file
+    file.on 'refresh:dependents', @refresh_dependents
     file.init()
     @files.push file
     file
@@ -54,8 +55,13 @@ module.exports = new class Files
     @restart file
     return file
 
-  on_new_dependencies:(deps)=>
+  bulk_create_file:(deps)=>
     @create_file dep for dep in deps
+
+  refresh_dependents:( dependents )=>
+    for dependent in dependents
+      file = _.find @files, {filepath:dependent.filepath}
+      file.refresh() if file?
 
   watch:->
     @watchers = []

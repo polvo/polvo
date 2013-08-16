@@ -1,20 +1,33 @@
 fs = require 'fs'
-_ = require 'lodash'
-fsu = require 'fs-util'
 path = require 'path'
+
+_ = require 'lodash'
 esprima = require 'esprima'
 
+fsu = require 'fs-util'
+
+dirs = require '../utils/dirs'
+config = require '../utils/config'
 resolve = require './resolve'
 
 
-exports.dependencies = (file, filepath, raw)->
+exports.dependencies = (filepath, raw)->
   aliased = {}
   for dep in filter_dependencies esprima.parse raw
     aliased[dep] = resolve filepath, dep
   aliased
 
 exports.dependents = (file, filepath, raw)->
-  filter_dependents()
+  files = []
+  for dirpath in config.input
+    for filepath in fsu.find dirpath, file.compiler.ext
+      continue if filepath is file.filepath
+      files.push
+        filepath: filepath
+        raw: fs.readFileSync(filepath).toString()
+
+  file.compiler.resolve_dependents file, files
+
 
 filter_dependencies = (node, found = [])->
 
@@ -37,7 +50,3 @@ filter_dependencies = (node, found = [])->
       found.push node.arguments[0].value
 
   found
-
-
-filter_dependents = ->
-  []

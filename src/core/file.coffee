@@ -1,6 +1,8 @@
 fs = require 'fs'
 path = require 'path'
 
+_ = require 'lodash'
+
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
 scan = require '../scanner/scan'
@@ -53,6 +55,7 @@ module.exports = class File extends MicroEvent
     @compile =>
       @scan_deps()
       @make_aliases()
+      @emit 'refresh:dependents', @dependents
       @wrap()
 
   compile:( done )->
@@ -73,14 +76,14 @@ module.exports = class File extends MicroEvent
   scan_deps:->
 
     if @type is 'script'
+      @dependents = []
       @dependencies = scan.dependencies @filepath, @compiled
       @emit 'new:dependencies', (location for id, location of @dependencies)
 
     else if (@type is 'template' or @type is 'style')
-      if @is_partial
-        @depts = scan.dependents @, @filepath, @compiled
-      else
-        @depts = []
+      @dependencies = []
+      return @dependents = [] if not @is_partial
+      @dependents = scan.dependents @, @filepath, @compiled
 
   make_aliases:->
     @aliases = {}
