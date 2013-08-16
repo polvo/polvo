@@ -55,7 +55,7 @@ exports.release = ->
     fs.writeFileSync config.output.js, minify.js uncompressed.toString()
     exports.notify_js()
 
-    if config.minify.css
+  if config.minify.css
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
     exports.notify_css()
@@ -69,6 +69,8 @@ exports.build_js = (notify) ->
   merged = []
 
   for each in all
+    continue if each.is_partial
+
     merged.push each.wrapped
 
     comp = each.compiler
@@ -95,7 +97,14 @@ exports.build_css = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
   all = _.filter files.files, type: 'css'
-  merged = (each.compiled for each in all).join '\n'
+  merged = []
+
+  for each in all
+    continue if each.is_partial
+    merged.push each.compiled
+
+  merged = merged.join '\n'
+
   fs.writeFileSync config.output.css, merged
   exports.notify_css() if notify
 

@@ -32,12 +32,15 @@ module.exports = class File extends MicroEvent
   compiled: null
   src_map: null
 
+  is_partial: no
+
   compiler: null
 
   constructor:(@filepath)->
     @relativepath = dirs.relative @filepath
     @compiler = @get_compiler()
     @type = @compiler.type
+    @is_partial = @compiler.partials is on and @compiler.is_partial @filepath
 
   init:->
     @refresh()
