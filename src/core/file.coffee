@@ -22,7 +22,10 @@ module.exports = class File extends MicroEvent
 
   id: null
   type: null
-  deps: null
+  output: null
+
+  dependents: null
+  dependencies: null
   aliases: null
 
   uncompiled: null
@@ -39,7 +42,7 @@ module.exports = class File extends MicroEvent
   constructor:(@filepath)->
     @relativepath = dirs.relative @filepath
     @compiler = @get_compiler()
-    @type = @compiler.type
+    {@type, @output} = @compiler
     @is_partial = @compiler.partials is on and @compiler.is_partial @filepath
 
   init:->
@@ -57,9 +60,9 @@ module.exports = class File extends MicroEvent
       done?(@)
 
   wrap:->
-    if @type is 'css'
+    if @output is 'css'
       @wrapped = @compiled
-    if @type is 'js'
+    if @output is 'js'
       id = @relativepath.replace @compiler.ext, ''
       @wrapped = prefix.replace '~path', id
       @wrapped += "\n"
@@ -68,17 +71,20 @@ module.exports = class File extends MicroEvent
       @wrapped += sufix.replace '~deps', JSON.stringify @aliases
 
   scan_deps:->
-    if @type is 'js'
-      @deps = scan.js @filepath, @compiled
-      @emit 'deps', (location for id, location of @deps)
-    else if @type is 'css'
-      @deps = scan.css @, @filepath, @compiled
-      @emit 'deps', (location for id, location of @deps)
 
+    if @type is 'script'
+      @dependencies = scan.dependencies @filepath, @compiled
+      @emit 'new:dependencies', (location for id, location of @dependencies)
+
+    else if (@type is 'template' or @type is 'style')
+      if @is_partial
+        @depts = scan.dependents @, @filepath, @compiled
+      else
+        @depts = []
 
   make_aliases:->
     @aliases = {}
-    for id, depath of @deps
+    for id, depath of @dependencies
       @aliases[id] = dirs.relative(depath).replace /\.[^\.]+$/, ''
 
   get_compiler:->

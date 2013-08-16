@@ -7,25 +7,24 @@ esprima = require 'esprima'
 resolve = require './resolve'
 
 
-exports.js = (filepath, raw)->
+exports.dependencies = (file, filepath, raw)->
   aliased = {}
-  for dep in filter_deps esprima.parse raw
+  for dep in filter_dependencies esprima.parse raw
     aliased[dep] = resolve filepath, dep
-
   aliased
 
-exports.css = (file, filepath, raw)->
-  return {}
+exports.dependents = (file, filepath, raw)->
+  filter_dependents()
 
-filter_deps = (node, found = [])->
+filter_dependencies = (node, found = [])->
 
   if node instanceof Array
     for item in node
-      filter_deps item, found
+      filter_dependencies item, found
 
   else if node instanceof Object
     for key, item of node
-      filter_deps item, found
+      filter_dependencies item, found
 
 
   if node instanceof Object
@@ -38,3 +37,7 @@ filter_deps = (node, found = [])->
       found.push node.arguments[0].value
 
   found
+
+
+filter_dependents = ->
+  []

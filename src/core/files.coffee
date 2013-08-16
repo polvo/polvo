@@ -44,7 +44,7 @@ module.exports = new class Files
     return file if file = _.find @files, {filepath}
 
     file = new File filepath
-    file.on 'deps', @new_deps
+    file.on 'new:dependencies', @on_new_dependencies
     file.init()
     @files.push file
     file
@@ -54,7 +54,7 @@ module.exports = new class Files
     @restart file
     return file
 
-  new_deps:(deps)=>
+  on_new_dependencies:(deps)=>
     @create_file dep for dep in deps
 
   watch:->
@@ -103,6 +103,6 @@ module.exports = new class Files
         @compile file
 
   compile:(file)->
-    switch file.type
+    switch file.output
       when 'js' then compiler.build_js true
       when 'css' then compiler.build_css true

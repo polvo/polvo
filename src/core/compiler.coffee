@@ -63,7 +63,7 @@ exports.release = ->
 exports.build_js = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
-  all = _.filter files.files, type: 'js'
+  all = _.filter files.files, output: 'js'
   
   helpers = {}
   merged = []
@@ -96,7 +96,7 @@ exports.build_js = (notify) ->
 exports.build_css = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
-  all = _.filter files.files, type: 'css'
+  all = _.filter files.files, output: 'css'
   merged = []
 
   for each in all
