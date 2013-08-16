@@ -18,4 +18,4 @@ module.exports = ->
     ).listen port
 
   address = 'http://localhost:' + port
-  console.log "♫  #{address}".cyan
+  console.log "♫  #{address}"

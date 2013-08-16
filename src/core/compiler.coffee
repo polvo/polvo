@@ -77,9 +77,9 @@ exports.build_css = (notify) ->
 exports.notify_css = ->
   # TODO add show css filesize
   relative = dirs.relative config.output.css
-  console.log "✓ #{relative}".green
+  console.log "✓ #{relative}".cyan
 
 exports.notify_js = ->
   fsize = filesize (fs.statSync config.output.js).size
   relative = dirs.relative config.output.js
-  console.log "✓ #{relative} (#{fsize})".green
+  console.log "✓ #{relative} (#{fsize})".cyan

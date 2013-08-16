@@ -34,7 +34,6 @@ module.exports = new class Files
   restart:( file )->
     watcher.close() for watcher in @watchers
     @collect()
-    @compile file
 
   has_compiler:(filepath)->
     (return yes if ext.test filepath) for ext in exts
@@ -81,15 +80,13 @@ module.exports = new class Files
 
       when "create"
         file = @create_file location
-        msg = "+ #{type} created".bold
-        console.log "#{msg} #{dirs.relative location}".cyan
+        console.log "+ #{dirs.relative location}".green
         @compile file
 
       when "delete"
         file = @delete_file location
         if file
-          msg = "- #{type} deleted".bold
-          console.log "#{msg} #{dirs.relative location}".red
+          console.log "- #{dirs.relative location}".red
           @compile file
 
       when "change"
@@ -100,8 +97,7 @@ module.exports = new class Files
           msg += "Please report this at the repo issues section."
           console.warn msg
         else
-          msg = "• #{type} changed".bold
-          console.log "#{msg} #{dirs.relative location}".cyan
+          console.log "• #{dirs.relative location}".yellow
 
         file.refresh() if not vendor
         @compile file
