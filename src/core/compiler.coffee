@@ -38,7 +38,10 @@ prefix = """;(function(){
 
 sufix = "})()"
 
+compilers = {}
+
 build = exports.build = ->
+  compilers = {}
   exports.build_js true
   exports.build_css true
 
@@ -57,11 +60,25 @@ exports.build_js = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
   all = _.filter files.files, type: 'js'
-  merged = (each.wrapped for each in all).join '\n'
+  
+  helpers = {}
+  merged = []
+
+  for each in all
+    merged.push each.wrapped
+
+    comp = each.compiler
+    comp_name = comp.name
+
+    if helpers[comp_name]? and (helper = comp.fetch_helpers?())?
+      helpers[comp_name] or= helper
+
+  helpers = (v for k, v of helpers)
+  merged = merged.join '\n'
 
   buffer = prefix
   buffer += "\n"
-  buffer += merged
+  buffer += helpers + merged
   buffer += "\n"
   buffer += "require('#{config.boot}');"
   buffer += "\n"
