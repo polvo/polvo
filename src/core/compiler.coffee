@@ -54,6 +54,8 @@ exports.minify = ->
   # ......
 
 exports.build_js = (notify) ->
+  files.files = _.sortBy files.files, 'filepath'
+
   all = _.filter files.files, type: 'js'
   merged = (each.wrapped for each in all).join '\n'
 
@@ -69,6 +71,8 @@ exports.build_js = (notify) ->
   exports.notify_js() if notify
 
 exports.build_css = (notify) ->
+  files.files = _.sortBy files.files, 'filepath'
+
   all = _.filter files.files, type: 'css'
   merged = (each.compiled for each in all).join '\n'
   fs.writeFileSync config.output.css, merged
