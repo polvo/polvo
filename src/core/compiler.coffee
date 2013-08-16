@@ -46,15 +46,19 @@ build = exports.build = ->
   exports.build_css true
 
 
-exports.minify = ->
+exports.release = ->
   exports.build_js()
   exports.build_css()
 
-  uncompressed = fs.readFileSync config.output.js
-  fs.writeFileSync config.output.js, minify.js uncompressed.toString()
+  if config.minify.js
+    uncompressed = fs.readFileSync config.output.js
+    fs.writeFileSync config.output.js, minify.js uncompressed.toString()
+    exports.notify_js()
 
-  # TODO: minify css
-  # ......
+    if config.minify.css
+    uncompressed = fs.readFileSync config.output.css
+    fs.writeFileSync config.output.css, minify.css uncompressed.toString()
+    exports.notify_css()
 
 exports.build_js = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
@@ -96,9 +100,9 @@ exports.build_css = (notify) ->
   exports.notify_css() if notify
 
 exports.notify_css = ->
-  # TODO add show css filesize
+  fsize = filesize (fs.statSync config.output.css).size
   relative = dirs.relative config.output.css
-  console.log "✓ #{relative}".cyan
+  console.log "✓ #{relative} (#{fsize})".cyan
 
 exports.notify_js = ->
   fsize = filesize (fs.statSync config.output.js).size

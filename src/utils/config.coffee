@@ -13,4 +13,10 @@ if config.output.js
 if config.output.css
   config.output.css = path.join dirs.pwd, config.output.css
 
+if config.minify?
+  config.minify.js = config.minify.js ? true
+  config.minify.css = config.minify.css ? true
+else
+  config.minify = js: true, css: true
+
 module.exports = config

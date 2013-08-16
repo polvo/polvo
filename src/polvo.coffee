@@ -20,7 +20,7 @@ module.exports = (options)->
     return
 
   if argv.release
-    compiler.minify()
+    compiler.release()
     server() if argv.server
     return
 
