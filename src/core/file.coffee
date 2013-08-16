@@ -4,13 +4,17 @@ path = require 'path'
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
 scan = require '../scanner/scan'
+
 MicroEvent = require '../event/microevent'
+Cli = require '../cli'
 
 prefix = "require.register('~path', function(exports, require, module){"
 sufix = "}, ~deps);"
 
 
 module.exports = class File extends MicroEvent
+
+  {argv} = cli = new Cli
 
   raw: null
   filepath: null
@@ -46,7 +50,8 @@ module.exports = class File extends MicroEvent
       @wrap()
 
   compile:( done )->
-    @compiler.compile @filepath, @raw, ( @compiled, @map )=> done?(@)
+    @compiler.compile @filepath, @raw, argv.release, (@compiled, @map )=>
+      done?(@)
 
   wrap:->
     if @type is 'css'
