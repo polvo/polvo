@@ -2,6 +2,7 @@ path = require 'path'
 fsu = require 'fs-util'
 _ = require 'lodash'
 
+dirs = require '../utils/dirs'
 config = require '../utils/config'
 compiler = require './compiler'
 
@@ -33,12 +34,13 @@ module.exports = new class Files
 
   new_file:(filepath)->
     return if not @has_compiler filepath
-    return if _.find @files, {filepath}
+    return file if file = _.find @files, {filepath}
 
     file = new File filepath
     file.on 'deps', @new_deps
     file.init()
     @files.push file
+    file
 
   new_deps:(deps)=>
     @new_file dep for dep in deps
@@ -56,7 +58,6 @@ module.exports = new class Files
     for watcher in @watchers
       watcher.close()
 
-
   onfschange:(vendor, dirpath, action, file)=>
 
     {location, type} = file
@@ -66,10 +67,10 @@ module.exports = new class Files
     switch action
 
       when "create"
-        @new_file filepath
+        file = @new_file location
         msg = "+ #{type} created".bold
-        console.log "#{msg} #{location}".cyan        
-        compiler.build()
+        console.log "#{msg} #{dirs.relative location}".cyan
+        @compile file
 
       when "delete"
         file = _.find @files, filepath: location
@@ -78,9 +79,8 @@ module.exports = new class Files
         if file?
           @files.splice index, 1
           msg = "- #{type} deleted".bold
-          compiler.build()
-          console.log "#{msg} #{location}".red
-
+          console.log "#{msg} #{dirs.relative location}".red
+          @compile file
 
       when "change"
         file = _.find @files, filepath: location
@@ -91,7 +91,12 @@ module.exports = new class Files
           console.warn msg
         else
           msg = "• #{type} changed".bold
-          console.log "#{msg} #{location}".cyan
+          console.log "#{msg} #{dirs.relative location}".cyan
 
         file.refresh() if not vendor
-        compiler.build()
+        @compile file
+
+  compile:(file)->
+    switch file.type
+      when 'js' then compiler.build_js true
+      when 'css' then compiler.build_css true
