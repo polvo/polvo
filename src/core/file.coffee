@@ -60,8 +60,12 @@ module.exports = class File extends MicroEvent
       @wrapped += sufix.replace '~deps', JSON.stringify @aliases
 
   scan_deps:->
-    @deps = scan @filepath, @compiled
-    @emit 'deps', (location for id, location of @deps)
+    if @type is 'js'
+      @deps = scan.js @filepath, @compiled
+      @emit 'deps', (location for id, location of @deps)
+    else if @type is 'css'
+      @deps = scan.css @, @filepath, @compiled
+      @emit 'deps', (location for id, location of @deps)
 
 
   make_aliases:->

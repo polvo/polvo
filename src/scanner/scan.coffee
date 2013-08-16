@@ -7,13 +7,15 @@ esprima = require 'esprima'
 resolve = require './resolve'
 
 
-module.exports = (filepath, raw)->
+exports.js = (filepath, raw)->
   aliased = {}
   for dep in filter_deps esprima.parse raw
     aliased[dep] = resolve filepath, dep
 
   aliased
 
+exports.css = (file, filepath, raw)->
+  return {}
 
 filter_deps = (node, found = [])->
 
