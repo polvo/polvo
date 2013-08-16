@@ -38,28 +38,22 @@ prefix = """;(function(){
 
 sufix = "})()"
 
-exports.build = ->
-  save_js()
-  fsize = filesize (fs.statSync config.output.js).size
-  relative = dirs.relative config.output.js
-  console.log "✓ #{relative} (#{fsize})".green
+build = exports.build = ->
+  exports.build_js true
+  exports.build_css true
 
-  save_css()
 
 exports.minify = ->
-  save_js()
+  exports.build_js()
+  exports.build_css()
 
   uncompressed = fs.readFileSync config.output.js
   fs.writeFileSync config.output.js, minify.js uncompressed.toString()
 
-  size = filesize (fs.statSync config.output.js).size
-  relative = dirs.relative config.output.js
-  console.log "✓ #{relative} (minified=#{size})".green
+  # TODO: minify css
+  # ......
 
-  save_css()
-
-
-save_js = ->
+exports.build_js = (notify) ->
   all = _.filter files.files, type: 'js'
   merged = (each.wrapped for each in all).join '\n'
 
@@ -72,11 +66,20 @@ save_js = ->
   buffer += sufix
 
   fs.writeFileSync config.output.js, buffer
+  exports.notify_js() if notify
 
-save_css = ->
+exports.build_css = (notify) ->
   all = _.filter files.files, type: 'css'
   merged = (each.compiled for each in all).join '\n'
-
   fs.writeFileSync config.output.css, merged
+  exports.notify_css() if notify
+
+exports.notify_css = ->
+  # TODO add show css filesize
   relative = dirs.relative config.output.css
   console.log "✓ #{relative}".green
+
+exports.notify_js = ->
+  fsize = filesize (fs.statSync config.output.js).size
+  relative = dirs.relative config.output.js
+  console.log "✓ #{relative} (#{fsize})".green
