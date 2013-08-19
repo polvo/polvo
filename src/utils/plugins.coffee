@@ -15,7 +15,7 @@ for dep of polvo.dependencies
   mods.push dep if dep.polvo and dep not in mods
 
 for dep of app.dependencies
-  dep = require path.join dirs.root, 'node_modules', dep
+  dep = require path.join dirs.pwd, 'node_modules', dep
   mods.push dep if dep.polvo and dep not in mods
 
 module.exports = mods
