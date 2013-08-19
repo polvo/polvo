@@ -1,4 +1,6 @@
 path = require 'path'
+fs = require 'fs'
+
 connect = require 'connect'
 config = require '../utils/config'
 
