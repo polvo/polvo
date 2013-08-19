@@ -4,4 +4,7 @@ module.exports =
   root: path.join __dirname, '..', '..'
   pwd: path.resolve '.'
   relative:(filepath)->
-    filepath.replace "#{@pwd}/", ''
+    if ~filepath.indexOf(@pwd)
+      filepath.replace "#{@pwd}/", ''
+    else
+      path.relative @pwd, filepath
