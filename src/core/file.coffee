@@ -55,13 +55,13 @@ module.exports = class File extends MicroEvent
     @compile =>
       @scan_deps()
       @make_aliases()
-      @emit 'refresh:dependents', @dependents
       @wrap()
+      @emit 'refresh:dependents', @dependents
 
   compile:( done )->
-    @compiler.compile @filepath, @raw, argv.release,
+    @compiler.compile @filepath, @raw, not argv.release,
       (err)-> console.log err,
-      (@compiled, @map)-> done?(@)
+      (@compiled, @map)=> done?(@)
 
   wrap:->
     if @output is 'css'
