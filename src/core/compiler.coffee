@@ -18,6 +18,7 @@ prefix = """;(function(){
     {
       console.error('Module not found: ', path);
       return null
+    }
     
     if(!m.init)
     {
