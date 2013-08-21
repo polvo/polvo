@@ -1,5 +1,6 @@
 _ = require 'lodash'
 
+fs = require 'fs'
 path = require 'path'
 util = require 'util'
 
