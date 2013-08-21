@@ -14,7 +14,12 @@ prefix = """;(function(){
       path = require.mods[parent].aliases[path]
     
     var m;
-    if(!(m = require.mods[path]).init)
+    if(!(m = require.mods[path]))
+    {
+      console.error('Module not found: ', path);
+      return null
+    
+    if(!m.init)
     {
       m.factory.call(this, m.module.exports, require.local(path), m.module);
       m.init = true;
