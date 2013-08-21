@@ -59,9 +59,12 @@ module.exports = class File extends MicroEvent
       @emit 'refresh:dependents', @dependents
 
   compile:( done )->
-    @compiler.compile @filepath, @raw, not argv.release,
-      (err)-> console.log err,
-      (@compiled, @map)=> done?(@)
+    @compiler.compile @filepath, @raw, not argv.release
+      ,(err)=>
+        console.log @filepath, err
+
+      , (@compiled, @map)=>
+        done?(@)
 
   wrap:->
     if @output is 'css'
@@ -88,7 +91,7 @@ module.exports = class File extends MicroEvent
 
   make_aliases:->
     @aliases = {}
-    for id, depath of @dependencies
+    for id, depath of @dependencies when depath?
       @aliases[id] = dirs.relative(depath).replace /\.[^\.]+$/, ''
 
   get_compiler:->
