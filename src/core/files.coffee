@@ -21,15 +21,16 @@ module.exports = new class Files
 
 
   constructor:->
+    @files = []
+    @watchers = []
     @collect()
 
   collect:->
-    @files = []
     for dirpath in config.input
       for filepath in fsu.find dirpath, exts
         @create_file filepath
 
-    @watch() if argv.watch
+    @watch_inputs() if argv.watch
 
   restart:( file )->
     watcher.close() for watcher in @watchers
@@ -43,11 +44,18 @@ module.exports = new class Files
     return if not @has_compiler filepath
     return file if file = _.find @files, {filepath}
 
-    file = new File filepath
+    @files.push file = new File filepath
     file.on 'new:dependencies', @bulk_create_file
     file.on 'refresh:dependents', @refresh_dependents
     file.init()
-    @files.push file
+
+    is_under_inputs = true
+    for dirpath in config.input
+      is_under_inputs and= (filepath.indexOf(dirpath) is 0)
+    
+    if not is_under_inputs
+      @watch_file file.filepath
+
     file
 
   delete_file:(filepath)->        
@@ -63,20 +71,24 @@ module.exports = new class Files
       file = _.find @files, {filepath:dependent.filepath}
       file.refresh() if file?
 
-  watch:->
-    @watchers = []
+  watch_file:( filepath )->
+    @watchers.push watcher = fsu.watch filepath
+    watcher.on 'create', (file)=> @onfschange 'create', file
+    watcher.on 'change', (file)=> @onfschange 'change', file
+    watcher.on 'delete', (file)=> @onfschange 'delete', file
 
+  watch_inputs:->
     for dirpath in config.input
       @watchers.push (watcher = fsu.watch dirpath, exts)
-      watcher.on 'create', (file)=> @onfschange no, dirpath, 'create', file
-      watcher.on 'change', (file)=> @onfschange no, dirpath, 'change', file
-      watcher.on 'delete', (file)=> @onfschange no, dirpath, 'delete', file
+      watcher.on 'create', (file)=> @onfschange 'create', file
+      watcher.on 'change', (file)=> @onfschange 'change', file
+      watcher.on 'delete', (file)=> @onfschange 'delete', file
 
   close_watchers:->
     for watcher in @watchers
       watcher.close()
 
-  onfschange:(vendor, dirpath, action, file)=>
+  onfschange:(action, file)=>
 
     {location, type} = file
 
@@ -98,14 +110,14 @@ module.exports = new class Files
       when "change"
         file = _.find @files, filepath: location
 
-        if file is null and vendor is false
+        if file is null
           msg = "Change file is apparently null, it shouldn't happened.\n"
           msg += "Please report this at the repo issues section."
           console.warn msg
         else
           console.log "• #{dirs.relative location}".yellow
 
-        file.refresh() if not vendor
+        file.refresh()
         @compile file
 
   compile:(file)->
