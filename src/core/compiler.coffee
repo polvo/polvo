@@ -7,7 +7,6 @@ dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 
-# prefix = ";(function(){"
 prefix = """;(function(){
   function require(path, parent){
     var m, realpath;
