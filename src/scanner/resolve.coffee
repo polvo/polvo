@@ -1,12 +1,13 @@
 path = require 'path'
 fs = require 'fs'
 
+config = require '../utils/config'
+dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
 
 exts = []
 for plugin in plugins
   exts = exts.concat plugin.exts
-
 
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
@@ -24,7 +25,7 @@ resolve = module.exports = (filepath, id)->
   return (path.resolve file) if file?
 
   # otherwise show error
-  caller = path.relative dirpath, filepath
+  caller = path.relative dirs.pwd, filepath
   console.log "Cannot find module '#{id}' for '#{caller}'"
   return null
 
@@ -80,7 +81,14 @@ resolve_index = ( dirpath )->
 # ------------------------------------------------------------------------------
 resolve_module = (filepath, id)->
   # console.log '[resolve_module]', filepath, id
-  nmods = closest_node_modules filepath
+  
+  if config.mappings?
+    for map, location of config.mappings
+      if id.indexOf(map) is 0
+        nmods = path.join dirs.pwd, location
+
+  unless nmods?
+    nmods = closest_node_modules filepath
 
   # trying to reach the `main` entry in package.json (if there's one)
   json = path.join nmods, id, 'package.json'
@@ -102,6 +110,9 @@ resolve_module = (filepath, id)->
     # if there's no main entry, tries to get the index file
     return file if (file = resolve_index file)?
 
+    # keep searching on parent node_module's folders
+    if filepath is not '/'
+      resolve_module path.join(filepath, '..'), di
   
   # if there's no json, move on with other searches
   idpath = (path.join nmods, id)
@@ -111,6 +122,10 @@ resolve_module = (filepath, id)->
 
   # and finally as index
   return file if (file = resolve_index idpath)?
+
+  # keep searching on parent node_module's folders
+  if filepath isnt '/'
+    resolve_module path.join(filepath, '..'), id
 
 
 # searches for the closest node_modules folder in the parent dirs
