@@ -5,7 +5,7 @@ util = require 'util'
 
 dirs = require '../utils/dirs'
 
-mods = []
+plugins = []
 
 polvo_manifest = path.join dirs.root, 'package.json'
 if fs.existsSync polvo_manifest
@@ -16,7 +16,7 @@ if fs.existsSync polvo_manifest
     catch err
       continue
 
-    mods.push dep if dep.polvo and dep not in mods
+    plugins.push dep if dep.polvo and dep not in plugins
 
 app_manifest = path.join dirs.pwd, 'package.json'
 if fs.existsSync app_manifest
@@ -27,6 +27,6 @@ if fs.existsSync app_manifest
     catch err
       continue
 
-    mods.push dep if dep.polvo and dep not in mods
+    plugins.push dep if dep.polvo and dep not in plugins
 
-module.exports = mods
+module.exports = plugins
