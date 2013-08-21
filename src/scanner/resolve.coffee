@@ -7,7 +7,7 @@ plugins = require '../utils/plugins'
 
 exts = []
 for plugin in plugins
-  exts = exts.concat plugin.exts
+  exts = exts.concat plugin.exts if plugin.output is 'js'
 
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ resolve = module.exports = (filepath, id)->
 
   # otherwise show error
   caller = path.relative dirs.pwd, filepath
-  console.log "Cannot find module '#{id}' for '#{caller}'"
+  console.log "Module '#{id}' not found for '#{caller}'"
   return null
 
 
@@ -36,7 +36,6 @@ resolve_id = (filepath, id)->
 
   # for globals, always go on for module
   if id[0] isnt '.'
-    # console.log '+ (module-0)'
     return resolve_module filepath, id
 
   # breaks id path nodes (if there's some)
@@ -80,7 +79,6 @@ resolve_index = ( dirpath )->
 
 # ------------------------------------------------------------------------------
 resolve_module = (filepath, id)->
-  # console.log '[resolve_module]', filepath, id
   
   if config.mappings?
     for map, location of config.mappings
@@ -90,9 +88,12 @@ resolve_module = (filepath, id)->
   unless nmods?
     nmods = closest_node_modules filepath
 
+  # if no node_modules is found, return null
+  return null if not nmods
+
   # trying to reach the `main` entry in package.json (if there's one)
   json = path.join nmods, id, 'package.json'
-  if (fs.existsSync json)
+  if json and fs.existsSync json
 
     # tries to get the main entry in package.json
     main = (require json).main
