@@ -10,16 +10,17 @@ minify = require '../utils/minify'
 # prefix = ";(function(){"
 prefix = """;(function(){
   function require(path, parent){
-    // console.log('::: require', path, parent);
-
     if(parent)
       path = require.mods[parent].aliases[path]
     
-    var mod;
-    if(!(mod = require.mods[path]).exports)
-      mod.call(this, (mod.exports = {}), require.local(path), mod);
+    var m;
+    if(!(m = require.mods[path]).init)
+    {
+      m.factory.call(this, m.module.exports, require.local(path), m.module);
+      m.init = true;
+    }
 
-    return mod.exports;
+    return m.module.exports;
   }
 
   require.mods = {}
@@ -29,14 +30,16 @@ prefix = """;(function(){
   }
 
   require.register = function(path, mod, aliases){
-    // console.log('::: registered', path);
-    require.mods[path] = mod;
-    mod.aliases = aliases;
+    require.mods[path] = {
+      factory: mod,
+      aliases: aliases,
+      module: {exports:{}}
+    };
   }
 
   """
 
-sufix = "})()"
+sufix = '})()'
 
 compilers = {}
 
