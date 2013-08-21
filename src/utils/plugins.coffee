@@ -8,19 +8,18 @@ dirs = require '../utils/dirs'
 
 plugins = []
 
-scan = (manifest)->
+scan = (manifest_path)->
+  return if not fs.existsSync manifest_path
+
+  manifest = require manifest_path
   for plugin of manifest.dependencies
     try
       plugin = require path.join dirs.root, 'node_modules', plugin
+      plugins.push plugin if plugin.polvo
     catch err
       continue
 
-polvo_manifest = path.join dirs.root, 'package.json'
-if fs.existsSync polvo_manifest
-  scan require polvo_manifest
-
-app_manifest = path.join dirs.pwd, 'package.json'
-if fs.existsSync app_manifest
-  scan require app_manifest
+scan path.join dirs.root, 'package.json'
+scan path.join dirs.pwd, 'package.json'
 
 module.exports = plugins
