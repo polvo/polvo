@@ -10,7 +10,7 @@ scan = require '../scanner/scan'
 MicroEvent = require '../event/microevent'
 Cli = require '../cli'
 
-prefix = "require.register('~path', function(exports, require, module){"
+prefix = "require.register('~path', function(require, module, exports){"
 sufix = "}, ~deps);"
 
 
@@ -59,6 +59,8 @@ module.exports = class File extends MicroEvent
       @emit 'refresh:dependents', @dependents
 
   compile:( done )->
+    return done if @is_partial
+
     @compiler.compile @filepath, @raw, not argv.release
       ,(err)=>
         console.log @filepath, err
