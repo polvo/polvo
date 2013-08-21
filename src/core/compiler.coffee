@@ -10,11 +10,17 @@ minify = require '../utils/minify'
 # prefix = ";(function(){"
 prefix = """;(function(){
   function require(path, parent){
+    var m, realpath;
+
     if(parent)
-      path = require.mods[parent].aliases[path]
+      realpath = require.mods[parent].aliases[path];
+    else
+      realpath = path;
+
+    if(!realpath)
+      realpath = require.map( path );
     
-    var m;
-    if(!(m = require.mods[path]))
+    if(!(m = require.mods[realpath]))
     {
       console.error('Module not found: ', path);
       return null
@@ -22,7 +28,7 @@ prefix = """;(function(){
     
     if(!m.init)
     {
-      m.factory.call(this, m.module.exports, require.local(path), m.module);
+      m.factory.call(this, require.local(realpath), m.module, m.module.exports);
       m.init = true;
     }
 
@@ -43,6 +49,13 @@ prefix = """;(function(){
     };
   }
 
+  require.maps = #{JSON.stringify config.mappings};
+  require.map = function(path) {
+    for(var map in require.maps)
+      if(path.indexOf(map) == 0)
+        return require.maps[map] + path;
+    return null;
+  }
   """
 
 sufix = '})()'
@@ -85,16 +98,19 @@ exports.build_js = (notify) ->
     comp = each.compiler
     comp_name = comp.name
 
-    if helpers[comp_name]? and (helper = comp.fetch_helpers?())?
+    if not helpers[comp_name]? and (helper = comp.fetch_helpers?())?
       helpers[comp_name] or= helper
 
   helpers = (v for k, v of helpers)
   merged = merged.join '\n'
 
-  buffer = prefix
-  buffer += "\n"
-  buffer += helpers + merged
-  buffer += "\n"
+  buffer = '// POLVO :: HELPERS\n'
+  buffer += helpers
+  buffer += "\n// POLVO :: LOADER\n"
+  buffer += prefix
+  buffer += "\n// POLVO :: MERGED FILES\n"
+  buffer += merged
+  buffer += "\n// POLVO :: INITIALIZER\n"
   buffer += "require('#{config.boot}');"
   buffer += "\n"
   buffer += sufix
