@@ -7,26 +7,19 @@ dirs = require '../utils/dirs'
 
 plugins = []
 
-polvo_manifest = path.join dirs.root, 'package.json'
-if fs.existsSync polvo_manifest
-  polvo = require polvo_manifest
-  for dep of polvo.dependencies
+scan = (manifest)->
+  for plugin of manifest.dependencies
     try
-      dep = require path.join dirs.root, 'node_modules', dep
+      plugin = require path.join dirs.root, 'node_modules', plugin
     catch err
       continue
 
-    plugins.push dep if dep.polvo and dep not in plugins
+polvo_manifest = path.join dirs.root, 'package.json'
+if fs.existsSync polvo_manifest
+  scan require polvo_manifest
 
 app_manifest = path.join dirs.pwd, 'package.json'
 if fs.existsSync app_manifest
-  app = require app_manifest
-  for dep of app.dependencies
-    try
-      dep = require path.join dirs.pwd, 'node_modules', dep
-    catch err
-      continue
-
-    plugins.push dep if dep.polvo and dep not in plugins
+  scan require app_manifest
 
 module.exports = plugins
