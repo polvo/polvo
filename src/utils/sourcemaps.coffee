@@ -38,9 +38,9 @@ exports.assemble = (files)->
   buffer = map.replace '~FILE', path.basename config.output.js
   sections = []
 
-  for file in files
+  for file in files when file.source_map?
     sbuffer = section.replace '~SOURCE', dirs.relative file.filepath
-    sbuffer = sbuffer.replace '~LINE', file.offset
+    sbuffer = sbuffer.replace '~LINE', file.source_map_offset
     sbuffer = sbuffer.replace '~MAPS', JSON.parse(file.source_map).mappings
     sections.push sbuffer
 
