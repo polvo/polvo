@@ -59,7 +59,7 @@ module.exports = class File extends MicroEvent
       @emit 'refresh:dependents', @dependents
 
   compile:( done )->
-    return done if @is_partial
+    return done() if @is_partial
 
     @compiler.compile @filepath, @raw, not argv.release
       ,(err)=>
