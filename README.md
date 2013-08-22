@@ -40,42 +40,51 @@ Polvo is stupidly fast. *Seriously*.
 
 First compilation will take some seconds depending on the size of your application, but subsequent changes (compiled in `watch` mode) *will happen in a blink*.
 
-# Usage (in short)
+# Philosophy (in short)
 
  1.  You write code using CJS pattern signature for `scripts` and plain schemes according the syntax provided by your pre-compiled language of choice for *html*-`templates` and `styles`.
-
- 1. Polvo will compile all your `scripts` and `templates` to *`.js`*, wrapped in CJS signature, and all your styles to `*.css`.
-
- 1. You can require all your **scripts** and **templates** using CJS require's, and include your **styles** (`app.css`) in your html file.
+ 
+ 1. You require your `scripts` and `templates` as common CJS modules, like you do in NodeJS.
+ 
+ 1. CSS (`app.css`) and JS (`app.js`) files should be included in your in your `html` file.
  
  1. You end up with a 2 files, `app.js` and `app.css` -  both can be easily optimized (compressed) as needed with the `-r` option.
 
-## Plugins (supported languages)
+# Plugins (supported languages)
 
 Polvo is agnostic to languages, however it needs plugins for each one ir onder to properly assemble it. Some of them is built in out of the box, and others should be done / installed separately.
 
-### Built in plugins
+## Built in plugins
 
-#### ★ for Scripts
+### ★ for Scripts
  1. Pure Javascript (`.js`)
  1. CoffeeScript (`.coffee`)
     * ✓ Literate Coffeescript (`.litcoffee`, `.coffee.md`)
     * ✓ Source Maps
 
-#### ★ for Styles
+### ★ for Styles
  1. Pure CSS (`.css`)
      * ✓ `partials` supported
  1. Stylus (`.styl`)
      * ✓ `nib` available
      * ✓ `partials` supported
 
-#### ★ for Templates
+### ★ for Templates
  1. Pure HTML (`.htm`, `.html`)
     * ✓ `partials` supported
  1. Jade (`.jade`)
     * ✓ `partials` supported
 
-## Features
+#### Repos
+
+ * [https://github.com/polvo/polvo-html](https://github.com/polvo/polvo-html)
+ * [https://github.com/polvo/polvo-jade](https://github.com/polvo/polvo-jade)
+ * [https://github.com/polvo/polvo-stylus](https://github.com/polvo/polvo-stylus)
+ * [https://github.com/polvo/polvo-css](https://github.com/polvo/polvo-css)
+ * [https://github.com/polvo/polvo-js](https://github.com/polvo/polvo-js)
+ * [https://github.com/polvo/polvo-cs](https://github.com/polvo/polvo-cs)
+
+# Features
  * Simple embeded webserver for *Single Page Applications*
  * Live Reload when developing
  * Live syntax-check for everything
@@ -89,7 +98,7 @@ Polvo is agnostic to languages, however it needs plugins for each one ir onder t
 <!-- * Minify support-->
 <!-- * ~~Scaffolding routines~~-->
 
-## Config
+# Config
 
 A Polvo's complete config file will look such as:
 
@@ -122,10 +131,51 @@ output:
 boot: src/boot
 ````
 
-## Satability
+# Help
+
+````
+Usage:
+  polvo [options] [params]
+
+Options:
+  -w, --watch        Start watching/compiling in dev mode             
+  -c, --compile      Compile project in development mode              
+  -r, --release      Compile project in release mode                  
+  -s, --server       Serves project statically, options in config file
+  -C, --config-file  Path to a different config file                  
+  -J, --config       Config file formatted as a json-string           
+  -v, --version      Show Polvo's version                             
+  -h, --help         Shows this help screen                           
+
+Examples:
+  polvo -c
+  polvo -cs
+  polvo -w
+  polvo -ws
+````
+
+# Examples
+
+Complete example-app using all built in plugins with a complete config file.
+
+  * [repo-link](…)
+
+Live preview of this app.
+
+  * [app-link](…)
+
+# Screencast
+
+You can watch a quick screencast showing the basics here:
+ 
+ * [video-link](…)
+
+
+# Satability?
 
 Polvo is under heavy development, it's not bullet proof yet, but you can surely
-used as you will.
+used as you will. A properly test suite and coverage analysys is on the way.
+
 
 ## History
 
