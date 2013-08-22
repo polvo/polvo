@@ -2,9 +2,9 @@
 
 Polyvalent cephalopod mollusc.
 
-[![Stories in Ready](http://badge.waffle.io/serpentem/polvo.png)](http://waffle.io/serpentem/polvo)
+[![Stories in Ready](https://badge.waffle.io/polvo/polvo.png)](http://waffle.io/polvo/polvo)
 
-[![Build Status](https://secure.travis-ci.org/serpentem/polvo.png)](http://travis-ci.org/serpentem/polvo) [![Dependency Status](https://gemnasium.com/serpentem/polvo.png)](https://gemnasium.com/serpentem/polvo) [![NPM version](https://badge.fury.io/js/polvo.png)](http://badge.fury.io/js/polvo)
+[![Build Status](https://secure.travis-ci.org/polvo/polvo.png)](http://travis-ci.org/polvo/polvo) [![Dependency Status](https://gemnasium.com/polvo/polvo.png)](https://gemnasium.com/polvo/polvo) [![NPM version](https://badge.fury.io/js/polvo.png)](http://badge.fury.io/js/polvo)
 
 # What the ★★★★?
 
@@ -65,9 +65,9 @@ Some of them is yet ~~to be done~~.
 <a name="examples"></a>
 ## Examples
 
-There are no examples yet, but you can check the [tests](https://github.com/serpentem/polvo/tree/master/tests) provided for real example usages.
+There are no examples yet, but you can check the [tests](https://github.com/polvo/polvo/tree/master/tests) provided for real example usages.
 
 <a name="history"></a>
 ## History
 
-> Polvo started as a natural evolution of [Coffee Toaster](http://github.com/serpentem/coffee-toaster) -- *a build system for CoffeeScript*. As Toaster became too specific about CoffeeScript, Polvo comes out to be a more inclusive build tool covering more languages around the same goal.
+> Polvo started as a natural evolution of [Coffee Toaster](http://github.com/polvo/coffee-toaster) -- *a build system for CoffeeScript*. As Toaster became too specific about CoffeeScript, Polvo comes out to be a more inclusive build tool covering more languages around the same goal.
