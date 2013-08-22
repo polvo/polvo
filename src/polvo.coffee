@@ -12,6 +12,8 @@ module.exports = (options)->
   if argv.version
     return console.log version
 
+  console.log 'Initializing..'.grey
+
   if argv.compile or argv.watch or argv.release
     compiler = require './core/compiler'
 
