@@ -4,7 +4,9 @@ fs = require 'fs'
 connect = require 'connect'
 io = require 'socket.io'
 
+dirs = require '../utils/dirs'
 config = require '../utils/config'
+sourcemaps = require '../utils/sourcemaps'
 Cli = require '../cli'
 
 
@@ -14,16 +16,27 @@ module.exports = ->
   {root, port} = config.server
 
   index = path.join root, 'index.html'
+  source_map_reg = /\/__source_maps/
 
   # simple static server with 'connect'
   connect()
     .use( connect.static root )
     .use( (req, res)->
-      if ~(req.url.indexOf '.')
-        res.statusCode = 404
-        res.end 'File not found: ' + req.url
+
+      if source_map_reg.test req.url
+        file = req.url.replace '__source_maps/', ''
+
+        if file is '/map'
+          res.end sourcemaps.get_assembled(), 'utf-8'
+        else
+          souce_map_path = path.join dirs.pwd, file
+          res.end fs.readFileSync souce_map_path, 'utf-8'
       else
-        res.end (fs.readFileSync index, 'utf-8')
+        if ~(req.url.indexOf '.')
+          res.statusCode = 404
+          res.end 'File not found: ' + req.url
+        else
+          res.end fs.readFileSync index, 'utf-8'
     ).listen port
 
   address = 'http://localhost:' + port
