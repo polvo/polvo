@@ -7,6 +7,7 @@ files = require './files'
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
+sourcemaps = require '../utils/sourcemaps'
 
 server = require '../core/server'
 
@@ -29,6 +30,13 @@ reloader_path = loader_path.replace 'loader.js', 'reloader.js'
 
 auto_reload = fs.readFileSync io_path, 'utf-8'
 auto_reload += fs.readFileSync reloader_path, 'utf-8'
+
+# source maps header
+source_maps_header = """
+/*
+//@ sourceMappingURL=http://localhost:#{config.server.port}/__source_maps/map
+*/
+"""
 
 # sufix
 sufix = '})()'
@@ -64,23 +72,36 @@ exports.build_js = (notify) ->
   helpers = {}
   merged = []
 
+  offset = 0
+
   for each in all
     continue if each.is_partial
 
-    merged.push each.wrapped
+    # saving compiled contents and line count
+    js = each.wrapped
+    linesnum = js.split('\n').length
 
+    # storing compiled code in merged array
+    merged.push js
+
+    # updating file's offset info for source maps concatenation
+    each.offset = offset
+    offset += linesnum
+
+    # getting compiler
     comp = each.compiler
     comp_name = comp.name
-
     if not helpers[comp_name]? and (helper = comp.fetch_helpers?())?
       helpers[comp_name] or= helper
 
+  # merging helpers
   helpers = (v for k, v of helpers)
   merged = merged.join '\n'
 
+  # starting empty buffer
   buffer = ''
 
-  if argv.server and not argv.release
+  if argv.server and not argv.release and argv.autoreload is not false
     buffer += "\n// POLVO :: AUTORELOAD\n"
     buffer += auto_reload
 
@@ -91,13 +112,22 @@ exports.build_js = (notify) ->
   buffer += "\n// POLVO :: LOADER\n"
   buffer += loader
   buffer += "\n// POLVO :: MERGED FILES\n"
+
+  start = buffer.split('\n').length
+  for each in all
+    each.offset += start
+
   buffer += merged
+
   buffer += "\n// POLVO :: INITIALIZER\n"
   buffer += "require('#{config.boot}');"
   buffer += "\n"
+  buffer += source_maps_header
   buffer += sufix
 
   fs.writeFileSync config.output.js, buffer
+  sourcemaps.assemble all
+
   server.reload 'js'
   exports.notify_js() if notify
 
