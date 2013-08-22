@@ -32,7 +32,7 @@ module.exports = class File extends MicroEvent
 
   uncompiled: null
   compiled: null
-  map: null
+  source_map: null
 
   compiled: null
   src_map: null
@@ -42,6 +42,7 @@ module.exports = class File extends MicroEvent
   compiler: null
 
   constructor:(@filepath)->
+    @source_map = offset: 0
     @relativepath = dirs.relative @filepath
     @compiler = @get_compiler()
     {@type, @output} = @compiler
@@ -65,7 +66,7 @@ module.exports = class File extends MicroEvent
       ,(err)=>
         console.log @filepath, err
 
-      , (@compiled, @map)=>
+      , (@compiled, @source_map)=>
         done()
 
   wrap:->
