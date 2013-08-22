@@ -74,7 +74,7 @@ exports.build_js = (notify) ->
 
   offset = 0
 
-  for each in all
+  for each in all when each.wrapped?
     continue if each.is_partial
 
     # saving compiled contents and line count
