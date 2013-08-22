@@ -85,7 +85,7 @@ exports.build_js = (notify) ->
     merged.push js
 
     # updating file's offset info for source maps concatenation
-    each.offset = offset
+    each.source_map_offset = offset
     offset += linesnum
 
     # getting compiler
@@ -115,7 +115,7 @@ exports.build_js = (notify) ->
 
   start = buffer.split('\n').length
   for each in all
-    each.offset += start
+    each.source_map_offset += start
 
   buffer += merged
 

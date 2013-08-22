@@ -26,23 +26,19 @@ module.exports = class File extends MicroEvent
   type: null
   output: null
 
+  compiled: null
+  source_map: null
+  source_map_offset: null
+
   dependents: null
   dependencies: null
   aliases: null
-
-  uncompiled: null
-  compiled: null
-  source_map: null
-
-  compiled: null
-  src_map: null
 
   is_partial: no
 
   compiler: null
 
   constructor:(@filepath)->
-    @source_map = offset: 0
     @relativepath = dirs.relative @filepath
     @compiler = @get_compiler()
     {@type, @output} = @compiler
