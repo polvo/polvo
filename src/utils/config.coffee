@@ -33,9 +33,6 @@ if fs.existsSync polvo_yml
 else
   config = null
   error "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
-  warn "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
-  info "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
-  debug "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
   process.exit()
 
 module.exports = config
