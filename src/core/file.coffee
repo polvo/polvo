@@ -10,6 +10,8 @@ scan = require '../scanner/scan'
 MicroEvent = require '../event/microevent'
 Cli = require '../cli'
 
+{error, warn, info, debug} = require('../utils/log')('core/file')
+
 prefix = "require.register('~path', function(require, module, exports){"
 sufix = "}, ~deps);"
 
@@ -59,8 +61,8 @@ module.exports = class File extends MicroEvent
     return done() if @is_partial
 
     @compiler.compile @filepath, @raw, not argv.release
-      ,(err)=>
-        console.log @filepath, err
+      , (err)=>
+        error dirs.relative @filepath, '\n', err
 
       , (@compiled, @source_map)=>
         done()
