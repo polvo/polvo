@@ -1,22 +1,41 @@
-yml = require 'js-yaml'
 path = require 'path'
+fs = require 'fs'
+
+yml = require 'js-yaml'
 dirs = require './dirs'
 
-config = require path.join dirs.pwd, "polvo.yml"
+{error, warn, info, debug} = require('./log')('utils/config')
 
-for dirpath, index in config.input
-  config.input[index] = path.join dirs.pwd, dirpath
+parse_config = ( config_file ) ->
+  config = require config_file
 
-if config.output.js
-  config.output.js = path.join dirs.pwd, config.output.js
+  for dirpath, index in config.input
+    config.input[index] = path.join dirs.pwd, dirpath
 
-if config.output.css
-  config.output.css = path.join dirs.pwd, config.output.css
+  if config.output.js
+    config.output.js = path.join dirs.pwd, config.output.js
 
-if config.minify?
-  config.minify.js = config.minify.js ? true
-  config.minify.css = config.minify.css ? true
+  if config.output.css
+    config.output.css = path.join dirs.pwd, config.output.css
+
+  if config.minify?
+    config.minify.js = config.minify.js ? true
+    config.minify.css = config.minify.css ? true
+  else
+    config.minify = js: true, css: true
+
+  config
+
+polvo_yml = path.join dirs.pwd, "polvo.yml"
+
+if fs.existsSync polvo_yml
+  config = parse_config polvo_yml
 else
-  config.minify = js: true, css: true
+  config = null
+  error "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
+  warn "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
+  info "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
+  debug "Config file #{'polvo.yml'.bold} not found in ~> #{dirs.pwd}"
+  process.exit()
 
 module.exports = config
