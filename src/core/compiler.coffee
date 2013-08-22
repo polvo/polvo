@@ -101,7 +101,7 @@ exports.build_js = (notify) ->
   # starting empty buffer
   buffer = ''
 
-  if argv.server and not argv.release and argv.autoreload is not false
+  if argv.server and not argv.release and argv.autoreload isnt false
     buffer += "\n// POLVO :: AUTORELOAD\n"
     buffer += auto_reload
 
