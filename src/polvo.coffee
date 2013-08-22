@@ -2,8 +2,6 @@
   handleUncaughtExceptions: false
 
 version = require './utils/version'
-compiler = require './core/compiler'
-server = require './core/server'
 
 Cli = require './cli'
 
@@ -13,6 +11,12 @@ module.exports = (options)->
 
   if argv.version
     return console.log version
+
+  if argv.compile or argv.watch or argv.release
+    compiler = require './core/compiler'
+
+  if argv.server
+    server = require './core/server'
 
   if argv.compile or argv.watch
     compiler.build()

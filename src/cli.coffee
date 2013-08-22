@@ -28,8 +28,10 @@ module.exports = class Cli
 
     examples = """
       Examples:
+        polvo -c
+        polvo -cs
+        polvo -w
         polvo -ws
-        polvo -ws -b ./your/app/folder -j ./your/app/folder/config.polvo
     """
 
   help:->
@@ -57,13 +59,13 @@ module.exports = class Cli
       .alias('s', 'server')
       .describe('s', "Serves project statically, options in config file")
 
-      .alias('j', 'config')
-      .string( 'j' )
-      .describe('j', "Config file formatted as a json-string")
+      .alias( 'C', 'config-file' )
+      .string( 'C' )
+      .describe('C', "Path to a different config file")
 
-      .alias( 'f', 'config-file' )
-      .string( 'f' )
-      .describe('f', "Path to a different config file")
+      .alias('J', 'config')
+      .string( 'J' )
+      .describe('J', "Config file formatted as a json-string")
 
       .alias('v', 'version')
       .describe('v', 'Show Polvo\'s version')
