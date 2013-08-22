@@ -1,5 +1,6 @@
 _ = require 'lodash'
 fs = require 'fs'
+path = require 'path'
 filesize = require 'filesize'
 
 files = require './files'
@@ -7,7 +8,14 @@ dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 
-prefix = """;(function(){
+server = require '../core/server'
+
+Cli = require '../cli'
+
+{argv} = cli = new Cli
+
+prefix = ";(function(){"
+loader = """
   function require(path, parent){
     var m, realpath;
 
@@ -55,7 +63,55 @@ prefix = """;(function(){
         return require.maps[map] + path;
     return null;
   }
-  """
+"""
+
+io_path = path.join dirs.root, 'node_modules', 'socket.io', 'node_modules'
+io_path = path.join io_path, 'socket.io-client', 'dist', 'socket.io.js'
+io = fs.readFileSync io_path, 'utf-8'
+
+refresher = """
+  #{io}
+
+  ;(function(){
+    var host = window.location.protocol + '//' + window.location.hostname;
+    var refresher = io.connect( host, {port: 53211} );
+    refresher.on("refresh", function(data)
+    {
+      var i, suspects, suspect, newlink, href;
+
+      // refresh approach for javascript and templates
+      if(data.type == 'js')
+        return location.reload();
+
+      // refresh approach for styles
+      if(data.type == 'css') {
+        newlink = document.createElement('link');
+        newlink.setAttribute('rel', 'stylesheet');
+        newlink.setAttribute('type', 'text/css');
+
+        suspects = document.getElementsByTagName('link');
+        for( i=suspects.length; i>= 0; --i)
+        {
+          suspect = suspects[i]
+          if( suspect == null) continue;
+
+          href = suspect.getAttribute('href');
+          name = href != null ? href.split('/').pop() : null;
+
+          if (name && name == data.css_output)
+          {
+            newlink.setAttribute('href', href);
+            suspect.parentNode.appendChild(newlink);
+            setTimeout(function(){
+              suspect.parentNode.removeChild(suspect);
+            }, 100);
+            break;
+          }
+        }
+      }
+    });
+  })();
+"""
 
 sufix = '})()'
 
@@ -103,10 +159,18 @@ exports.build_js = (notify) ->
   helpers = (v for k, v of helpers)
   merged = merged.join '\n'
 
-  buffer = '// POLVO :: HELPERS\n'
-  buffer += helpers
-  buffer += "\n// POLVO :: LOADER\n"
+  buffer = ''
+
+  if argv.server and not argv.release
+    buffer += "\n// POLVO :: AUTORELOAD\n"
+    buffer += refresher
+
   buffer += prefix
+  buffer += '\n// POLVO :: HELPERS\n'
+  buffer += helpers
+
+  buffer += "\n// POLVO :: LOADER\n"
+  buffer += loader
   buffer += "\n// POLVO :: MERGED FILES\n"
   buffer += merged
   buffer += "\n// POLVO :: INITIALIZER\n"
@@ -115,6 +179,7 @@ exports.build_js = (notify) ->
   buffer += sufix
 
   fs.writeFileSync config.output.js, buffer
+  server.reload 'js'
   exports.notify_js() if notify
 
 exports.build_css = (notify) ->
@@ -130,6 +195,7 @@ exports.build_css = (notify) ->
   merged = merged.join '\n'
 
   fs.writeFileSync config.output.css, merged
+  server.reload 'css'
   exports.notify_css() if notify
 
 exports.notify_css = ->
