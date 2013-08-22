@@ -14,106 +14,25 @@ Cli = require '../cli'
 
 {argv} = cli = new Cli
 
+# prefix
 prefix = ";(function(){"
-loader = """
-  function require(path, parent){
-    var m, realpath;
 
-    if(parent)
-      realpath = require.mods[parent].aliases[path];
-    else
-      realpath = path;
+# cjs loader
+loader_path = path.join dirs.root, 'src', 'core', 'helpers', 'loader.js'
+loader = fs.readFileSync loader_path, 'utf-8'
+loader = loader.replace '~MAPPINGS', JSON.stringify config.mappings
 
-    if(!realpath)
-      realpath = require.map( path );
-    
-    if(!(m = require.mods[realpath]))
-    {
-      console.error('Module not found: ', path);
-      return null
-    }
-    
-    if(!m.init)
-    {
-      m.factory.call(this, require.local(realpath), m.module, m.module.exports);
-      m.init = true;
-    }
-
-    return m.module.exports;
-  }
-
-  require.mods = {}
-
-  require.local = function( path ){
-    return function( id ) { return require( id, path ); }
-  }
-
-  require.register = function(path, mod, aliases){
-    require.mods[path] = {
-      factory: mod,
-      aliases: aliases,
-      module: {exports:{}}
-    };
-  }
-
-  require.maps = #{JSON.stringify config.mappings};
-  require.map = function(path) {
-    for(var map in require.maps)
-      if(path.indexOf(map) == 0)
-        return require.maps[map] + path;
-    return null;
-  }
-"""
-
+# auto reload
 io_path = path.join dirs.root, 'node_modules', 'socket.io', 'node_modules'
 io_path = path.join io_path, 'socket.io-client', 'dist', 'socket.io.js'
-io = fs.readFileSync io_path, 'utf-8'
+reloader_path = loader_path.replace 'loader.js', 'reloader.js'
 
-refresher = """
-  #{io}
+auto_reload = fs.readFileSync io_path, 'utf-8'
+auto_reload += fs.readFileSync reloader_path, 'utf-8'
 
-  ;(function(){
-    var host = window.location.protocol + '//' + window.location.hostname;
-    var refresher = io.connect( host, {port: 53211} );
-    refresher.on("refresh", function(data)
-    {
-      var i, suspects, suspect, newlink, href;
-
-      // refresh approach for javascript and templates
-      if(data.type == 'js')
-        return location.reload();
-
-      // refresh approach for styles
-      if(data.type == 'css') {
-        newlink = document.createElement('link');
-        newlink.setAttribute('rel', 'stylesheet');
-        newlink.setAttribute('type', 'text/css');
-
-        suspects = document.getElementsByTagName('link');
-        for( i=suspects.length; i>= 0; --i)
-        {
-          suspect = suspects[i]
-          if( suspect == null) continue;
-
-          href = suspect.getAttribute('href');
-          name = href != null ? href.split('/').pop() : null;
-
-          if (name && name == data.css_output)
-          {
-            newlink.setAttribute('href', href);
-            suspect.parentNode.appendChild(newlink);
-            setTimeout(function(){
-              suspect.parentNode.removeChild(suspect);
-            }, 100);
-            break;
-          }
-        }
-      }
-    });
-  })();
-"""
-
+# sufix
 sufix = '})()'
+
 
 compilers = {}
 
@@ -163,7 +82,7 @@ exports.build_js = (notify) ->
 
   if argv.server and not argv.release
     buffer += "\n// POLVO :: AUTORELOAD\n"
-    buffer += refresher
+    buffer += auto_reload
 
   buffer += prefix
   buffer += '\n// POLVO :: HELPERS\n'
