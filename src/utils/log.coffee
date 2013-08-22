@@ -1,24 +1,24 @@
 util = require 'util'
 colors = require 'colors'
 
-module.exports = class Log
-  alias: null
+alias = ''
 
-  constructor:(alias = null)->
-    @alias = alias.grey
+module.exports = (_alias)->
+  alias = (_alias or alias).grey
+  module.exports
 
-  error:(msg, args...)=>
+module.exports.error = (msg, args...)->
     output = ['error'.red, msg.grey].concat args
     console.log.apply null, output
 
-  warn:(msg, args...)=>
+module.exports.warn = (msg, args...)->
     output = [' warn'.yellow, msg.grey].concat args
     console.log.apply null, output
 
-  info:(msg, args...)=>
+module.exports.info = (msg, args...)->
     output = [' info'.cyan, msg.grey].concat args
     console.log.apply null, output
 
-  debug:(msg, args...)=>
-    output = [@alias, 'debug'.magenta, msg.grey].concat args
+module.exports.debug = (msg, args...)->
+    output = [alias.inverse, 'debug'.magenta, msg.grey].concat args
     console.log.apply null, output
