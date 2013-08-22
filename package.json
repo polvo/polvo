@@ -45,7 +45,6 @@
     "esprima": "1.0.x",
     "filesize": "1.10.x",
     "clean-css": "1.0.x",
-
     "polvo-cs": "*",
     "polvo-js": "*",
     "polvo-html": "*",
@@ -54,6 +53,7 @@
     "polvo-css": "*"
   },
   "devDependencies": {
-    "coffee-script": "1.6.x"
+    "coffee-script": "1.6.x",
+    "mversion": "~0.2.0"
   }
 }

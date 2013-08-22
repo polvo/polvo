@@ -1,5 +1,6 @@
 CS=node_modules/coffee-script/bin/coffee
-VERSION=`$(CS) build/bumper.coffee --version`
+MVERSION=node_modules/.bin/mversion
+VERSION=`$(MVERSION) | sed -E 's/\* package.json: //g'`
 MOCHA_PHAMTOM=node_modules/mocha-phantomjs/bin/mocha-phantomjs
 POLVO=bin/polvo
 
@@ -39,13 +40,13 @@ test.release:
 
 
 bump.minor:
-	$(CS) build/bumper.coffee --minor
+	@$(MVERSION) minor
 
 bump.major:
-	$(CS) build/bumper.coffee --major
+	@$(MVERSION) major
 
 bump.patch:
-	$(CS) build/bumper.coffee --patch
+	@$(MVERSION) patch
 
 
 
