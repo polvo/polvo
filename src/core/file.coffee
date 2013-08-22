@@ -66,7 +66,7 @@ module.exports = class File extends MicroEvent
         console.log @filepath, err
 
       , (@compiled, @map)=>
-        done?(@)
+        done()
 
   wrap:->
     if @output is 'css'
