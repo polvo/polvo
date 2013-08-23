@@ -69,7 +69,8 @@ resolve_id = (filepath, id)->
 resolve_file = ( filepath )->
   for ext in exts
     tmp =  filepath
-    tmp += ext if (path.extname filepath) is ''
+    tmp = tmp.replace ext, ''
+    tmp += ext
     return tmp if fs.existsSync tmp
   return null
 
@@ -77,8 +78,11 @@ resolve_file = ( filepath )->
 # tries to get the index file inside a directory
 # ------------------------------------------------------------------------------
 resolve_index = ( dirpath )->
-  filepath = path.join dirpath, 'index.js'
-  return filepath if fs.existsSync filepath
+  path.join dirpath, 'index'
+  for ext in exts
+    tmp =  filepath
+    tmp += ext
+    return tmp if fs.existsSync tmp
   return null
 
 
