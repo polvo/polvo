@@ -12,7 +12,7 @@ log_to_stdout = ( args ) ->
   args = [].concat args
 
   if process.send and not argv.stdio
-    process.send channel: 'stdout', msg: args.join ''
+    process.send channel: 'stdout', msg: args.join ' '
   else
     console.log.apply null, args
 
@@ -20,7 +20,7 @@ log_to_stderr = ( args )->
   args = [].concat args
 
   if process.send and not argv.stidio
-    process.send channel: 'stderr', msg: args
+    process.send channel: 'stderr', msg: args.join ' '
   else
     console.error.apply null, args
 
