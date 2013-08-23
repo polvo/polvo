@@ -1,24 +1,57 @@
 util = require 'util'
 colors = require 'colors'
 
+dirs = require './dirs'
+Cli = require '../cli'
+
 alias = ''
+{argv} = cli = new Cli
+
+
+log_to_stdout = ( args ) ->
+  args = [].concat args
+
+  if process.send and not argv.stdio
+    process.send channel: 'stdout', msg: args.join ''
+  else
+    console.log.apply null, args
+
+log_to_stderr = ( args )->
+  args = [].concat args
+
+  if process.send and not argv.stidio
+    process.send channel: 'stderr', msg: args
+  else
+    console.error.apply null, args
 
 module.exports = (_alias)->
   alias = (_alias or alias).grey
   module.exports
 
 module.exports.error = (msg, args...)->
-    output = ['error'.red, msg.grey].concat args
-    console.log.apply null, output
+  log_to_stderr ['error'.red, msg.grey].concat args
 
 module.exports.warn = (msg, args...)->
-    output = [' warn'.yellow, msg.grey].concat args
-    console.log.apply null, output
+  log_to_stderr [' warn'.yellow, msg.grey].concat args
 
 module.exports.info = (msg, args...)->
-    output = [' info'.cyan, msg.grey].concat args
-    console.log.apply null, output
+  log_to_stdout = [' info'.cyan, msg.grey].concat args
 
 module.exports.debug = (msg, args...)->
-    output = [alias.inverse, 'debug'.magenta, msg.grey].concat args
-    console.log.apply null, output
+  log_to_stdout = [alias.inverse, 'debug'.magenta, msg.grey].concat args
+
+module.exports.log = (args...)->
+  log_to_stdout args
+
+module.exports.file = 
+  created:( filepath )->
+    log_to_stdout "+ #{dirs.relative filepath}".green
+
+  changed:( filepath )->
+    log_to_stdout "• #{dirs.relative filepath}".yellow
+
+  deleted:( filepath )->
+    log_to_stdout "- #{dirs.relative filepath}".red
+
+  compiled:( filepath )->
+    log_to_stdout "✓ #{dirs.relative filepath}".cyan
