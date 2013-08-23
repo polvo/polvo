@@ -23,8 +23,8 @@ section = """{
     "map": {
       "version": 3,
       "file": "app.js",
-      "sourceRoot": "http://localhost:#{config.server.port}/__source_maps",
       "sources": ["~SOURCE"],
+      "sourcesContent": ["~SOURCE-CONTENT"],
       "names": [],
       "mappings": "~MAPS"
     }
@@ -39,12 +39,23 @@ exports.assemble = (files)->
   sections = []
 
   for file in files when file.source_map?
+
+    clean_raw = file.raw
+    clean_raw = clean_raw.replace /\\/g, '\\\\'
+    clean_raw = clean_raw.replace /"/g, '\\"'
+    clean_raw = clean_raw.replace /\n/g, '\\n'
+
     sbuffer = section.replace '~SOURCE', dirs.relative file.filepath
     sbuffer = sbuffer.replace '~LINE', file.source_map_offset
     sbuffer = sbuffer.replace '~MAPS', JSON.parse(file.source_map).mappings
+    sbuffer = sbuffer.replace '~SOURCE-CONTENT', clean_raw
     sections.push sbuffer
+
 
   sourcemaps = buffer.replace '~SECTIONS', sections.join(',\n')
 
 exports.get_assembled = ->
   sourcemaps
+
+exports.get_assembled_64 = ->
+  new Buffer(sourcemaps).toString 'base64'

@@ -36,10 +36,9 @@ reloader_path = loader_path.replace 'loader.js', 'reloader.js'
 auto_reload = fs.readFileSync io_path, 'utf-8'
 auto_reload += fs.readFileSync reloader_path, 'utf-8'
 
-# source maps header
 source_maps_header = """
 /*
-//@ sourceMappingURL=http://localhost:#{config.server.port}/__source_maps/map
+//@ sourceMappingURL=data:application/json;charset=utf-8;base64,~MAP
 */
 """
 
@@ -121,17 +120,17 @@ exports.build_js = (notify) ->
   start = buffer.split('\n').length
   for each in all
     each.source_map_offset += start
+  sourcemaps.assemble all
 
   buffer += merged
 
   buffer += "\n// POLVO :: INITIALIZER\n"
   buffer += "require('#{config.boot}');"
   buffer += "\n"
-  buffer += source_maps_header
+  buffer += source_maps_header.replace '~MAP', sourcemaps.get_assembled_64()
   buffer += sufix
 
   fs.writeFileSync config.output.js, buffer
-  sourcemaps.assemble all
 
   server.reload 'js'
   exports.notify_js() if notify
