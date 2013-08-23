@@ -67,6 +67,9 @@ module.exports = class Cli
       .string( 'J' )
       .describe('J', "Config file formatted as a json-string")
 
+      .describe('stdio', 'Pipe stdio when forking `polvo` as a child process.')
+      .boolean( 'stdio' )
+
       .alias('v', 'version')
       .describe('v', 'Show Polvo\'s version')
 
