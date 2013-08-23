@@ -18,6 +18,9 @@ parse_config = ( config_file ) ->
   if config.output.css
     config.output.css = path.join dirs.pwd, config.output.css
 
+  if config?.server?.root
+    config.server.root = path.join dirs.pwd, config.server.root
+
   if config.minify?
     config.minify.js = config.minify.js ? true
     config.minify.css = config.minify.css ? true
