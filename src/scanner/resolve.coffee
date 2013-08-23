@@ -4,6 +4,11 @@ fs = require 'fs'
 config = require '../utils/config'
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
+log = require('../utils/log')('scanner/resolve')
+
+
+{error, warn, info, debug, log} = log
+
 
 exts = []
 for plugin in plugins
@@ -26,7 +31,7 @@ resolve = module.exports = (filepath, id)->
 
   # otherwise show error
   caller = path.relative dirs.pwd, filepath
-  console.log "Module '#{id}' not found for '#{caller}'"
+  error "Module '#{id}' not found for '#{caller}'"
   return null
 
 

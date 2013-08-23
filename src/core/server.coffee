@@ -7,6 +7,10 @@ io = require 'socket.io'
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 sourcemaps = require '../utils/sourcemaps'
+log = require('../utils/log')('core/server')
+
+{error, warn, info, debug, log} = log
+
 Cli = require '../cli'
 
 
@@ -40,7 +44,7 @@ module.exports = ->
     ).listen port
 
   address = 'http://localhost:' + port
-  console.log "♫  #{address}"
+  log "♫  #{address}"
 
   unless argv.r
     refresher = io.listen 53211, 'log level': 0

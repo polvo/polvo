@@ -7,6 +7,13 @@ config = require '../utils/config'
 compiler = require './compiler'
 
 plugins = require '../utils/plugins'
+log = require('../utils/log')('core/files')
+
+{error, warn, info, debug} = log
+
+log_created = log.file.created
+log_changed = log.file.changed
+log_deleted = log.file.deleted
 
 File = require './file'
 Cli = require '../cli'
@@ -98,13 +105,13 @@ module.exports = new class Files
 
       when "create"
         file = @create_file location
-        console.log "+ #{dirs.relative location}".green
+        log_created location 
         @compile file
 
       when "delete"
         file = @delete_file location
         if file
-          console.log "- #{dirs.relative location}".red
+          log_deleted location
           @compile file
 
       when "change"
@@ -113,9 +120,9 @@ module.exports = new class Files
         if file is null
           msg = "Change file is apparently null, it shouldn't happened.\n"
           msg += "Please report this at the repo issues section."
-          console.warn msg
+          warn msg
         else
-          console.log "• #{dirs.relative location}".yellow
+          log_changed location
 
         file.refresh()
         @compile file

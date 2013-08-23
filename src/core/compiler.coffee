@@ -4,12 +4,17 @@ path = require 'path'
 filesize = require 'filesize'
 
 files = require './files'
+server = require './server'
+
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
+log = require('../utils/log')('core/compiler')
 
-server = require '../core/server'
+{error, warn, info, debug} = log
+
+log_compiled = log.file.compiled
 
 Cli = require '../cli'
 
@@ -149,10 +154,9 @@ exports.build_css = (notify) ->
 
 exports.notify_css = ->
   fsize = filesize (fs.statSync config.output.css).size
-  relative = dirs.relative config.output.css
-  console.log "✓ #{relative} (#{fsize})".cyan
+  fsize = filesize (fs.statSync config.output.css).size
+  log_compiled "#{config.output.css} (#{fsize})"
 
 exports.notify_js = ->
   fsize = filesize (fs.statSync config.output.js).size
-  relative = dirs.relative config.output.js
-  console.log "✓ #{relative} (#{fsize})".cyan
+  log_compiled "#{config.output.js} (#{fsize})"
