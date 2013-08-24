@@ -1,7 +1,8 @@
 util = require 'util'
 colors = require 'colors'
 
-dirs = null # is required above to avoid circular-loop
+# dirs module is required above to avoid circular-loop
+dirs = null
 Cli = require '../cli'
 
 alias = ''
