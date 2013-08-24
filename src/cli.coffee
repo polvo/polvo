@@ -66,7 +66,7 @@ module.exports = class Cli
       .describe('f', "Path to a different config file")
 
       .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
-      .boolean( 'f' )
+      .string( 'f' )
 
       .describe('base', 'Path to app\'s root folder (when its not the current)')
       .string( 'base' )
