@@ -32,6 +32,24 @@ Tired of reading? Watch the [screencast](#screencast).
 
 > Screencast screenshot here with link.
 
+ - [Philosophy](#philosophy-in-short)
+ - [Features](#features)
+ - [Dependency Resolution](#dependency-resolution)
+ - [Packaging Systems](#packaging-systems)
+ - [Plugins](#plugins-supported-languages)
+   - [Built in](#built-in-plugins)
+ - [Config file](#config)
+   - [server](#server)
+   - [input](#input)
+   - [output](#output)
+   - [aliases](#aliases)
+   - [minify](#minify)
+   - [boot](#boot)
+ - [CLI](#cli)
+ - [Examples](#examples)
+ - [Stability](#stability)
+ - [History](#history)
+
 # Philosophy (in short)
 
  1. Your `scripts` and templates becomes all one `javascript`, and your `styles`
@@ -249,9 +267,9 @@ Following the config presented above, it'd be:
 require( 'src/app/app' );
 ````
 
-# Help
+# CLI
 
-Command line usage.
+Command line interface.
 
 ````
 Usage:
