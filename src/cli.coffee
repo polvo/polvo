@@ -11,7 +11,7 @@ module.exports = class Cli
   usage = null
   examples = null
 
-  constructor:( @options )->
+  constructor:->
     do @configure
     do @init
 
@@ -32,6 +32,7 @@ module.exports = class Cli
         polvo -cs
         polvo -w
         polvo -ws
+        polvo -wsf custom-config-file.yml
     """
 
   help:->
@@ -39,39 +40,41 @@ module.exports = class Cli
 
   init:->
 
-    inject = []
-    for key, val of @options
-      if key.length is 1
-        inject = inject.concat "-#{key}", val
-      else
-        inject = inject.concat "--#{key}", val
+    for key, val of cli_options
+      process.argv.push if key.length is 1 then "-#{key}" else "--#{key}"
+      process.argv.push "#{val}"
 
-    optimis = optimist( process.argv.concat inject ).usage( usage )
+    optimis = optimist( process.argv ).usage( usage )
       .alias('w', 'watch')
+      .boolean( 'w' )
       .describe('w', "Start watching/compiling in dev mode")
       
       .alias('c', 'compile')
+      .boolean( 'c' )
       .describe('c', "Compile project in development mode")
 
       .alias('r', 'release')
+      .boolean( 'r' )
       .describe('r', "Compile project in release mode")
 
       .alias('s', 'server')
+      .boolean( 's' )
       .describe('s', "Serves project statically, options in config file")
 
-      .alias( 'C', 'config-file' )
-      .string( 'C' )
-      .describe('C', "Path to a different config file")
+      .alias( 'f', 'config-file' )
+      .string( 'f' )
+      .describe('f', "Path to a different config file")
 
-      .alias('J', 'config')
-      .string( 'J' )
-      .describe('J', "Config file formatted as a json-string")
+      .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
+      .boolean( 'f' )
 
-      .describe('stdio', 'Pipe stdio when forking `polvo` as a child process.')
-      .boolean( 'stdio' )
+      .describe('base', 'Path to app\'s root folder (when its not the current)')
+      .string( 'base' )
 
       .alias('v', 'version')
+      .boolean('v')
       .describe('v', 'Show Polvo\'s version')
 
       .alias('h', 'help')
+      .boolean('h')
       .describe('h', 'Shows this help screen')
