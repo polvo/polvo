@@ -1,17 +1,17 @@
 (require 'source-map-support').install
   handleUncaughtExceptions: false
 
-version = require './utils/version'
-log = require('./utils/log')('polvo')
+module.exports = (options = {}, on_data, on_error)->
+  global.cli_options = options
+  global.__stdout = on_data
+  global.__stderr = on_error
 
-{error, warn, info, debug, log} = log
+  version = require './utils/version'
+  log = require('./utils/log')('polvo')
+  Cli = require './cli'
 
-
-Cli = require './cli'
-
-module.exports = (options)->
-
-  {argv} = cli = new Cli options
+  {error, warn, info, debug, log} = log
+  {argv} = cli = new Cli
 
   if argv.version
     return log version
