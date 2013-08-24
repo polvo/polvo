@@ -1,1 +1,0 @@
-var vendor_b = function vendor_b(){}
