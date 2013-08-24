@@ -48,6 +48,7 @@ Tired of reading? Watch the [screencast](#screencast).
    - [minify](#minify)
    - [boot](#boot)
  - [CLI](#cli)
+ - [Stability](#stability)
  - [Examples](#examples)
  - [History](#history)
 
@@ -297,7 +298,7 @@ Live preview of this app.
 
   * [app-link](…)
 
-# Satability?
+# Stability?
 
 Polvo is under heavy development, it's not bullet proof yet, but you can surely
 use it. It's being used in production everyday. A properly test suite and
