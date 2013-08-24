@@ -32,6 +32,8 @@ Tired of reading? Watch the [screencast](#screencast).
 
 > Screencast screenshot here with link.
 
+# Docs
+
  - [Philosophy](#philosophy-in-short)
  - [Features](#features)
  - [Dependency Resolution](#dependency-resolution)
