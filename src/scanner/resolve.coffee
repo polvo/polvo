@@ -92,7 +92,7 @@ resolve_module = (filepath, id)->
   if config.mappings?
     for map, location of config.mappings
       if id.indexOf(map) is 0
-        nmods = path.join dirs.pwd, location
+        nmods = location
 
   unless nmods?
     nmods = closest_node_modules filepath
