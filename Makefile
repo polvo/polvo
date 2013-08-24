@@ -26,16 +26,16 @@ build:
 
 test:
 	@$(MOCHA) --compilers coffee:coffee-script \
-	--ui bdd \
-	--reporter spec \
-	tests/functional/*.coffee
+		--ui bdd \
+		--reporter spec \
+		tests/functional
 
 test.coverage:
-	@$(ISTANBUL) cover _mocha -- \
+	@$(ISTANBUL) cover $(_MOCHA) -- \
 	--compilers coffee:coffee-script \
 	--ui bdd \
 	--reporter spec \
-	tests/functional/*.coffee
+	tests/functional
 
 
 bump.minor:
