@@ -28,14 +28,14 @@ test:
 	@$(MOCHA) --compilers coffee:coffee-script \
 	--ui bdd \
 	--reporter spec \
-	new-tests/functional/*.coffee
+	tests/functional/*.coffee
 
 test.coverage:
 	@$(ISTANBUL) cover _mocha -- \
 	--compilers coffee:coffee-script \
 	--ui bdd \
 	--reporter spec \
-	new-tests/functional/*.coffee
+	tests/functional/*.coffee
 
 
 bump.minor:
