@@ -49,7 +49,6 @@ Tired of reading? Watch the [screencast](#screencast).
    - [boot](#boot)
  - [CLI](#cli)
  - [Examples](#examples)
- - [Stability](#stability)
  - [History](#history)
 
 # Philosophy (in short)
@@ -99,7 +98,7 @@ support them all. It's not fully functional yet, but at the moment you can use:
 
 # Plugins (supported languages)
 
-Polvo is agnostic to languages, however it needs plugins for each one ir onder
+Polvo is agnostic to languages, however it needs plugins for each one in order
 to properly assemble it. Some of them is built in out of the box, and others
 should be done / installed separately.
 
