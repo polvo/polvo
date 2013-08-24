@@ -12,13 +12,12 @@ minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
 log = require('../utils/log')('core/compiler')
 
-{error, warn, info, debug} = log
-
-log_compiled = log.file.compiled
-
 Cli = require '../cli'
 
+log_compiled = log.file.compiled
 {argv} = cli = new Cli
+{error, warn, info, debug} = log
+
 
 # prefix
 prefix = ";(function(){"
@@ -48,7 +47,9 @@ sufix = '})()'
 
 compilers = {}
 
-build = exports.build = ->
+
+
+exports.build = ->
   compilers = {}
   exports.build_js true
   exports.build_css true
