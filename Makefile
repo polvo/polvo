@@ -1,7 +1,13 @@
 CS=node_modules/coffee-script/bin/coffee
+
 MVERSION=node_modules/.bin/mversion
 VERSION=`$(MVERSION) | sed -E 's/\* package.json: //g'`
-MOCHA_PHAMTOM=node_modules/mocha-phantomjs/bin/mocha-phantomjs
+
+ISTANBUL=node_modules/istanbul/lib/cli.js
+MOCHA=node_modules/mocha/bin/mocha
+_MOCHA=node_modules/mocha/bin/_mocha
+
+
 POLVO=bin/polvo
 
 setup:
@@ -18,25 +24,18 @@ build:
 
 
 
-test: test.dev test.release
+test:
+	@$(MOCHA) --compilers coffee:coffee-script \
+	--ui bdd \
+	--reporter spec \
+	new-tests/functional/*.coffee
 
-
-test.dev:
-	@echo ''
-	@echo '★  testing `development` version'
-	@echo ''
-	@$(POLVO) -c tests
-	@echo ''
-	@$(MOCHA_PHAMTOM) tests/www/index.html
-
-# testing release version
-test.release:
-	@echo ''
-	@echo '★  testing `release` version'
-	@echo ''
-	@$(POLVO) -r tests
-	@echo ''
-	@$(MOCHA_PHAMTOM) tests/www/index.html
+test.coverage:
+	@$(ISTANBUL) cover _mocha -- \
+	--compilers coffee:coffee-script \
+	--ui bdd \
+	--reporter spec \
+	new-tests/functional/*.coffee
 
 
 bump.minor:
