@@ -42,6 +42,5 @@ if fs.existsSync polvo_yml
 else
   config = null
   error 'Config file not found, run `polvo -i` to initialize your project'
-  # process.exit()
 
 module.exports = config
