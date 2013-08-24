@@ -90,9 +90,11 @@ if dirs.pwd?
     polvo_yml = path.join dirs.pwd, "polvo.yml"
 
   if fs.existsSync polvo_yml
-    config = parse_config polvo_yml
+    if fs.statSync( polvo_yml ).isDirectory()
+      error 'Config file\'s path is a directory  ~> ', polvo_yml
+    else
+      config = parse_config polvo_yml
   else
     error 'Config file not found ~> ', polvo_yml
-
 
 module.exports = config
