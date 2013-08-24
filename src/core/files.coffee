@@ -61,7 +61,7 @@ module.exports = new class Files
       is_under_inputs and= (filepath.indexOf(dirpath) is 0)
     
     if not is_under_inputs
-      @watch_file file.filepath
+      @watch_file file.filepath if argv.watch
 
     file
 
