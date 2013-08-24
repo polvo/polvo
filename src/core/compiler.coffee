@@ -72,7 +72,12 @@ exports.build_js = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
   all = _.filter files.files, output: 'js'
+  return unless all.length
   
+  unless config.output.js?
+    error 'JS not saved, you need to set the js output in your config file'
+    return
+
   helpers = {}
   merged = []
 
@@ -139,8 +144,13 @@ exports.build_css = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
   all = _.filter files.files, output: 'css'
-  merged = []
+  return unless all.length
 
+  unless config.output.css?
+    error 'CSS not saved, you need to set the css output in your config file'
+    return
+
+  merged = []
   for each in all
     continue if each.is_partial
     merged.push each.compiled
@@ -152,7 +162,6 @@ exports.build_css = (notify) ->
   exports.notify_css() if notify
 
 exports.notify_css = ->
-  fsize = filesize (fs.statSync config.output.css).size
   fsize = filesize (fs.statSync config.output.css).size
   log_compiled "#{config.output.css} (#{fsize})"
 
