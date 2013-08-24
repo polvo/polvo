@@ -2,10 +2,7 @@ optimist = require 'optimist'
 version = require './utils/version'
 colors = require 'colors'
 
-# argv injection
-for key, val of cli_options
-  process.argv.push if key.length is 1 then "-#{key}" else "--#{key}"
-  process.argv.push "#{val}"
+original_argv = process.argv
 
 module.exports = class Cli
 
@@ -44,6 +41,14 @@ module.exports = class Cli
     "#{optimis.help()}\n#{examples}"
 
   init:->
+    # argv injection
+    injection = []
+    for key, val of cli_options
+      injection.push if key.length is 1 then "-#{key}" else "--#{key}"
+      injection.push "#{val}"
+
+    process.argv = original_argv.concat injection
+
     optimis = optimist( process.argv ).usage( usage )
       .alias('w', 'watch')
       .boolean( 'w' )
