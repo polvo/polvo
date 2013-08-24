@@ -159,12 +159,6 @@ minify:
 boot: src/app/app
 ````
 
-Considere these options for the docs bellow.
-
-## Config options
-
-Detailed infos about each option.
-
 ### Server
 
 Basic infos to serve your application, just inform desired port and your
