@@ -112,20 +112,20 @@ Each plugin is an independent repository.
 
 Click the links to see individual `README` for each one.
 
-### ★ for Scripts
+### ★ Scripts
  1. [Javascript](https://github.com/polvo/polvo-js) (`.js`)
  1. [CoffeeScript]((https://github.com/polvo/polvo-cs) (`.coffee`)
     * ✓ Literate Coffeescript (`.litcoffee`, `.coffee.md`)
     * ✓ Source Maps
 
-### ★ for Styles
+### ★ Styles
  1. [CSS](https://github.com/polvo/polvo-css) (`.css`)
      * ✓ `partials` supported
  1. [Stylus](https://github.com/polvo/polvo-stylus) (`.styl`)
      * ✓ `nib` available
      * ✓ `partials` supported
 
-### ★ for Templates
+### ★ Templates
  1. [HTML](https://github.com/polvo/polvo-html) (`.htm`, `.html`)
     * ✓ `partials` supported
  1. [Jade](https://github.com/polvo/polvo-jade) (`.jade`)
