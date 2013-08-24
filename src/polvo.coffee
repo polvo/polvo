@@ -6,18 +6,19 @@ module.exports = (options = {}, io)->
   global.__stdout = io?.out or null
   global.__stderr = io?.err or null
 
-  version = require './utils/version'
-  config = require './utils/config'
-  log = require('./utils/log')('polvo')
   Cli = require './cli'
+  version = require './utils/version'
+  log = require('./utils/log')('polvo')
 
-  {error, warn, info, debug, log} = log
   {argv} = cli = new Cli
+  {error, warn, info, debug, log} = log
 
   if argv.version
     return log version
 
   else if argv.compile or argv.watch or argv.release
+
+    config = require './utils/config'
 
     if config?
       compiler = require './core/compiler'
