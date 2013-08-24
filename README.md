@@ -192,7 +192,7 @@ The app's `controller.coffee` can require the framework's `controller.coffee`
 as easy as:
 
 ````coffeescript
-Controller = require '../../../vendors/myframework/src/lib/controller.coffee'
+Controller = require '../../../vendors/myframework/src/lib/controller'
 ````
 
 However, sometimes these relative paths can get nasty. In this cases, aliases
@@ -208,11 +208,8 @@ your `node_modules` folder, and `require` calls can be made in global-style
 regardless of which file is requiring it:
 
 ````coffeescript
-Controller = require 'myfraework/lib/controller.coffee'
+Controller = require 'myfraework/lib/controller'
 ````
-
-Any file in your src folders will be able to require this Controller in this
-very same way. Again, like it were a NPM module inside `node_modules` folders.
 
 Not that:
 
@@ -232,7 +229,7 @@ So what's the catch?
 In `development` mode other things will be injected among your scripts in the
 `app.js` file. For example, the LiveReload embedded functionality.
 
-In `release` mode it's removed, nothing special is injectd. So you may want to
+In `release` mode it's removed, nothing special is injected. So you may want to
 have a production ready `release` file (that doesn't includes magic), but at the
 same time keep it uncompressed. In case you do, that's the way to go.
 
