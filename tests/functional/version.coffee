@@ -1,9 +1,9 @@
 polvo = require '../../lib/polvo'
 should = require('chai').should()
 
-describe 'when asking for version', ->
-  it 'the right version should be shown', ->
+describe 'version', ->
+  it 'the right version should be shown for the -v command', (done)->
     options = version: true
-    version = polvo options, (out)->
-      v = out[0]
-      v.should.equal require('../../package.json').version
+    polvo options, out:(version)->
+      version.should.equal require('../../package.json').version
+      done()
