@@ -1,12 +1,13 @@
 (require 'source-map-support').install
   handleUncaughtExceptions: false
 
-module.exports = (options = {}, on_data, on_error)->
+module.exports = (options = {}, io)->
   global.cli_options = options
-  global.__stdout = on_data
-  global.__stderr = on_error
+  global.__stdout = io?.out or null
+  global.__stderr = io?.err or null
 
   version = require './utils/version'
+  config = require './utils/config'
   log = require('./utils/log')('polvo')
   Cli = require './cli'
 
@@ -16,21 +17,22 @@ module.exports = (options = {}, on_data, on_error)->
   if argv.version
     return log version
 
-  if argv.compile or argv.watch or argv.release
-    log 'Initializing..'.grey
-    compiler = require './core/compiler'
+  else if argv.compile or argv.watch or argv.release
 
-  if argv.server
-    server = require './core/server'
+    if config?
+      compiler = require './core/compiler'
 
-  if argv.compile or argv.watch
-    compiler.build()
-    server() if argv.server
-    return
+      if argv.server and config?
+        server = require './core/server'
+      
+      if argv.compile or argv.watch
+        compiler.build()
+        server() if argv.server
+      
+      else if argv.release
+        console.log 'merda'
+        compiler.release()
+        server() if argv.server
 
-  if argv.release
-    compiler.release()
-    server() if argv.server
-    return
-
-  log cli.help()
+  else
+    log cli.help()
