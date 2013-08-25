@@ -37,6 +37,10 @@ test.coverage:
 	--reporter spec \
 	tests/functional
 
+test.coverage.server: test.coverage
+	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080
+
+
 
 bump.minor:
 	@$(MVERSION) minor
