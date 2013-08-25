@@ -57,6 +57,22 @@ describe '[log]', ->
     info 'Hello world', 1
     info 'Hello world', 1, 2
 
+  it 'log', (done)->
+    msgs = [
+      'Hello world'
+      'Hello world 1'
+      'Hello world 1 2'
+    ]
+
+    global.__stdout = (data)->
+      data.should.equal msgs.shift()
+      done() unless msgs.length
+
+    {log} = require('../../lib/utils/logger')()
+    log 'Hello world'
+    log 'Hello world', 1
+    log 'Hello world', 1, 2
+
   it 'debug', (done)->
     msgs = [
       'tests/log debug Hello world'
