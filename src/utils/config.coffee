@@ -6,7 +6,7 @@ require 'js-yaml'
 dirs = require './dirs'
 cli = require '../cli'
 
-{error, warn, info, debug} = require('./log')('utils/config')
+{error, warn, info, debug} = require('./logger')('utils/config')
 
 exports.parse = ->
 
