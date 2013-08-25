@@ -40,10 +40,12 @@ module.exports = (alias = '')->
     log_to_stdout ['info'.bold.cyan, msg.grey].concat args
 
   debug: (msg, args...)->
-    if alias is ''
-      log_to_stdout ['debug'.magenta, msg.grey].concat args
-    else
-      log_to_stdout [alias.inverse, 'debug'.magenta, msg.grey].concat args
+    args = ['debug'.magenta, msg.grey].concat args
+    args.unshift alias.inverse if alias isnt ''
+    log_to_stdout args
+
+  log: (msg, args...)->
+    log_to_stdout [msg].concat args
 
 
   file: 
