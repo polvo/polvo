@@ -14,7 +14,7 @@ exports.pwd = ->
   
   if argv.base?
     unless fs.existsSync (pwd = path.resolve argv.base)
-      error 'Dir informed with [--base] option doesn\'t exist ~>', base
+      error 'Dir informed with [--base] option doesn\'t exist ~>', argv.base
       return null
     else return pwd
   
