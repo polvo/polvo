@@ -10,7 +10,7 @@ dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
-log = require('../utils/log')('core/compiler')
+log = require('../utils/logger')('core/compiler')
 
 Cli = require '../cli'
 

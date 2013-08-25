@@ -4,7 +4,7 @@ fs = require 'fs'
 config = require '../utils/config'
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
-log = require('../utils/log')('scanner/resolve')
+log = require('../utils/logger')('scanner/resolve')
 
 
 {error, warn, info, debug, log} = log

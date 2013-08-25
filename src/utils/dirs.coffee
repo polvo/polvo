@@ -2,7 +2,7 @@ path = require 'path'
 fs = require 'fs'
 
 cli = require '../cli'
-log = require('./log')('polvo')
+log = require('./logger')('polvo')
 
 {error, warn, info, debug, log} = log
 

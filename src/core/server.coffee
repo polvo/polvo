@@ -7,7 +7,7 @@ io = require 'socket.io'
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 sourcemaps = require '../utils/sourcemaps'
-log = require('../utils/log')('core/server')
+log = require('../utils/logger')('core/server')
 
 {error, warn, info, debug, log} = log
 

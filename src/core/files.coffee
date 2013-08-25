@@ -7,7 +7,7 @@ config = require '../utils/config'
 compiler = require './compiler'
 
 plugins = require '../utils/plugins'
-log = require('../utils/log')('core/files')
+log = require('../utils/logger')('core/files')
 
 {error, warn, info, debug} = log
 

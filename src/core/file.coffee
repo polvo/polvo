@@ -10,7 +10,7 @@ scan = require '../scanner/scan'
 MicroEvent = require '../event/microevent'
 Cli = require '../cli'
 
-{error, warn, info, debug} = require('../utils/log')('core/file')
+{error, warn, info, debug} = require('../utils/logger')('core/file')
 
 prefix = "require.register('~path', function(require, module, exports){"
 sufix = "}, ~deps);"
