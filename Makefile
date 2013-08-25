@@ -6,6 +6,7 @@ VERSION=`$(MVERSION) | sed -E 's/\* package.json: //g'`
 ISTANBUL=node_modules/istanbul/lib/cli.js
 MOCHA=node_modules/mocha/bin/mocha
 _MOCHA=node_modules/mocha/bin/_mocha
+COVERALLS=node_modules/coveralls/bin/coveralls.js
 
 
 POLVO=bin/polvo
@@ -39,6 +40,13 @@ test.coverage:
 
 test.coverage.preview: test.coverage
 	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080
+
+test.coverage.coveralls: test.coverage
+	@sed -i.bak \
+		"s/^.*polvo\/lib/SF:lib/g" \
+		coverage/lcov.info
+
+	@cat coverage/lcov.info | $(COVERALLS)
 
 
 

@@ -57,6 +57,7 @@
     "mversion": "~0.2.0",
     "chai": "1.7.x",
     "mocha": "1.12.x",
-    "istanbul": "0.1.x"
+    "istanbul": "0.1.x",
+    "coveralls": "2.2.x"
   }
 }
