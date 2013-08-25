@@ -49,9 +49,7 @@ describe   '[config]', ->
     global.global_options = base: base
 
   afterEach ->
-    if fs.existsSync yml
-      fs.unlinkSync yml
-      delete require.cache[require.resolve yml]
+    fs.unlinkSync yml if fs.existsSync yml
 
     global.__stdout = global.__stderr = global.global_options = null
     delete global.__stdout

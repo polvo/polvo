@@ -27,6 +27,7 @@ exports.parse = ->
     return null
   else
     config = require(yml) or {}
+    delete require.cache[require.resolve yml]
 
   # server
   if argv.server
