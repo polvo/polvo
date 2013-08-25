@@ -3,10 +3,10 @@ colors = require 'colors'
 
 # dirs module is required above to avoid circular-loop
 dirs = null
-Cli = require '../cli'
+cli = require '../cli'
 
 alias = ''
-{argv} = cli = new Cli
+argv = cli.argv()
 
 log_to_stdout = ( args ) ->
   args = [].concat args
