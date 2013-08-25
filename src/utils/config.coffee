@@ -19,32 +19,28 @@ exports.parse = ->
       yml = path.join dirs.pwd(), "polvo.yml"
 
   unless fs.existsSync yml
-    error 'Config file not found ~> ', yml
+    error 'Config file not found ~>', yml
     return null
 
   if fs.statSync( yml ).isDirectory()
-    error 'Config file\'s path is a directory  ~> ', yml
+    error 'Config file\'s path is a directory  ~>', yml
     return null
   else
-    config = require yml
-
-  # pwd
-  unless fs.existsSync dirs.pwd()
-    return null
+    config = require(yml) or {}
 
   # server
   if argv.server
 
-    if config?.server?
+    if config.server?
 
       config.server.port ?= 3000
-      if config.server?.root
+      if config.server.root
         root = config.server.root = path.join dirs.pwd(), config.server.root
         unless fs.existsSync root
           error 'Server\'s root dir does not exist ~>', root
           return null
       else
-        error 'Server\'s root not set in in config file ~>', root
+        error 'Server\'s root not set in in config file'
         return null
 
     else
@@ -52,7 +48,7 @@ exports.parse = ->
       return null
 
   # input
-  if config?.input? and config.input.length
+  if config.input? and config.input.length
     for dirpath, index in config.input
       tmp = config.input[index] = path.join dirs.pwd(), dirpath
       unless fs.existsSync tmp
@@ -63,7 +59,7 @@ exports.parse = ->
     return null
 
   # output
-  if config?.output?
+  if config.output?
 
     if config.output.js?
       config.output.js = path.join dirs.pwd(), config.output.js
@@ -92,10 +88,8 @@ exports.parse = ->
         return null
 
   # minify
-  if config.minify?
-    config.minify.js = config.minify.js ? true
-    config.minify.css = config.minify.css ? true
-  else
-    config.minify = js: true, css: true
+  config.minify = {} unless config.minify?
+  config.minify.js = true unless config.minify.js?
+  config.minify.css = true unless config.minify.css?
 
   config
