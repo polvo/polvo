@@ -6,7 +6,7 @@ io = require 'socket.io'
 
 cli = require '../cli'
 dirs = require '../utils/dirs'
-config = require('../config').parse()
+config = require('../utils/config').parse()
 sourcemaps = require '../utils/sourcemaps'
 
 {error, warn, info, debug, log} = require('../utils/logger')('core/server')
