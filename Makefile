@@ -37,7 +37,7 @@ test.coverage:
 	--reporter spec \
 	tests/functional
 
-test.coverage.server: test.coverage
+test.coverage.preview: test.coverage
 	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080
 
 
