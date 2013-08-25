@@ -21,13 +21,7 @@ describe '[dirs]', ->
     global.global_options = null
     delete global.global_options
 
-  it 'getting relative path', ->
-    global.global_options = base: base
-    dirs.relative(app).should.equal rel
-    global.global_options = null
-    delete global.global_options
-
-  it 'getting relative path', (done)->
+  it 'getting pwd for inexistent base path', (done)->
     out = 0
     err_msg = 'error Dir informed with [--base] option doesn\'t exist ~> '
     err_msg += 'non/existent/folder'
@@ -44,3 +38,8 @@ describe '[dirs]', ->
     global.global_options = null
     delete global.global_options
 
+  it 'getting relative path', ->
+    global.global_options = base: base
+    dirs.relative(app).should.equal rel
+    global.global_options = null
+    delete global.global_options
