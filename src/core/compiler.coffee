@@ -24,12 +24,12 @@ log_compiled = logger.file.compiled
 prefix = ";(function(){"
 
 # cjs loader
-loader_path = path.join dirs.root, 'src', 'core', 'helpers', 'loader.js'
+loader_path = path.join dirs.root(), 'src', 'core', 'helpers', 'loader.js'
 loader = fs.readFileSync loader_path, 'utf-8'
 loader = loader.replace '~MAPPINGS', JSON.stringify config.mappings
 
 # auto reload
-io_path = path.join dirs.root, 'node_modules', 'socket.io', 'node_modules'
+io_path = path.join dirs.root(), 'node_modules', 'socket.io', 'node_modules'
 io_path = path.join io_path, 'socket.io-client', 'dist', 'socket.io.js'
 reloader_path = loader_path.replace 'loader.js', 'reloader.js'
 
@@ -63,12 +63,13 @@ exports.release = ->
   if config.minify.js
     uncompressed = fs.readFileSync config.output.js
     fs.writeFileSync config.output.js, minify.js uncompressed.toString()
-    exports.notify_js()
 
   if config.minify.css
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
-    exports.notify_css()
+
+  exports.notify_js()
+  exports.notify_css()
 
 exports.build_js = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
