@@ -71,7 +71,7 @@ describe '[log]', ->
       data.should.equal msgs.shift()
       done() unless msgs.length
 
-    {debug} = require('../../lib/utils/logger')('tests/logger')
+    {debug} = require('../../lib/utils/logger')('tests/log')
     debug 'Hello world'
     debug 'Hello world', 1
     debug 'Hello world', 1, 2
