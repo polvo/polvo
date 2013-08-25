@@ -5,15 +5,14 @@ colors = require 'colors'
 dirs = null
 cli = require '../cli'
 
-alias = ''
 argv = cli.argv()
 
 log_to_stdout = ( args ) ->
   args = [].concat args
 
-  if process.send and not argv.stdio
-    process.send channel: 'stdout', msg: args.join ' '
-  else if __stdout?
+  # if process.send and not argv.stdio
+  #   process.send channel: 'stdout', msg: args.join ' '
+  if __stdout?
     __stdout args.join(' ').stripColors
   else
     console.log.apply null, args
@@ -21,42 +20,41 @@ log_to_stdout = ( args ) ->
 log_to_stderr = ( args )->
   args = [].concat args
 
-  if process.send and not argv.stidio
-    process.send channel: 'stderr', msg: args.join ' '
-  else if __stderr?
+  # if process.send and not argv.stidio
+  #   process.send channel: 'stderr', msg: args.join ' '
+  if __stderr?
     __stderr args.join(' ').stripColors
   else
     console.error.apply null, args
 
-module.exports = (_alias)->
+module.exports = (alias = '')->
   dirs = require './dirs'
-  alias = (_alias or alias).grey
-  module.exports
 
-module.exports.error = (msg, args...)->
-  log_to_stderr ['error'.bold.red, msg.grey].concat args
+  error: (msg, args...)->
+    log_to_stderr ['error'.bold.red, msg.grey].concat args
 
-module.exports.warn = (msg, args...)->
-  log_to_stderr [' warn'.bold.yellow, msg.grey].concat args
+  warn: (msg, args...)->
+    log_to_stderr ['warn'.bold.yellow, msg.grey].concat args
 
-module.exports.info = (msg, args...)->
-  log_to_stdout = [' info'.bold.cyan, msg.grey].concat args
+  info: (msg, args...)->
+    log_to_stdout ['info'.bold.cyan, msg.grey].concat args
 
-module.exports.debug = (msg, args...)->
-  log_to_stdout = [alias.inverse, 'debug'.magenta, msg.grey].concat args
+  debug: (msg, args...)->
+    if alias is ''
+      log_to_stdout ['debug'.magenta, msg.grey].concat args
+    else
+      log_to_stdout [alias.inverse, 'debug'.magenta, msg.grey].concat args
 
-module.exports.log = (args...)->
-  log_to_stdout args
 
-module.exports.file = 
-  created:( filepath )->
-    log_to_stdout "+ #{dirs.relative filepath}".green
+  file: 
+    created:( filepath )->
+      log_to_stdout "+ #{dirs.relative filepath}".green
 
-  changed:( filepath )->
-    log_to_stdout "• #{dirs.relative filepath}".yellow
+    changed:( filepath )->
+      log_to_stdout "• #{dirs.relative filepath}".yellow
 
-  deleted:( filepath )->
-    log_to_stdout "- #{dirs.relative filepath}".red
+    deleted:( filepath )->
+      log_to_stdout "- #{dirs.relative filepath}".red
 
-  compiled:( filepath )->
-    log_to_stdout "✓ #{dirs.relative filepath}".cyan
+    compiled:( filepath )->
+      log_to_stdout "✓ #{dirs.relative filepath}".cyan
