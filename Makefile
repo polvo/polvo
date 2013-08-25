@@ -17,10 +17,10 @@ setup:
 
 
 watch:
-	$(CS) -wmco lib src
+	$(CS) -bwmco lib src
 
 build:
-	$(CS) -mco lib src
+	$(CS) -bmco lib src
 
 
 
