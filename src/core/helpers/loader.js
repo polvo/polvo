@@ -42,6 +42,6 @@ require.maps = ~MAPPINGS;
 require.map = function(path) {
   for(var map in require.maps)
     if(path.indexOf(map) == 0)
-      return require.maps[map] + path;
+      return require.maps[map] + path.match(/\/(.+)/)[0];
   return null;
 }
