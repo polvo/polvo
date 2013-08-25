@@ -1,0 +1,1 @@
+require '../vendors/some.vendor'
