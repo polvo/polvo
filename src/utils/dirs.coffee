@@ -21,8 +21,4 @@ exports.pwd = ->
   path.resolve '.'
 
 exports.relative = (filepath)->
-  pwd = exports.pwd()
-  if filepath.indexOf(pwd) is 0
-    filepath.replace "#{@pwd}/", ''
-  else
-    path.relative pwd, filepath
+  path.relative exports.pwd(), filepath
