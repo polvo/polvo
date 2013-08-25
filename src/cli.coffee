@@ -61,11 +61,9 @@ exports.argv = (opts)->
     .string( 'f' )
     .describe('f', "Path to a different config file")
 
-    .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
-    .boolean( 'stdio' )
-
-    .describe('base', 'Path to app\'s root folder (when its not the current)')
-    .string( 'base' )
+    .alias('b', 'base')
+    .describe('b', 'Path to app\'s root folder (when its not the current)')
+    .string( 'b' )
 
     .alias('v', 'version')
     .boolean('v')
@@ -74,6 +72,10 @@ exports.argv = (opts)->
     .alias('h', 'help')
     .boolean('h')
     .describe('h', 'Shows this help screen')
+
+    # .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
+    # .boolean( 'stdio' )
+
 
   return optimistic.argv
 

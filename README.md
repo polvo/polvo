@@ -1,6 +1,10 @@
+![Polvo - Polyvalent cephalopod mollusc](assets/polvo.png)
+
+<!--
 # Polvo
 
 Polyvalent cephalopod mollusc.
+-->
 
 [![Stories in Ready](https://badge.waffle.io/polvo/polvo.png)](http://waffle.io/polvo/polvo)
 
@@ -275,20 +279,21 @@ Usage:
   polvo [options] [params]
 
 Options:
-  -w, --watch        Start watching/compiling in dev mode             
-  -c, --compile      Compile project in development mode              
-  -r, --release      Compile project in release mode                  
-  -s, --server       Serves project statically, options in config file
-  -f, --config-file  Path to a different config file                  
-  -v, --version      Show Polvo's version                             
-  -h, --help         Shows this help screen                           
+  -w, --watch        Start watching/compiling in dev mode                
+  -c, --compile      Compile project in development mode                 
+  -r, --release      Compile project in release mode                     
+  -s, --server       Serves project statically, options in config file   
+  -f, --config-file  Path to a different config file                     
+  -b, --base         Path to app's root folder (when its not the current)
+  -v, --version      Show Polvo's version                                
+  -h, --help         Shows this help screen                              
 
 Examples:
   polvo -c
   polvo -cs
   polvo -w
   polvo -ws
-  polvo -wsf custom-config-file-name.yml
+  polvo -wsf custom-config-file.yml
 ````
 
 # Examples
