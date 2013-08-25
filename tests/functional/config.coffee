@@ -14,8 +14,8 @@ write_config = (contents...)->
 # config variations templates
 configs = 
   server:
-    inexistent: 'server:\n  port: 3000\n  root: not/existent/folder'
     empty: 'server:\n  root:'
+    inexistent: 'server:\n  port: 3000\n  root: not/existent/folder'
     valid: 'server:\n  root: public'
     valid_with_pot: 'server:\n  port:11235\n  root: public'
 
@@ -35,9 +35,14 @@ configs =
     inexistent: 'mappings:\n  mapped: non/existent/folder'
     valid: 'mappings:\n  mapped: mapped/src'
 
+  boot:
+    empty: 'boot:\n'
+    valid: 'boot: src/app\n'
+
   minify:
     js: off: 'minify:\n  js: false'
     css: off: 'minify:\n  css: false'
+
 
 
 
@@ -230,13 +235,35 @@ describe   '[config]', ->
 
 
 
+  describe '[key:boot]', ->
+    it 'error should be shown when key is not set', (done)->
+      out = 0
+      err_msg = 'error Boot module not informed in config file'
+
+      global.__stdout = (data)-> out++
+      global.__stderr = (data)->
+        out.should.equal 0
+        data.should.equal err_msg
+        done()
+
+      write_config configs.input.valid,
+                   configs.output.js.valid,
+                   configs.output.css.valid,
+                   configs.mappings.valid,
+                   configs.server.valid
+
+      config.parse()
+
+
+
   describe '[key:minify]', ->
     it 'minify should be turned on by default', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
              configs.mappings.valid,
-             configs.server.valid
+             configs.server.valid,
+             configs.boot.valid
 
       conf = config.parse()
       
@@ -250,7 +277,8 @@ describe   '[config]', ->
              configs.output.css.valid,
              configs.mappings.valid,
              configs.server.valid,
-             configs.minify.js.off
+             configs.minify.js.off,
+             configs.boot.valid
 
       conf = config.parse()
       
@@ -263,7 +291,8 @@ describe   '[config]', ->
              configs.output.css.valid,
              configs.mappings.valid,
              configs.server.valid,
-             configs.minify.css.off
+             configs.minify.css.off,
+             configs.boot.valid
 
       conf = config.parse()
       

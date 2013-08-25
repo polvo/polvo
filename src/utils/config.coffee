@@ -95,4 +95,9 @@ exports.parse = ->
   config.minify.js = true unless config.minify.js?
   config.minify.css = true unless config.minify.css?
 
+  # boot
+  unless config.boot?
+    error "Boot module not informed in config file"
+    return null
+
   config
