@@ -59,7 +59,7 @@ Included both in your `html` and you're done!
    - [server](#server)
    - [input](#input)
    - [output](#output)
-   - [aliases](#aliases)
+   - [virtual](#virtual)
    - [minify](#minify)
    - [boot](#boot)
  - [CLI](#cli)
@@ -152,7 +152,7 @@ output:
   js: ./public/app.js
   css: ./public/app.css
 
-aliases:
+virtual:
   app: src/
 
 minify:
@@ -177,9 +177,9 @@ Project's input `src` folders, can be one or many.
 
 Project's output `files`, at least one should be specified.
 
-### Aliases
+### Virtual
 
-Aliases is a handy option that lets you map some `names` to specific dirs. These
+It's a handy option that lets you map some `names` to specific `dirs`. These
 names will make folders act like modules.
 
 For example, imagine a structure like this:
@@ -212,11 +212,11 @@ as easy as:
 Controller = require '../../../vendors/myframework/src/lib/controller'
 ````
 
-However, sometimes these relative paths can get nasty. In this cases, aliases
+However, sometimes these relative paths can get nasty. In these cases, virtual
 can help the way. Imagine this one:
 
 ````yml
-alias:
+virtual:
   myframework: vendors/myframework/src
 ````
 
@@ -230,7 +230,7 @@ Controller = require 'myfraework/lib/controller'
 
 Not that:
 
- 1. The `myframework` keywork is our alias in the config file 
+ 1. The `myframework` keywork is the virtual alias in the config file 
  1. It points to the folder `vendors/myframework/src`
  1. So requiring `myframewok/***` will be the same as requiring
  `vendors/myframework/src/***`

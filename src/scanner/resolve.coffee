@@ -89,8 +89,8 @@ resolve_index = ( dirpath )->
 # ------------------------------------------------------------------------------
 resolve_module = (filepath, id)->
   
-  if config.mappings?
-    for map, location of config.mappings
+  if config.virtual?
+    for map, location of config.virtual
       if id.indexOf(map) is 0
         nmods = location
         id = id.match(/\/(.+)/)[0]

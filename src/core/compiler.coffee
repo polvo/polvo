@@ -26,7 +26,7 @@ prefix = ";(function(){"
 # cjs loader
 loader_path = path.join dirs.root(), 'src', 'core', 'helpers', 'loader.js'
 loader = fs.readFileSync loader_path, 'utf-8'
-loader = loader.replace '~MAPPINGS', JSON.stringify config.mappings
+loader = loader.replace '~VIRTUAL', JSON.stringify config.virtual
 
 # auto reload
 io_path = path.join dirs.root(), 'node_modules', 'socket.io', 'node_modules'

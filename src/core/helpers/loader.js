@@ -7,7 +7,7 @@ function require(path, parent){
     realpath = path;
 
   if(!realpath)
-    realpath = require.map( path );
+    realpath = require.virtual( path );
   
   if(!(m = require.mods[realpath]))
   {
@@ -38,10 +38,11 @@ require.register = function(path, mod, aliases){
   };
 }
 
-require.maps = ~MAPPINGS;
-require.map = function(path) {
-  for(var map in require.maps)
-    if(path.indexOf(map) == 0)
-      return require.maps[map] + path.match(/\/(.+)/)[0];
+require.virtual = function(path) {
+  for(var virtual in require.virtual.conf)
+    if(path.indexOf(virtual) == 0)
+      return require.virtual.conf[virtual] + path.match(/\/(.+)/)[0];
   return null;
 }
+
+require.virtual.conf = ~VIRTUAL;

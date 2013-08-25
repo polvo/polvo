@@ -31,9 +31,9 @@ configs =
       inexistent: 'output:\n  css: non/existent/folder/app.css'
       valid: 'output:\n  css: public/app.css'
 
-  mappings:
-    inexistent: 'mappings:\n  mapped: non/existent/folder'
-    valid: 'mappings:\n  mapped: mapped/src'
+  virtual:
+    inexistent: 'virtual:\n  mapped: non/existent/folder'
+    valid: 'virtual:\n  mapped: mapped/src'
 
   boot:
     empty: 'boot:\n'
@@ -151,7 +151,7 @@ describe   '[config]', ->
 
 
 
-  describe '[key:mappings]', ->
+  describe '[key:virtual]', ->
 
     it 'error should be shown when mapped folder doesn\'t exist', (done)->
       out = 0
@@ -167,7 +167,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.mappings.inexistent
+                   configs.virtual.inexistent
       config.parse()
 
 
@@ -187,7 +187,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.mappings.valid
+                   configs.virtual.valid
       config.parse()
 
     it 'error should be shown when server root dir is not set', (done)->
@@ -204,7 +204,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.mappings.valid,
+                   configs.virtual.valid,
                    configs.server.empty
       config.parse()
 
@@ -226,7 +226,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.mappings.valid,
+                   configs.virtual.valid,
                    configs.server.inexistent
       config.parse()
 
@@ -249,7 +249,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.mappings.valid,
+                   configs.virtual.valid,
                    configs.server.valid
 
       config.parse()
@@ -261,7 +261,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
-             configs.mappings.valid,
+             configs.virtual.valid,
              configs.server.valid,
              configs.boot.valid
 
@@ -275,7 +275,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
-             configs.mappings.valid,
+             configs.virtual.valid,
              configs.server.valid,
              configs.minify.js.off,
              configs.boot.valid
@@ -289,7 +289,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
-             configs.mappings.valid,
+             configs.virtual.valid,
              configs.server.valid,
              configs.minify.css.off,
              configs.boot.valid
