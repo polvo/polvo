@@ -1,19 +1,35 @@
 path = require 'path'
 fs = require 'fs'
+util = require 'util'
 
-yml = require 'js-yaml'
+require 'js-yaml'
 dirs = require './dirs'
-Cli = require '../cli'
+cli = require '../cli'
 
 {error, warn, info, debug} = require('./log')('utils/config')
-{argv} = cli = new Cli
 
+exports.parse = ->
 
-parse_config = ( cpath ) ->
-  config = require cpath
+  argv = cli.argv()
+
+  if dirs.pwd()?
+    if argv['config-file']?
+      yml = path.join dirs.pwd(), argv['config-file']
+    else
+      yml = path.join dirs.pwd(), "polvo.yml"
+
+  unless fs.existsSync yml
+    error 'Config file not found ~> ', yml
+    return null
+
+  if fs.statSync( yml ).isDirectory()
+    error 'Config file\'s path is a directory  ~> ', yml
+    return null
+  else
+    config = require yml
 
   # pwd
-  unless fs.existsSync dirs.pwd
+  unless fs.existsSync dirs.pwd()
     return null
 
   # server
@@ -23,51 +39,54 @@ parse_config = ( cpath ) ->
 
       config.server.port ?= 3000
       if config.server?.root
-        root = config.server.root = path.join dirs.pwd, config.server.root
+        root = config.server.root = path.join dirs.pwd(), config.server.root
         unless fs.existsSync root
-          error 'Server\'s root dir doesn\'t exist ~>', root
+          error 'Server\'s root dir does not exist ~>', root
           return null
+      else
+        error 'Server\'s root not set in in config file ~>', root
+        return null
 
     else
-      error 'Server\'s config not set in config file ~> ', dirs.relative cpath
+      error 'Server\'s config not set in config file'
       return null
 
   # input
   if config?.input? and config.input.length
     for dirpath, index in config.input
-      tmp = config.input[index] = path.join dirs.pwd, dirpath
+      tmp = config.input[index] = path.join dirs.pwd(), dirpath
       unless fs.existsSync tmp
         error 'Input dir does not exist ~>', dirs.relative tmp
         return null
   else
-    error 'You need at least one input dir in your config file'
+    error 'You need at least one input dir in config file'
     return null
 
   # output
   if config?.output?
 
     if config.output.js?
-      config.output.js = path.join dirs.pwd, config.output.js
+      config.output.js = path.join dirs.pwd(), config.output.js
       tmp = path.dirname config.output.js
       unless fs.existsSync tmp
         error 'JS\'s output dir does not exist ~>', dirs.relative tmp
         return null
 
     if config.output.css?
-      config.output.css = path.join dirs.pwd, config.output.css
+      config.output.css = path.join dirs.pwd(), config.output.css
       tmp = path.dirname config.output.css
-      unless fs.existsSync
+      unless fs.existsSync tmp
         error 'CSS\'s output dir does not exist ~>', dirs.relative tmp
         return null
 
   else
-    error 'You need at least one output in your config file'
+    error 'You need at least one output in config file'
     return null
 
   # mapping
   if config.mappings?
     for name, location of config.mappings
-      tmp = config.mappings[name] = path.join dirs.pwd, location
+      tmp = config.mappings[name] = path.join dirs.pwd(), location
       unless fs.existsSync tmp
         error "Mapping dir for '#{name}' does not exist ~>", dirs.relative tmp
         return null
@@ -80,21 +99,3 @@ parse_config = ( cpath ) ->
     config.minify = js: true, css: true
 
   config
-
-
-config = null
-if dirs.pwd?
-  if argv['config-file']?
-    polvo_yml = path.join dirs.pwd, argv['config-file']
-  else
-    polvo_yml = path.join dirs.pwd, "polvo.yml"
-
-  if fs.existsSync polvo_yml
-    if fs.statSync( polvo_yml ).isDirectory()
-      error 'Config file\'s path is a directory  ~> ', polvo_yml
-    else
-      config = parse_config polvo_yml
-  else
-    error 'Config file not found ~> ', polvo_yml
-
-module.exports = config
