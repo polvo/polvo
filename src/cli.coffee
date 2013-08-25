@@ -1,85 +1,79 @@
 optimist = require 'optimist'
-version = require './utils/version'
 colors = require 'colors'
 
-original_argv = process.argv
+version = require './utils/version'
 
-module.exports = class Cli
+usage = """
+  Polvo #{('v' + version).grey}
+  #{'Polyvalent cephalopod mollusc'.grey}
 
-  argv: null
-  options: null
+  #{'Usage:'}
+    polvo [#{'options'.green}] [#{'params'.green}]
+"""
 
-  optimis = null
-  usage = null
-  examples = null
+examples = """
+  Examples:
+    polvo -c
+    polvo -cs
+    polvo -w
+    polvo -ws
+    polvo -wsf custom-config-file.yml
+"""
 
-  constructor:->
-    do @configure
-    do @init
+$argv = process.argv
+optimistic = null
 
-    @argv = optimis.argv
+exports.help = ->
+  "#{optimistic.help()}\n#{examples}"
 
-  configure:->
-    usage = """
-      Polvo #{('v' + version).grey}
-      #{'Polyvalent cephalopod mollusc'.grey}
+exports.argv = (opts)->
 
-      #{'Usage:'}
-        polvo [#{'options'.green}] [#{'params'.green}]
-    """
+  options = opts if opts?
+  options ?= global_options if global_options?
+  options ?= {}
 
-    examples = """
-      Examples:
-        polvo -c
-        polvo -cs
-        polvo -w
-        polvo -ws
-        polvo -wsf custom-config-file.yml
-    """
+  injection = []
+  for key, val of options
+    injection.push if key.length is 1 then "-#{key}" else "--#{key}"
+    injection.push "#{val}"
 
-  help:->
-    "#{optimis.help()}\n#{examples}"
+  process.argv = $argv.slice(0).concat injection
 
-  init:->
-    # argv injection
-    injection = []
-    for key, val of cli_options
-      injection.push if key.length is 1 then "-#{key}" else "--#{key}"
-      injection.push "#{val}"
+  optimistic = optimist( process.argv ).usage( usage )
+    .alias('w', 'watch')
+    .boolean( 'w' )
+    .describe('w', "Start watching/compiling in dev mode")
+    
+    .alias('c', 'compile')
+    .boolean( 'c' )
+    .describe('c', "Compile project in development mode")
 
-    process.argv = original_argv.concat injection
+    .alias('r', 'release')
+    .boolean( 'r' )
+    .describe('r', "Compile project in release mode")
 
-    optimis = optimist( process.argv ).usage( usage )
-      .alias('w', 'watch')
-      .boolean( 'w' )
-      .describe('w', "Start watching/compiling in dev mode")
-      
-      .alias('c', 'compile')
-      .boolean( 'c' )
-      .describe('c', "Compile project in development mode")
+    .alias('s', 'server')
+    .boolean( 's' )
+    .describe('s', "Serves project statically, options in config file")
 
-      .alias('r', 'release')
-      .boolean( 'r' )
-      .describe('r', "Compile project in release mode")
+    .alias( 'f', 'config-file' )
+    .string( 'f' )
+    .describe('f', "Path to a different config file")
 
-      .alias('s', 'server')
-      .boolean( 's' )
-      .describe('s', "Serves project statically, options in config file")
+    .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
+    .boolean( 'stdio' )
 
-      .alias( 'f', 'config-file' )
-      .string( 'f' )
-      .describe('f', "Path to a different config file")
+    .describe('base', 'Path to app\'s root folder (when its not the current)')
+    .string( 'base' )
 
-      .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
-      .string( 'f' )
+    .alias('v', 'version')
+    .boolean('v')
+    .describe('v', 'Show Polvo\'s version')
 
-      .describe('base', 'Path to app\'s root folder (when its not the current)')
-      .string( 'base' )
+    .alias('h', 'help')
+    .boolean('h')
+    .describe('h', 'Shows this help screen')
 
-      .alias('v', 'version')
-      .boolean('v')
-      .describe('v', 'Show Polvo\'s version')
+  return optimistic.argv
 
-      .alias('h', 'help')
-      .boolean('h')
-      .describe('h', 'Shows this help screen')
+exports.argv()
