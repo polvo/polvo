@@ -6,19 +6,19 @@ module.exports = (options = {}, io)->
   global.__stdout = io?.out or null
   global.__stderr = io?.err or null
 
-  Cli = require './cli'
+  cli = require './cli'
   version = require './utils/version'
-  log = require('./utils/log')('polvo')
+  logger = require('./utils/logger')('polvo')
 
-  {argv} = cli = new Cli
-  {error, warn, info, debug, log} = log
+  argv = cli.argv()
+  {error, warn, info, debug, log} = logger
 
   if argv.version
     return log version
 
   else if argv.compile or argv.watch or argv.release
 
-    config = require './utils/config'
+    config = require('./utils/config').parse()
 
     if config?
       compiler = require './core/compiler'
@@ -31,7 +31,6 @@ module.exports = (options = {}, io)->
         server() if argv.server
       
       else if argv.release
-        console.log 'merda'
         compiler.release()
         server() if argv.server
 
