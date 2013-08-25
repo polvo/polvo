@@ -1,7 +1,7 @@
 path = require 'path'
 fs = require 'fs'
 
-config = require '../utils/config'
+config = require('../config').parse()
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
 logger = require('../utils/logger')('scanner/resolve')

@@ -8,7 +8,7 @@ server = require './server'
 
 cli = require '../cli'
 dirs = require '../utils/dirs'
-config = require '../utils/config'
+config = require('../config').parse()
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
 logger = require('../utils/logger')('core/compiler')

@@ -3,7 +3,7 @@ fsu = require 'fs-util'
 _ = require 'lodash'
 
 dirs = require '../utils/dirs'
-config = require '../utils/config'
+config = require('../utils/config').parse()
 compiler = require './compiler'
 
 cli = require '../cli'
