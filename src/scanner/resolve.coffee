@@ -30,7 +30,7 @@ resolve = module.exports = (filepath, id)->
   return (path.resolve file) if file?
 
   # otherwise show error
-  caller = path.relative dirs.pwd, filepath
+  caller = path.relative dirs.pwd(), filepath
   error "Module '#{id}' not found for '#{caller}'"
   return null
 
@@ -78,7 +78,7 @@ resolve_file = ( filepath )->
 # tries to get the index file inside a directory
 # ------------------------------------------------------------------------------
 resolve_index = ( dirpath )->
-  path.join dirpath, 'index'
+  filepath = path.join dirpath, 'index'
   for ext in exts
     tmp =  filepath
     tmp += ext
@@ -93,6 +93,7 @@ resolve_module = (filepath, id)->
     for map, location of config.mappings
       if id.indexOf(map) is 0
         nmods = location
+        id = id.match(/\/(.+)/)[0]
 
   unless nmods?
     nmods = closest_node_modules filepath
