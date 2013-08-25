@@ -28,12 +28,13 @@ exports.help = ->
 
 exports.argv = (opts)->
 
-  options = opts if opts?
-  options ?= global_options if global_options?
-  options ?= {}
+  if opts?
+    options = opts
+  else if global_options?
+    options = global_options
 
   injection = []
-  for key, val of options
+  for key, val of (options or {})
     injection.push if key.length is 1 then "-#{key}" else "--#{key}"
     injection.push "#{val}"
 
