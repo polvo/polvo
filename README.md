@@ -28,15 +28,28 @@ You can think of Polvo as a mix of
 alternative that combines some of their features, which you won't find bundled
 together as it is provided here.
 
+<!--
 # TL;DR
 
-Tired of reading? Watch the [screencast](#screencast).
+Tired of reading?
 
-> Screencast screenshot here with link.
+> Video Screenshot + Screencast link
+-->
+
+# Philosophy (in short)
+
+ 1. Your `scripts` and templates becomes all one `javascript`, and your `styles`
+ becomes one `css`
+ 
+ 1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
+ required usually as you'd do in NodeJS - `require('../path/to/my/file')`
+ 
+ 1. You end up with 2 files, `app.js` and `app.css`
+ 
+Included both in your `html` and you're done!
 
 # Docs
 
- - [Philosophy](#philosophy-in-short)
  - [Features](#features)
  - [Dependency Resolution](#dependency-resolution)
  - [Packaging Systems](#packaging-systems)
@@ -53,18 +66,6 @@ Tired of reading? Watch the [screencast](#screencast).
  - [Stability](#stability)
  - [Examples](#examples)
  - [History](#history)
-
-# Philosophy (in short)
-
- 1. Your `scripts` and templates becomes all one `javascript`, and your `styles`
- becomes one `css`
- 
- 1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
- required usually as you'd do in NodeJS - `require('../path/to/my/file')`
- 
- 1. You end up with 2 files, `app.js` and `app.css`
- 
-Included both in your `html` and you're done!
 
 # Features
  * Simple embeded webserver for *Single Page Applications*
