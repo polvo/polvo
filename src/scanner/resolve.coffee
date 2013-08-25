@@ -4,10 +4,10 @@ fs = require 'fs'
 config = require '../utils/config'
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
-log = require('../utils/logger')('scanner/resolve')
+logger = require('../utils/logger')('scanner/resolve')
 
 
-{error, warn, info, debug, log} = log
+{error, warn, info, debug, log} = logger
 
 
 exts = []

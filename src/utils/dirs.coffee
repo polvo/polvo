@@ -2,9 +2,9 @@ path = require 'path'
 fs = require 'fs'
 
 cli = require '../cli'
-log = require('./logger')('polvo')
+log = 
 
-{error, warn, info, debug, log} = log
+{error, warn, info, debug, log} = require('./logger')('utils/dirs')
 
 exports.root = ->
   path.join __dirname, '..', '..'

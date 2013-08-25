@@ -10,13 +10,13 @@ dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
-log = require('../utils/logger')('core/compiler')
+logger = require('../utils/logger')('core/compiler')
 
 Cli = require '../cli'
 
-log_compiled = log.file.compiled
 {argv} = cli = new Cli
-{error, warn, info, debug} = log
+{error, warn, info, debug} = logger
+log_compiled = logger.file.compiled
 
 
 # prefix

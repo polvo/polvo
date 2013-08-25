@@ -7,13 +7,13 @@ config = require '../utils/config'
 compiler = require './compiler'
 
 plugins = require '../utils/plugins'
-log = require('../utils/logger')('core/files')
+logger = require('../utils/logger')('core/files')
 
-{error, warn, info, debug} = log
+{error, warn, info, debug} = logger
 
-log_created = log.file.created
-log_changed = log.file.changed
-log_deleted = log.file.deleted
+log_created = logger.file.created
+log_changed = logger.file.changed
+log_deleted = logger.file.deleted
 
 File = require './file'
 Cli = require '../cli'
