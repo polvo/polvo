@@ -7,19 +7,22 @@ util = require 'util'
 dirs = require '../utils/dirs'
 
 plugins = []
+registered = {}
 
 scan = (manifest_path)->
-  return if not fs.existsSync manifest_path
+  return unless fs.existsSync manifest_path
 
   manifest = require manifest_path
-  for plugin of manifest.dependencies
-    try
-      plugin = require path.join dirs.root, 'node_modules', plugin
-      plugins.push plugin if plugin.polvo
-    catch err
-      continue
 
-scan path.join dirs.root, 'package.json'
-scan path.join dirs.pwd, 'package.json'
+  for plugin of manifest.dependencies
+    plugin = path.join dirs.root(), 'node_modules', plugin
+    pmanifest = require path.join plugin, 'package.json'
+
+    if pmanifest.polvo and not registered[pmanifest.name]
+      registered[pmanifest.name] = true
+      plugins.push require plugin
+
+scan path.join dirs.root(), 'package.json'
+scan path.join dirs.pwd(), 'package.json'
 
 module.exports = plugins
