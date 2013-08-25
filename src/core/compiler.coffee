@@ -6,15 +6,16 @@ filesize = require 'filesize'
 files = require './files'
 server = require './server'
 
+cli = require '../cli'
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
 logger = require('../utils/logger')('core/compiler')
 
-Cli = require '../cli'
 
-{argv} = cli = new Cli
+argv = cli.argv()
+
 {error, warn, info, debug} = logger
 log_compiled = logger.file.compiled
 

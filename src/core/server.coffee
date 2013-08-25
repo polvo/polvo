@@ -4,19 +4,19 @@ fs = require 'fs'
 connect = require 'connect'
 io = require 'socket.io'
 
+cli = require '../cli'
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 sourcemaps = require '../utils/sourcemaps'
 
 {error, warn, info, debug, log} = require('../utils/logger')('core/server')
 
-Cli = require '../cli'
-
 
 refresher = null
 module.exports = ->
-  {argv} = cli = new Cli
   {root, port} = config.server
+
+  argv = cli.argv()
 
   index = path.join root, 'index.html'
 
