@@ -15,8 +15,7 @@ scan = (manifest_path)->
   manifest = require manifest_path
 
   for plugin of manifest.dependencies
-    plugin = path.join dirs.root(), 'node_modules', plugin
-    pmanifest = require path.join plugin, 'package.json'
+    pmanifest = "#{plugin}/package.json"
 
     if pmanifest.polvo and not registered[pmanifest.name]
       registered[pmanifest.name] = true
