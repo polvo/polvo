@@ -15,7 +15,7 @@ scan = (manifest_path)->
   manifest = require manifest_path
 
   for plugin of manifest.dependencies
-    pmanifest = "#{plugin}/package.json"
+    pmanifest = require "#{plugin}/package.json"
 
     if pmanifest.polvo and not registered[pmanifest.name]
       registered[pmanifest.name] = true
