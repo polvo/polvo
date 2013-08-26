@@ -73,11 +73,12 @@ Included both in your `html` and you're done!
 
 # Features
  * Simple embeded webserver for *Single Page Applications*
- * Live Reload when developing
- * Live syntax-check for everything
+ * Automatic LiveReload in `development` mode
  * Watch'n'compile in `development` mode
+ * Automatic syntax-check for everything
  * Automatic compression in `release` mode
- * SourceMaps support
+ * Automatic SourceMaps support in `development` mode
+ * Automatic, automatic..
 
 <!-- * Vendors management-->
 <!-- * Source Maps *(`coffeescript` only)*-->
@@ -88,11 +89,13 @@ Included both in your `html` and you're done!
 # Dependency Resolution
 
 Polvo uses the same resolution algorithm presented in NodeJS, so you can code
-your libraries doing global or local requires as you wish, like you were
+your libraries doing global or local requires as you wish, like if you were
 building a NodeJS app. In the end, everything will be ready for in-browser use.
 
 > Of couse, you won't be able to use NodeJS core modules once inside the
-Browser, such as `fs`, `process`, `cluster` and so on.
+Browser, such as `fs`, `process`, `cluster` and so on. The same applies to any
+other module you may find, if it uses API's not available for in-browser use,
+you won't be able to use it.
 
 # Packaging Systems
 
@@ -140,7 +143,18 @@ Click the links to see individual `README` for each one.
 
 # Config
 
-A Polvo's complete config file will look such as:
+Polvo's config file is simply a file named `polvo.yml` in your project.
+
+You'll may need to setup *six* simple options to adjust Polvo to your needs:
+
+ 1. [server](#server)
+ 1. [input](#input)
+ 1. [output](#output)
+ 1. [virtual](#virtual)
+ 1. [minify](#minify)
+ 1. [boot](#boot)
+
+A Polvo's complete config file look such as:
 
 ## polvo.yml
 
@@ -217,7 +231,7 @@ Controller = require '../../../vendors/myframework/src/lib/controller'
 ````
 
 However, sometimes these relative paths can get nasty. In these cases, virtual
-can help the way. Imagine this one:
+maps can help the way. Imagine this one:
 
 ````yml
 virtual:
@@ -238,8 +252,12 @@ Not that:
  1. It points to the folder `vendors/myframework/src`
  1. So requiring `myframewok/***` will be the same as requiring
  `vendors/myframework/src/***`
+ 1. Be cautious while using virtual maps, for instance if you have have a
+ virtual  map with the same name of a module you have in your  `node_modules`
+ folder,  you'll end up with seirous problems - hopefully you'll notice this
+ immediately.
 
-## Minify
+### Minify
 
 In some cases you may want to disable minification in `release` mode, even tough
 in both `development` and `release` mode you'll always have a single `.js` and
@@ -254,11 +272,11 @@ In `release` mode it's removed, nothing special is injected. So you may want to
 have a production ready `release` file (that doesn't includes magic), but at the
 same time keep it uncompressed. In case you do, that's the way to go.
 
-## Boot
+### Boot
 
-By default, Polvo will wrap all your `scripts` and `templates` in CJS module
-patterns, and register them all at startup. However, none will be required and
-therefore none will be initialized.
+By default, Polvo will wrap all your `scripts` and `templates` in CJS module and
+register them all at startup. However, none will be required and therefore none
+will be initialized.
 
 You need to specify your app's entry point within the `boot` property. With this
 Polvo will do a simple require to this file at startup, after everything is
