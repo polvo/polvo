@@ -39,9 +39,9 @@ describe '[cli]', ->
       argv['config-file'].should.equal 'sample.yml'
       argv.f.should.equal 'sample.yml'
 
-    it 'option stdio', ->
-      argv = cli.argv stdio: true
-      argv.stdio.should.be.true
+    # it 'option stdio', ->
+    #   argv = cli.argv stdio: true
+    #   argv.stdio.should.be.true
 
     it 'option base', ->
       argv = cli.argv base: '/some/dir'
