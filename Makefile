@@ -11,9 +11,10 @@ COVERALLS=node_modules/coveralls/bin/coveralls.js
 
 POLVO=bin/polvo
 
+
+
 setup:
 	npm link
-	@cd tests && make setup
 
 
 
