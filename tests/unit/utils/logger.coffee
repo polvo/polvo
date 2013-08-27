@@ -4,6 +4,9 @@ should = require('chai').should()
 
 describe '[log]', ->
 
+  before -> global.__nocolor = true
+  after -> global.__nocolor = null && delete global.__nocolor
+
   afterEach ->
     global.__stdout = global.__stderr = null
     delete global.__stdout

@@ -49,6 +49,8 @@ configs =
 describe   '[config]', ->
 
 
+  before -> global.__nocolor = true
+  after -> global.__nocolor = null && delete global.__nocolor
 
   beforeEach ->
     global.global_options = base: base
@@ -60,8 +62,6 @@ describe   '[config]', ->
     delete global.__stdout
     delete global.__stderr
     delete global.global_options
-
-  after ->
 
 
 

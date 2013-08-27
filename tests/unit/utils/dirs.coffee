@@ -7,6 +7,10 @@ app = path.join base, 'src', 'app.coffee'
 rel = path.relative base, app
 
 describe '[dirs]', ->
+
+  before -> global.__nocolor = true
+  after -> global.__nocolor = null && delete global.__nocolor
+
   it 'getting pwd', ->
     pwd = path.join __dirname, '..', '..', '..'
     dirs.pwd().should.equal pwd
