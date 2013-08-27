@@ -13,7 +13,9 @@ log_to_stdout = ( args ) ->
   # if process.send and not argv.stdio
   #   process.send channel: 'stdout', msg: args.join ' '
   if __stdout?
-    __stdout args.join(' ').stripColors
+    msg = args.join(' ')
+    msg = msg.stripColors if __nocolor? and __nocolor
+    __stdout msg
   else
     console.log.apply null, args
 
@@ -23,7 +25,9 @@ log_to_stderr = ( args )->
   # if process.send and not argv.stidio
   #   process.send channel: 'stderr', msg: args.join ' '
   if __stderr?
-    __stderr args.join(' ').stripColors
+    msg = args.join(' ')
+    msg = msg.stripColors if __nocolor? and __nocolor
+    __stderr msg
   else
     console.error.apply null, args
 

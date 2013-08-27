@@ -5,6 +5,7 @@ module.exports = (options = {}, io)->
   global.cli_options = options
   global.__stdout = io?.out or null
   global.__stderr = io?.err or null
+  global.__nocolor = io?.nocolor or null
 
   cli = require './cli'
   version = require './utils/version'
