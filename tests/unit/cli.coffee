@@ -53,15 +53,15 @@ describe '[cli]', ->
       help.should.be.string
 
   describe '[global_params]', ->
-    it 'global_options should be caught automatically when setted', ->
-      global.global_options = f: 'sample.yml'
+    it 'cli_options should be caught automatically when setted', ->
+      global.cli_options = f: 'sample.yml'
       argv = cli.argv()
       argv['config-file'].should.equal 'sample.yml'
       argv.f.should.equal 'sample.yml'
-      global.global_options = null
-      delete global.global_options
+      global.cli_options = null
+      delete global.cli_options
    
-    it 'global_options should not be cached between executions', ->
+    it 'cli_options should not be cached between executions', ->
       argv = cli.argv()
       should.not.exist argv['config-file']
       should.not.exist argv.f

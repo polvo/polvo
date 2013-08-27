@@ -53,15 +53,15 @@ describe   '[config]', ->
   after -> global.__nocolor = null && delete global.__nocolor
 
   beforeEach ->
-    global.global_options = base: base
+    global.cli_options = base: base
 
   afterEach ->
     fs.unlinkSync yml if fs.existsSync yml
 
-    global.__stdout = global.__stderr = global.global_options = null
+    global.__stdout = global.__stderr = global.cli_options = null
     delete global.__stdout
     delete global.__stderr
-    delete global.global_options
+    delete global.cli_options
 
 
 
@@ -177,7 +177,7 @@ describe   '[config]', ->
       out = 0
       err_msg = 'error Server\'s config not set in config file'
 
-      global.global_options.server = true
+      global.cli_options.server = true
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
         out.should.equal 0
@@ -194,7 +194,7 @@ describe   '[config]', ->
       out = 0
       err_msg = 'error Server\'s root not set in in config file'
 
-      global.global_options.server = true
+      global.cli_options.server = true
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
         out.should.equal 0
@@ -208,15 +208,15 @@ describe   '[config]', ->
                    configs.server.empty
       config.parse()
 
-      global.global_options.server = null
-      delete global.global_options
+      global.cli_options.server = null
+      delete global.cli_options
 
     it 'error should be shown when server root dir does not exist', (done)->
       out = 0
       root_dir = path.join base, 'not', 'existent', 'folder'
       err_msg = 'error Server\'s root dir does not exist ~> ' + root_dir 
 
-      global.global_options.server = true
+      global.cli_options.server = true
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
         out.should.equal 0
@@ -230,8 +230,8 @@ describe   '[config]', ->
                    configs.server.inexistent
       config.parse()
 
-      global.global_options.server = null
-      delete global.global_options
+      global.cli_options.server = null
+      delete global.cli_options
 
 
 
@@ -307,7 +307,7 @@ describe   '[config]', ->
       config_path = path.join base, 'not-existent.yml'
       err_msg = 'error Config file not found ~> ' + config_path
 
-      global.global_options['config-file'] = 'not-existent.yml'
+      global.cli_options['config-file'] = 'not-existent.yml'
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
         out.should.equal 0
@@ -316,8 +316,8 @@ describe   '[config]', ->
 
       config.parse()
 
-      global.global_options['config-file'] = null
-      delete global.global_options
+      global.cli_options['config-file'] = null
+      delete global.cli_options
 
     it 'error should be shown when informed config file is a directory', (done)->
 
@@ -325,7 +325,7 @@ describe   '[config]', ->
       config_path = path.join base, 'vendors'
       err_msg = 'error Config file\'s path is a directory  ~> ' + config_path
 
-      global.global_options['config-file'] = 'vendors'
+      global.cli_options['config-file'] = 'vendors'
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
         out.should.equal 0
@@ -334,8 +334,8 @@ describe   '[config]', ->
 
       config.parse()
 
-      global.global_options['config-file'] = null
-      delete global.global_options
+      global.cli_options['config-file'] = null
+      delete global.cli_options
 
   describe '[option:base]', ->
     it 'error should be shown when informed base dir does not exist', (done)->
@@ -345,7 +345,7 @@ describe   '[config]', ->
         'error Config file not found ~> '
       ]
 
-      global.global_options.base = 'non/existent/folder'
+      global.cli_options.base = 'non/existent/folder'
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
         # console.log data

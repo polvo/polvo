@@ -30,8 +30,8 @@ exports.argv = (opts)->
 
   if opts?
     options = opts
-  else if global_options?
-    options = global_options
+  else if cli_options?
+    options = cli_options
 
   injection = []
   for key, val of (options or {})

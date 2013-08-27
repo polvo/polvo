@@ -20,17 +20,17 @@ describe '[dirs]', ->
     dirs.root().should.equal pwd
 
   it 'getting pwd after --base inject', ->
-    global.global_options = base: base
+    global.cli_options = base: base
     dirs.pwd().should.equal base
-    global.global_options = null
-    delete global.global_options
+    global.cli_options = null
+    delete global.cli_options
 
   it 'getting pwd for inexistent base path', (done)->
     out = 0
     err_msg = 'error Dir informed with [--base] option doesn\'t exist ~> '
     err_msg += 'non/existent/folder'
 
-    global.global_options = base: 'non/existent/folder'
+    global.cli_options = base: 'non/existent/folder'
 
     global.__stdout = (data)-> out++
     global.__stderr = (data)->
@@ -39,11 +39,11 @@ describe '[dirs]', ->
       done()
     
     dirs.pwd()
-    global.global_options = null
-    delete global.global_options
+    global.cli_options = null
+    delete global.cli_options
 
   it 'getting relative path', ->
-    global.global_options = base: base
+    global.cli_options = base: base
     dirs.relative(app).should.equal rel
-    global.global_options = null
-    delete global.global_options
+    global.cli_options = null
+    delete global.cli_options
