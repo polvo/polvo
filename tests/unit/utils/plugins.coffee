@@ -1,8 +1,8 @@
 path = require 'path'
 should = require('chai').should()
 
-global.global_options = base: path.join __dirname, '..', 'mocks', 'basic'
-plugins = require '../../lib/utils/plugins'
+global.global_options = base: path.join __dirname, '..', '..', 'mocks', 'basic'
+plugins = require '../../../lib/utils/plugins'
 
 describe '[plugins]', ->
   it 'the full list must to be collected ', ->

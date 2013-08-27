@@ -30,14 +30,16 @@ test:
 	@$(MOCHA) --compilers coffee:coffee-script \
 		--ui bdd \
 		--reporter spec \
-		tests/functional
+		--recursive \
+		tests/unit
 
 test.coverage:
 	@$(ISTANBUL) cover $(_MOCHA) -- \
-	--compilers coffee:coffee-script \
-	--ui bdd \
-	--reporter spec \
-	tests/functional
+		--compilers coffee:coffee-script \
+		--ui bdd \
+		--reporter spec \
+		--recursive \
+		tests/unit
 
 test.coverage.preview: test.coverage
 	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080

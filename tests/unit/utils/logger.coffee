@@ -20,7 +20,7 @@ describe '[log]', ->
       data.should.equal msgs.shift()
       done() unless msgs.length
 
-    {error} = require('../../lib/utils/logger')()
+    {error} = require('../../../lib/utils/logger')()
     error 'Hello world'
     error 'Hello world', 1
     error 'Hello world', 1, 2
@@ -36,7 +36,7 @@ describe '[log]', ->
       data.should.equal msgs.shift()
       done() unless msgs.length
     
-    {warn} = require('../../lib/utils/logger')()
+    {warn} = require('../../../lib/utils/logger')()
     warn 'Hello world'
     warn 'Hello world', 1
     warn 'Hello world', 1, 2  
@@ -52,7 +52,7 @@ describe '[log]', ->
       data.should.equal msgs.shift()
       done() unless msgs.length
 
-    {info} = require('../../lib/utils/logger')()
+    {info} = require('../../../lib/utils/logger')()
     info 'Hello world'
     info 'Hello world', 1
     info 'Hello world', 1, 2
@@ -68,7 +68,7 @@ describe '[log]', ->
       data.should.equal msgs.shift()
       done() unless msgs.length
 
-    {log} = require('../../lib/utils/logger')()
+    {log} = require('../../../lib/utils/logger')()
     log 'Hello world'
     log 'Hello world', 1
     log 'Hello world', 1, 2
@@ -87,12 +87,12 @@ describe '[log]', ->
       data.should.equal msgs.shift()
       done() unless msgs.length
 
-    {debug} = require('../../lib/utils/logger')('tests/log')
+    {debug} = require('../../../lib/utils/logger')('tests/log')
     debug 'Hello world'
     debug 'Hello world', 1
     debug 'Hello world', 1, 2
 
-    {debug} = require('../../lib/utils/logger')()
+    {debug} = require('../../../lib/utils/logger')()
     debug 'Hello world'
     debug 'Hello world', 1
     debug 'Hello world', 1, 2
@@ -102,7 +102,7 @@ describe '[log]', ->
       data.should.equal '+ a.coffee'
       done()
 
-    file_created = require('../../lib/utils/logger')().file.created
+    file_created = require('../../../lib/utils/logger')().file.created
     file_created 'a.coffee'
 
   it 'file:changed', (done)->
@@ -110,7 +110,7 @@ describe '[log]', ->
       data.should.equal '• a.coffee'
       done()
 
-    file_changed = require('../../lib/utils/logger')().file.changed
+    file_changed = require('../../../lib/utils/logger')().file.changed
     file_changed 'a.coffee'
 
   it 'file:deleted', (done)->
@@ -118,14 +118,14 @@ describe '[log]', ->
       data.should.equal '- a.coffee'
       done()
 
-    file_deleted = require('../../lib/utils/logger')().file.deleted
+    file_deleted = require('../../../lib/utils/logger')().file.deleted
     file_deleted 'a.coffee'
 
   it 'file:compiled', (done)->
     global.__stdout = (data)->
       data.should.equal '✓ a.coffee'
       done()
-    file_compiled = require('../../lib/utils/logger')().file.compiled
+    file_compiled = require('../../../lib/utils/logger')().file.compiled
     file_compiled 'a.coffee'
 
 
@@ -144,8 +144,8 @@ describe '[log]', ->
       delete backup.stderr
       done()
 
-    {error} = require('../../lib/utils/logger')()
-    {debug} = require('../../lib/utils/logger')()
+    {error} = require('../../../lib/utils/logger')()
+    {debug} = require('../../../lib/utils/logger')()
 
     debug 'Hello world'
     error 'Hello world'

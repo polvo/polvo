@@ -1,18 +1,18 @@
 path = require 'path'
-dirs = require '../../lib/utils/dirs'
+dirs = require '../../../lib/utils/dirs'
 should = require('chai').should()
 
-base = path.join __dirname, '..', 'mocks', 'basic'
+base = path.join __dirname, '..', '..', 'mocks', 'basic'
 app = path.join base, 'src', 'app.coffee'
 rel = path.relative base, app
 
 describe '[dirs]', ->
   it 'getting pwd', ->
-    pwd = path.join __dirname, '..', '..'
+    pwd = path.join __dirname, '..', '..', '..'
     dirs.pwd().should.equal pwd
 
   it 'getting root', ->
-    pwd = path.join __dirname, '..', '..'
+    pwd = path.join __dirname, '..', '..', '..'
     dirs.root().should.equal pwd
 
   it 'getting pwd after --base inject', ->
