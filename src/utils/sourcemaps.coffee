@@ -54,8 +54,5 @@ exports.assemble = (files)->
 
   sourcemaps = buffer.replace '~SECTIONS', sections.join(',\n')
 
-exports.get_assembled = ->
-  sourcemaps
-
 exports.get_assembled_64 = ->
   new Buffer(sourcemaps).toString 'base64'
