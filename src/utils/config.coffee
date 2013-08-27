@@ -83,12 +83,12 @@ exports.parse = ->
   # mapping
   if config.virtual?
     for name, location of config.virtual
-      tmp = path.join dirs.pwd(), location
-      unless fs.existsSync tmp
-        error "Mapping dir for '#{name}' does not exist ~>", dirs.relative tmp
+      abs_location = path.join dirs.pwd(), location
+      unless fs.existsSync abs_location
+        error "Virtual map for '#{name}' does not exist ~>", location
         return null
       else
-        config.virtual[name] = path.relative dirs.pwd(), location
+        config.virtual[name] = dirs.relative abs_location
 
   # minify
   config.minify = {} unless config.minify?

@@ -92,8 +92,9 @@ resolve_module = (filepath, id)->
   if config.virtual?
     for map, location of config.virtual
       if id.indexOf(map) is 0
-        nmods = location
+        nmods = path.join dirs.pwd(), location
         id = id.match(/\/(.+)/)[0]
+        break
 
   unless nmods?
     nmods = closest_node_modules filepath
