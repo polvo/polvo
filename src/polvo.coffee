@@ -4,9 +4,11 @@
 module.exports = (options = {}, io)->
 
   global.cli_options = options
-  global.__stdout = io?.out or null
-  global.__stderr = io?.err or null
-  global.__nocolor = io?.nocolor or null
+
+  if io?
+    global.__stdout = io.out
+    global.__stderr = io.err
+    global.__nocolor = io.nocolor
 
   cli = require './cli'
   version = require './utils/version'
