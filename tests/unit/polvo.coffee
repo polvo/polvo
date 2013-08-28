@@ -129,6 +129,34 @@ describe '[polvo]', ->
       release = polvo options, stdio
       errors.should.equal 0
 
+    it 'should release and serve project without any surprises', (done)->
+      @timeout 2000
+
+      errors = outs = 0
+      checkers = [
+        /✓ public\/app\.js.+/
+        /✓ public\/app\.css.+/
+        /♫  http\:\/\/localhost:8080/
+      ]
+
+      options = release: true, server: true, base: mock_basic
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+          if checkers.length is 0
+            new setTimeout ->
+              server.close()
+              errors.should.equal 0
+              outs.should.equal 3
+              done()
+            , 500
+
+      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
+      server = polvo options, stdio
+
     it 'version should be printed properly with `polvo -v`', ->
       errors = outs = 0
 
@@ -211,6 +239,8 @@ describe '[polvo]', ->
 
       options = compile:true, server: 'true', base: mock_basic
       stdio = 
+        nocolor: true
+        err:(msg) -> errors++
         out:(msg) ->
           checkers.shift().test(msg).should.be.true
           if checkers.length is 0
@@ -221,8 +251,6 @@ describe '[polvo]', ->
                 server.close()
                 errors.should.equal 0
             , 500
-        err:(msg) -> errors++
-        nocolor: true
 
       fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
       backup = fs.readFileSync mock_basic_files.app
