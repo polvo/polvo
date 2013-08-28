@@ -35,7 +35,7 @@ basic_pack = '{"name": "basic"}'
 
 
 # npm mock
-
+npm = path.join __dirname, '..', 'mocks', 'npm'
 
 
 describe '[polvo]', ->
@@ -220,3 +220,20 @@ describe '[polvo]', ->
 
     polvo = require '../../lib/polvo'
     server = polvo options, stdio
+
+  it 'should compile app with NPM dependencies and index files', ->
+    errors = outs = 0
+    checker = /✓ public\/app\.js/
+
+    options = compile: true, base: npm
+    stdio = 
+      nocolor: true
+      err:(msg) -> errors++
+      out:(msg) ->
+        outs++
+        checker.test(msg).should.be.true
+
+    compile = polvo options, stdio
+
+    outs.should.equal 1
+    errors.should.equal 0
