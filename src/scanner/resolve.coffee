@@ -93,7 +93,11 @@ resolve_module = (filepath, id)->
     for map, location of config.virtual
       if id.indexOf(map) is 0
         nmods = path.join dirs.pwd(), location
-        id = id.match(/\/(.+)/)[0]
+
+        if ~id.indexOf('/')
+          id = id.match(/\/(.+)/)[0]
+        else
+          id = ''
         break
 
   unless nmods?
