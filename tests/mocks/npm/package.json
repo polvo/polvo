@@ -1,0 +1,6 @@
+{
+  "name": "polvo-mock-test-npm",
+  "dependencies": {
+    "lodash": "*"
+  }
+}
