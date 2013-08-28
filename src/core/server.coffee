@@ -11,6 +11,7 @@ sourcemaps = require '../utils/sourcemaps'
 
 {error, warn, info, debug, log} = require('../utils/logger')('core/server')
 
+app = null
 
 refresher = null
 module.exports = ->
@@ -21,7 +22,7 @@ module.exports = ->
   index = path.join root, 'index.html'
 
   # simple static server with 'connect'
-  connect()
+  app = connect()
     .use( connect.static root )
     .use( (req, res)->
       if ~(req.url.indexOf '.')
@@ -36,6 +37,11 @@ module.exports = ->
 
   unless argv.r
     refresher = io.listen 53211, 'log level': 0
+
+  module.exports
+
+module.exports.close = ->
+  app?.close()
 
 module.exports.reload = ( type )->
   return unless refresher?

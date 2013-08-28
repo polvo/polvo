@@ -39,6 +39,11 @@ module.exports = (options = {}, io)->
   else
     log cli.help()
 
+  module.exports
+
 module.exports.close = ->
   files = require './core/files'
+  server = require './core/server'
+
   files.close_watchers()
+  server.close()
