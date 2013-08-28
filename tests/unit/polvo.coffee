@@ -8,7 +8,7 @@ polvo = require '../../lib/polvo'
 base = path.join __dirname, '..', 'mocks', 'basic'
 files = 
   pack: path.join base, 'package.json'
-  app: path.join base, 'src', 'app.coffee'
+  app: path.join base, 'src', 'app', 'app.coffee'
   config: path.join base, 'polvo.yml'
   js: path.join base, 'public', 'app.js'
   css: path.join base, 'public', 'app.css'
@@ -141,13 +141,13 @@ describe '[polvo]', ->
       /✓ public\/app\.js.+/
       /✓ public\/app\.css.+/
 
-      /\• src\/app.coffee/
+      /\• src\/app\/app.coffee/
       /✓ public\/app\.js/
 
-      /\- src\/app.coffee/
+      /\- src\/app\/app.coffee/
       /✓ public\/app\.js/
 
-      /\+ src\/app\.coffee/
+      /\+ src\/app\/app\.coffee/
       /✓ public\/app\.js/
     ]
 
