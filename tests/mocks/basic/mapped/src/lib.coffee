@@ -1,1 +1,1 @@
-exports.name = "name"
+exports.name = "somelib"

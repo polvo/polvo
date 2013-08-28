@@ -1,1 +1,1 @@
-console.log( 'I am a vendor' );
+exports.name = 'some.vendor'
