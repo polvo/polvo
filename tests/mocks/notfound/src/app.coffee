@@ -1,0 +1,1 @@
+nofound = require './not/existent'
