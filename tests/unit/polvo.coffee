@@ -9,6 +9,8 @@ mock_basic = path.join __dirname, '..', 'mocks', 'basic'
 mock_basic_files = 
   mock_basic_pack: path.join mock_basic, 'package.json'
   app: path.join mock_basic, 'src', 'app', 'app.coffee'
+  vendor: path.join mock_basic, 'vendors', 'some.vendor.js'
+  partial: path.join mock_basic, 'src', 'templates', '_header.jade'
   mock_basic_config: path.join mock_basic, 'polvo.yml'
   js: path.join mock_basic, 'public', 'app.js'
   css: path.join mock_basic, 'public', 'app.css'
@@ -74,6 +76,43 @@ describe '[polvo]', ->
     fs.unlinkSync mock_basic_files.mock_basic_pack if fs.existsSync mock_basic_files.mock_basic_pack
     fs.unlinkSync mock_basic_files.js if fs.existsSync mock_basic_files.js
     fs.unlinkSync mock_basic_files.css if fs.existsSync mock_basic_files.css
+
+
+  describe '[general]', ->
+    it 'should show version number `-v`', ->
+      errors = outs = 0
+
+      options = version: true
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(version) ->
+          outs++
+          version.should.equal require('../../package.json').version
+
+      version = polvo options, stdio
+
+      outs.should.equal 1
+      errors.should.equal 0
+
+    it 'should show the help screen `-h`', ->
+      errors = outs = 0
+
+      options = help: true
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(help) ->
+          outs++
+          help.indexOf('Polyvalent cephalopod mollusc').should.not.equal -1
+          help.indexOf('Usage').should.not.equal -1
+          help.indexOf('Options').should.not.equal -1
+          help.indexOf('Examples').should.not.equal -1
+
+      help = polvo null, stdio
+
+      outs.should.equal 1
+      errors.should.equal 0
 
 
   describe '[mock:basic]', ->
@@ -157,62 +196,66 @@ describe '[polvo]', ->
       fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
       server = polvo options, stdio
 
-    it 'version should be printed properly with `polvo -v`', ->
-      errors = outs = 0
-
-      options = version: true
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(version) ->
-          outs++
-          version.should.equal require('../../package.json').version
-
-      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
-      version = polvo options, stdio
-
-      outs.should.equal 1
-      errors.should.equal 0
-
-    it 'should start app and perform crate/change/delete files events in watch mode', (done)->
-      @timeout 6000 
+    it 'should start app and perform some file operations gracefully', (done)->
+      @timeout 9000 
 
       errors = outs = 0
-      checkers = [
+      err_checker = /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/app.coffee'/
+      out_checkers = [
+        # fist compilation
         /✓ public\/app\.js.+/
         /✓ public\/app\.css.+/
 
+        # updating app.coffee
         /\• src\/app\/app.coffee/
         /✓ public\/app\.js/
 
+        # deleting app.coffee
         /\- src\/app\/app.coffee/
         /✓ public\/app\.js/
 
+        # crating app.coffee
         /\+ src\/app\/app\.coffee/
+        /✓ public\/app\.js/
+
+        # updating _header.jade
+        /\• src\/templates\/_header\.jade/
+        /✓ public\/app\.js/
+
+        # deleting vendor
+        /\- vendors\/some\.vendor\.js/
+        /✓ public\/app\.js/
+
+        # re-creating a deleted vendor
+        /\+ vendors\/some\.vendor\.js/
+        /✓ public\/app\.js/
+
+        # updating _header.jade
+        /\• vendors\/some\.vendor\.js/
         /✓ public\/app\.js/
       ]
 
-      options = watch: 'true', base: mock_basic
+      options = watch: true, base: mock_basic
       stdio = 
-        out:(msg) ->
-          checkers.shift().test(msg).should.be.true
-          if checkers.length is 0
-            watch.close()
-            errors.should.equal 0
-            done()
-
-        err:(msg) -> errors++
         nocolor: true
+        err:(msg) ->
+          errors++
+          err_checker.test(msg).should.be.true
+        out:(msg) ->
+          out_checkers.shift().test(msg).should.be.true
+          if out_checkers.length is 0
+            watch.close()
+            errors.should.equal 1
+            done()
 
       fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
       backup = fs.readFileSync mock_basic_files.app
 
-      polvo = require '../../lib/polvo'
       watch = polvo options, stdio
 
       # editing
       new setTimeout ->
-        fs.appendFileSync mock_basic_files.app, '\n\na = 1\n'
+        fs.appendFileSync mock_basic_files.app, ' '
       , 1000
 
       # deleting
@@ -224,6 +267,29 @@ describe '[polvo]', ->
       new setTimeout ->
         fs.writeFileSync mock_basic_files.app, backup
       , 3000
+
+      # editing a partial
+      new setTimeout ->
+        fs.appendFileSync mock_basic_files.partial, ' '
+      , 4000
+
+      # deleting a vendor
+      new setTimeout ->
+        fs.unlinkSync mock_basic_files.vendor
+      , 5000
+
+      # creating a vendor
+      vendor_backup = fs.readFileSync(mock_basic_files.vendor).toString()
+      new setTimeout ->
+        fs.writeFileSync mock_basic_files.vendor, vendor_backup
+      , 6000
+
+      # editing a vendor
+      new setTimeout ->
+        fs.appendFileSync mock_basic_files.vendor, ' '
+      , 7000
+
+
 
     it 'should start app and serve it', (done)->
       @timeout 4000
