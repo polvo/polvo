@@ -25,14 +25,16 @@ module.exports = new class Files
 
   files: null
   watchers: null
-
+  watchers_foreing: null
+  foreing_caller: false
 
   constructor:->
-    @files = []
-    @watchers = []
     @collect()
 
   collect:->
+    @watchers = []
+    @watchers_foreing = {}
+    @files = []
     for dirpath in config.input
       for filepath in fsu.find dirpath, exts
         @create_file filepath
@@ -40,7 +42,7 @@ module.exports = new class Files
     @watch_inputs() if argv.watch
 
   restart:( file )->
-    watcher.close() for watcher in @watchers
+    @close_watchers()
     @collect()
 
   has_compiler:(filepath)->
@@ -63,6 +65,10 @@ module.exports = new class Files
     if not is_under_inputs
       @watch_file file.filepath if argv.watch
 
+    if @foreign_caller
+      log_created file.filepath
+      @compile @foreign_caller
+
     file
 
   delete_file:(filepath)->        
@@ -79,23 +85,28 @@ module.exports = new class Files
       file.refresh() if file?
 
   watch_file:( filepath )->
-    @watchers.push watcher = fsu.watch filepath
-    watcher.on 'create', (file)=> @onfschange 'create', file
-    watcher.on 'change', (file)=> @onfschange 'change', file
-    watcher.on 'delete', (file)=> @onfschange 'delete', file
+    dir = path.dirname filepath
+    unless @watchers_foreing[dir]?
+      @watchers_foreing[dir] = true
+      @watchers.push watcher = fsu.watch dir
+      watcher.on 'create', (file)=> @onfschange 'create', file, true
+      watcher.on 'change', (file)=> @onfschange 'change', file, true
+      watcher.on 'delete', (file)=> @onfschange 'delete', file, true
 
   watch_inputs:->
     for dirpath in config.input
-      @watchers.push (watcher = fsu.watch dirpath, exts)
+      @watchers.push watcher = fsu.watch dirpath, exts
       watcher.on 'create', (file)=> @onfschange 'create', file
       watcher.on 'change', (file)=> @onfschange 'change', file
       watcher.on 'delete', (file)=> @onfschange 'delete', file
 
-  close_watchers:->
+  close_watchers:( preserve_outsiders )->
     for watcher in @watchers
-      watcher.close()
+      if preserve_outsiders?
+        continue if watcher.root in @watchers_foreing
+        watcher.close()
 
-  onfschange:(action, file)=>
+  onfschange:(action, file, foreign)=>
 
     {location, type} = file
 
@@ -104,8 +115,16 @@ module.exports = new class Files
     switch action
 
       when "create"
+        if foreign
+          for file in @files
+            @foreign_caller = file
+            file.scan_deps()
+
+          @foreign_caller = null
+          return
+
         file = @create_file location
-        log_created location 
+        log_created location
         @compile file
 
       when "delete"
