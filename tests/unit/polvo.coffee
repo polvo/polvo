@@ -7,6 +7,7 @@ polvo = require '../../lib/polvo'
 base = path.join __dirname, '..', 'mocks', 'basic'
 files = 
   pack: path.join base, 'package.json'
+  app: path.join base, 'src', 'app.coffee'
   config: path.join base, 'polvo.yml'
   js: path.join base, 'public', 'app.js'
   css: path.join base, 'public', 'app.css'
@@ -28,8 +29,16 @@ boot: src/app/app
 pack = '{"name": "basic"}'
 
 clear_cache = ->
-  mod = require.resolve '../../lib/utils/plugins'
-  delete require.cache[mod]
+  mods = [
+    '../../lib/utils/plugins'
+    '../../lib/core/compiler'
+    '../../lib/core/file'
+    '../../lib/core/files'
+  ]
+
+  for m in mods
+    mod = require.resolve m
+    delete require.cache[mod]
 
 describe '[polvo]', ->
 
@@ -42,6 +51,7 @@ describe '[polvo]', ->
     fs.writeFileSync files.config, config
 
   afterEach ->
+    clear_cache()    
 
   after ->
     fs.unlinkSync files.config if fs.existsSync files.config
@@ -68,9 +78,10 @@ describe '[polvo]', ->
     
     outs.should.equal 1
     errors.should.equal 0
+    clear_cache()
 
 
-  it 'should compile project without any surprises', ->
+  it 'should compile app without any surprises', ->
     errors = outs = 0
     checker = /✓ public\/app\.(js|css).+$/m
 
@@ -100,7 +111,8 @@ describe '[polvo]', ->
       err:(msg) -> errors++
       nocolor: true
 
-    compile = polvo options, stdio
+    fs.writeFileSync files.pack, pack
+    release = polvo options, stdio
     errors.should.equal 0
 
   it 'version should be printed properly with `polvo -v`', ->
@@ -114,7 +126,58 @@ describe '[polvo]', ->
         outs++
         version.should.equal require('../../package.json').version
 
-    compile = polvo options, stdio
+    fs.writeFileSync files.pack, pack
+    version = polvo options, stdio
 
     outs.should.equal 1
     errors.should.equal 0
+
+  it 'should start app app and perform crate/change/delete files events in watch mode', (done)->
+    @timeout 4000
+
+    errors = outs = 0
+    checkers = [
+      /✓ public\/app\.js.+/
+      /✓ public\/app\.css.+/
+
+      /\• src\/app.coffee/
+      /✓ public\/app\.js/
+
+      /\- src\/app.coffee/
+      /✓ public\/app\.js/
+
+      /\+ src\/app\.coffee/
+      /✓ public\/app\.js/
+    ]
+
+    options = watch: 'true', base: base
+    stdio = 
+      out:(msg) ->
+        checkers.shift().test(msg).should.be.true
+        if checkers.length is 0
+          polvo.close()
+          errors.should.equal 0
+          done()
+      err:(msg) -> errors++
+      nocolor: true
+
+    fs.writeFileSync files.pack, pack
+    backup = fs.readFileSync files.app
+
+    polvo = require '../../lib/polvo'
+    start = polvo options, stdio
+
+    # editing
+    new setTimeout ->
+      fs.appendFileSync files.app, '\n\na = 1\n'
+    , 1000
+
+    # deleting
+    new setTimeout ->
+      fs.unlinkSync files.app
+    , 2000
+
+    # creating
+    new setTimeout ->
+      fs.writeFileSync files.app, backup
+    , 3000
