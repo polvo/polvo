@@ -155,7 +155,7 @@ describe   '[config]', ->
 
     it 'error should be shown when mapped folder doesn\'t exist', (done)->
       out = 0
-      err_msg = 'error Mapping dir for \'mapped\' does not exist ~> '
+      err_msg = 'error Virtual map for \'mapped\' does not exist ~> '
       err_msg += 'non/existent/folder'
 
       global.__stdout = (data)-> out++
