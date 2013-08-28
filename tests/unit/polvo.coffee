@@ -1,5 +1,6 @@
 fs = require 'fs'
 path = require 'path'
+exec = require('child_process').exec
 
 polvo = require '../../lib/polvo'
 
@@ -13,6 +14,10 @@ files =
   css: path.join base, 'public', 'app.css'
 
 config = """
+server:
+  port: 8080
+  root: ./public
+
 input:
   - src
 
@@ -28,17 +33,6 @@ boot: src/app/app
 
 pack = '{"name": "basic"}'
 
-clear_cache = ->
-  mods = [
-    '../../lib/utils/plugins'
-    '../../lib/core/compiler'
-    '../../lib/core/file'
-    '../../lib/core/files'
-  ]
-
-  for m in mods
-    mod = require.resolve m
-    delete require.cache[mod]
 
 describe '[polvo]', ->
 
@@ -51,7 +45,17 @@ describe '[polvo]', ->
     fs.writeFileSync files.config, config
 
   afterEach ->
-    clear_cache()    
+    mods = [
+      '../../lib/utils/plugins'
+      '../../lib/core/compiler'
+      '../../lib/core/file'
+      '../../lib/core/files'
+      '../../lib/core/server'
+    ]
+
+    for m in mods
+      mod = require.resolve m
+      delete require.cache[mod]
 
   after ->
     fs.unlinkSync files.config if fs.existsSync files.config
@@ -73,12 +77,10 @@ describe '[polvo]', ->
           checker.test(msg).should.be.true
           outs++
 
-    clear_cache()
     compile = polvo options, stdio
     
     outs.should.equal 1
     errors.should.equal 0
-    clear_cache()
 
 
   it 'should compile app without any surprises', ->
@@ -93,7 +95,6 @@ describe '[polvo]', ->
         outs++
         checker.test(msg).should.be.true
 
-    clear_cache()
     fs.writeFileSync files.pack, pack
     compile = polvo options, stdio
 
@@ -132,8 +133,8 @@ describe '[polvo]', ->
     outs.should.equal 1
     errors.should.equal 0
 
-  it 'should start app app and perform crate/change/delete files events in watch mode', (done)->
-    @timeout 4000
+  it 'should start app and perform crate/change/delete files events in watch mode', (done)->
+    @timeout 6000 
 
     errors = outs = 0
     checkers = [
@@ -155,9 +156,10 @@ describe '[polvo]', ->
       out:(msg) ->
         checkers.shift().test(msg).should.be.true
         if checkers.length is 0
-          polvo.close()
+          watch.close()
           errors.should.equal 0
           done()
+
       err:(msg) -> errors++
       nocolor: true
 
@@ -165,7 +167,7 @@ describe '[polvo]', ->
     backup = fs.readFileSync files.app
 
     polvo = require '../../lib/polvo'
-    start = polvo options, stdio
+    watch = polvo options, stdio
 
     # editing
     new setTimeout ->
@@ -181,3 +183,36 @@ describe '[polvo]', ->
     new setTimeout ->
       fs.writeFileSync files.app, backup
     , 3000
+
+  it 'should start app and serve it', (done)->
+    @timeout 4000
+
+    errors = outs = 0
+    checkers = [
+      /✓ public\/app\.js.+/
+      /✓ public\/app\.css.+/
+      /♫  http\:\/\/localhost:8080/
+    ]
+
+    server = null
+
+    options = compile:true, server: 'true', base: base
+    stdio = 
+      out:(msg) ->
+        checkers.shift().test(msg).should.be.true
+        if checkers.length is 0
+          new setTimeout ->
+            exec 'curl -I localhost:8080', (err, stdout, stderr)->
+              /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
+              done()
+              server.close()
+              errors.should.equal 0
+          , 500
+      err:(msg) -> errors++
+      nocolor: true
+
+    fs.writeFileSync files.pack, pack
+    backup = fs.readFileSync files.app
+
+    polvo = require '../../lib/polvo'
+    server = polvo options, stdio
