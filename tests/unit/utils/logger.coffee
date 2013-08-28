@@ -1,6 +1,7 @@
 path = require 'path'
 should = require('chai').should()
 
+require 'colors'
 
 describe '[log]', ->
 
@@ -27,7 +28,27 @@ describe '[log]', ->
     error 'Hello world'
     error 'Hello world', 1
     error 'Hello world', 1, 2
-    
+  
+  it 'error with colors', (done)->
+    msgs = [
+      "#{'error'.bold.red} #{'Hello world'.grey}"
+      "#{'error'.bold.red} #{'Hello world'.grey} 1"
+      "#{'error'.bold.red} #{'Hello world'.grey} 1 2"
+    ]
+
+    global.__stderr = (data)->
+      data.should.equal msgs.shift()
+      done() unless msgs.length
+
+    global.__nocolor = false
+
+    {error} = require('../../../lib/utils/logger')()
+    error 'Hello world'
+    error 'Hello world', 1
+    error 'Hello world', 1, 2
+
+    global.__nocolor = true
+
   it 'warn', (done)->
     msgs = [
       'warn Hello world'
@@ -43,6 +64,27 @@ describe '[log]', ->
     warn 'Hello world'
     warn 'Hello world', 1
     warn 'Hello world', 1, 2  
+
+  it 'warn with colors', (done)->
+    msgs = [
+      "#{'warn'.bold.yellow} #{'Hello world'.grey}"
+      "#{'warn'.bold.yellow} #{'Hello world'.grey} 1"
+      "#{'warn'.bold.yellow} #{'Hello world'.grey} 1 2"
+    ]
+
+    global.__stderr = (data)->
+      data.should.equal msgs.shift()
+      done() unless msgs.length
+
+    global.__nocolor = false
+
+    delete global.__nocolor
+    {warn} = require('../../../lib/utils/logger')()
+    warn 'Hello world'
+    warn 'Hello world', 1
+    warn 'Hello world', 1, 2
+
+    global.__nocolor = true
 
   it 'info', (done)->
     msgs = [
