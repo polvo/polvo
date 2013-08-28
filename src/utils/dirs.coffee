@@ -2,8 +2,6 @@ path = require 'path'
 fs = require 'fs'
 
 cli = require '../cli'
-log = 
-
 {error, warn, info, debug, log} = require('./logger')('utils/dirs')
 
 exports.root = ->
