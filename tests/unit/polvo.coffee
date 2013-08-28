@@ -57,6 +57,9 @@ describe '[polvo]', ->
       '../../lib/core/file'
       '../../lib/core/files'
       '../../lib/core/server'
+
+      '../../lib/scanner/resolve'
+      '../../lib/scanner/scan'
     ]
 
     for m in mods
@@ -223,7 +226,7 @@ describe '[polvo]', ->
     polvo = require '../../lib/polvo'
     server = polvo options, stdio
 
-  it 'should compile app with mock_NPM dependencies and index files', (done)->
+  it 'should compile app with NPM dependencies and index files', (done)->
     errors = outs = 0
     checker = /✓ public\/app\.js/
 
