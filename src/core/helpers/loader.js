@@ -2,19 +2,16 @@ function require(path, parent){
   var m, realpath;
 
   if(parent)
+  {
     realpath = require.mods[parent].aliases[path];
+    if(!realpath) realpath = require.virtual( path );
+  }
   else
     realpath = path;
 
-  if(!realpath)
-    realpath = require.virtual( path );
-  
   if(!(m = require.mods[realpath]))
-  {
-    console.error('Module not found: ', path);
-    return null
-  }
-  
+    return console.error('Module not found: ', path);
+
   if(!m.init)
   {
     m.factory.call(this, require.local(realpath), m.module, m.module.exports);
