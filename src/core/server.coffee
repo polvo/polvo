@@ -36,7 +36,7 @@ module.exports = ->
   log "♫  #{address}"
 
   unless argv.r
-    refresher = io.listen 53211, 'log level': 0
+    refresher = io.listen 53211, 'log level': 1
 
   module.exports
 
