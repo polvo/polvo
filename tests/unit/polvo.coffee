@@ -82,7 +82,6 @@ describe '[polvo]', ->
         outs++
         checker.test(msg).should.be.true
 
-    console.log 'WROTE!', files.pack
     clear_cache()
     fs.writeFileSync files.pack, pack
     compile = polvo options, stdio
