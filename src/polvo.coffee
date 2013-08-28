@@ -2,6 +2,7 @@
   handleUncaughtExceptions: false
 
 module.exports = (options = {}, io)->
+
   global.cli_options = options
   global.__stdout = io?.out or null
   global.__stderr = io?.err or null
@@ -37,3 +38,7 @@ module.exports = (options = {}, io)->
 
   else
     log cli.help()
+
+module.exports.close = ->
+  files = require './core/files'
+  files.close_watchers()
