@@ -120,19 +120,26 @@ module.exports = new class Files
 
       when "delete"
 
+        console.log 'delete', location
         log_deleted location
         file = @extract_file location
 
-        for dep, depath of file.dependencies
+        # check if others have the same dependencies
+        for depname, depath of file.dependencies
           found = 0
           for f in @files
-            for d, dpath of f.depenencies
+            for dname, dpath of f.depenencies
               found++ if dpath is depath
 
           if not found and not @is_under_inputs(depath, true)
             @extract_file depath unless found
 
-        # @collect()
+        # search for those who was depending on deleted item
+        for f in @files
+          for dname, dpath of f.dependencies
+            if dpath is file.filepath
+                f.scan_deps()
+
         @compile file
 
       when "change"
