@@ -133,8 +133,8 @@ resolve_module = (filepath, id = '')->
     return file if (file = resolve_index main)?
 
     # keep searching on parent node_module's folders
-    if filepath is not '/' and non_recurse is not true
-      resolve_module path.join(filepath, '..'), di
+    if filepath is not '/' and non_recurse isnt true
+      resolve_module path.join(filepath, '..'), dir
   
   # if there's no json, move on with other searches
   idpath = (path.join nmods, id)
@@ -146,7 +146,7 @@ resolve_module = (filepath, id = '')->
   return file if (file = resolve_index idpath)?
 
   # keep searching on parent node_module's folders
-  if filepath isnt '/' and non_recurse is not true
+  if filepath isnt '/' and non_recurse isnt true
     resolve_module path.join(filepath, '..'), id
 
 
