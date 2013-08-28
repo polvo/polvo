@@ -42,7 +42,16 @@ module.exports = new class Files
     (return yes if ext.test filepath) for ext in exts
     return no
 
+
+  # closes_folder:->
+    
   create_file:(filepath)->
+
+    # relative paths means file is null
+    # if filepath[0] is '.'
+    #   closest_folder = 
+      
+
     return if not @has_compiler filepath
     return file if file = _.find @files, {filepath}
 
@@ -120,7 +129,6 @@ module.exports = new class Files
 
       when "delete"
 
-        console.log 'delete', location
         log_deleted location
         file = @extract_file location
 

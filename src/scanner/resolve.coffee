@@ -31,6 +31,7 @@ resolve = module.exports = (filepath, id)->
   # otherwise show error
   caller = path.relative dirs.pwd(), filepath
   error "Module '#{id}' not found for '#{caller}'"
+  # return id
   return null
 
 
