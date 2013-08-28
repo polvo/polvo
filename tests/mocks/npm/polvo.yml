@@ -4,4 +4,7 @@ input:
 output:
   js: public/app.js
 
+virtual:
+  mod: mod
+
 boot: src/app
