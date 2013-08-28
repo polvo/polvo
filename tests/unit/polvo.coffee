@@ -4,16 +4,16 @@ exec = require('child_process').exec
 
 polvo = require '../../lib/polvo'
 
-# basic mock
-basic = path.join __dirname, '..', 'mocks', 'basic'
-basic_files = 
-  basic_pack: path.join basic, 'package.json'
-  app: path.join basic, 'src', 'app', 'app.coffee'
-  basic_config: path.join basic, 'polvo.yml'
-  js: path.join basic, 'public', 'app.js'
-  css: path.join basic, 'public', 'app.css'
+# mock_basic mock
+mock_basic = path.join __dirname, '..', 'mocks', 'basic'
+mock_basic_files = 
+  mock_basic_pack: path.join mock_basic, 'package.json'
+  app: path.join mock_basic, 'src', 'app', 'app.coffee'
+  mock_basic_config: path.join mock_basic, 'polvo.yml'
+  js: path.join mock_basic, 'public', 'app.js'
+  css: path.join mock_basic, 'public', 'app.css'
 
-basic_config = """
+mock_basic_config = """
 server:
   port: 8080
   root: ./public
@@ -31,22 +31,24 @@ virtual:
 boot: src/app/app
 """
 
-basic_pack = '{"name": "basic"}'
+mock_basic_pack = '{"name": "mock_basic"}'
 
 
 # npm mock
-npm = path.join __dirname, '..', 'mocks', 'npm'
+mock_npm = path.join __dirname, '..', 'mocks', 'npm'
 
+# mock_npm mock
+mock_error = path.join __dirname, '..', 'mocks', 'error'
 
 describe '[polvo]', ->
 
   before ->
-    fs.unlinkSync basic_files.basic_config if fs.existsSync basic_files.basic_config
-    fs.unlinkSync basic_files.basic_pack if fs.existsSync basic_files.basic_pack
-    fs.unlinkSync basic_files.js if fs.existsSync basic_files.js
-    fs.unlinkSync basic_files.css if fs.existsSync basic_files.css
+    fs.unlinkSync mock_basic_files.mock_basic_config if fs.existsSync mock_basic_files.mock_basic_config
+    fs.unlinkSync mock_basic_files.mock_basic_pack if fs.existsSync mock_basic_files.mock_basic_pack
+    fs.unlinkSync mock_basic_files.js if fs.existsSync mock_basic_files.js
+    fs.unlinkSync mock_basic_files.css if fs.existsSync mock_basic_files.css
 
-    fs.writeFileSync basic_files.basic_config, basic_config
+    fs.writeFileSync mock_basic_files.mock_basic_config, mock_basic_config
 
   afterEach ->
     mods = [
@@ -62,17 +64,17 @@ describe '[polvo]', ->
       delete require.cache[mod]
 
   after ->
-    fs.unlinkSync basic_files.basic_config if fs.existsSync basic_files.basic_config
-    fs.unlinkSync basic_files.basic_pack if fs.existsSync basic_files.basic_pack
-    fs.unlinkSync basic_files.js if fs.existsSync basic_files.js
-    fs.unlinkSync basic_files.css if fs.existsSync basic_files.css
+    fs.unlinkSync mock_basic_files.mock_basic_config if fs.existsSync mock_basic_files.mock_basic_config
+    fs.unlinkSync mock_basic_files.mock_basic_pack if fs.existsSync mock_basic_files.mock_basic_pack
+    fs.unlinkSync mock_basic_files.js if fs.existsSync mock_basic_files.js
+    fs.unlinkSync mock_basic_files.css if fs.existsSync mock_basic_files.css
 
 
   it 'should alert about no `package.json` file plugins during compile', ->
     errors = outs = 0
     checker = /^info app doesn't have a `package.json`/m
 
-    options = compile: true, base: basic
+    options = compile: true, base: mock_basic
     stdio = 
       nocolor: true
       err:(msg)-> errors++
@@ -91,7 +93,7 @@ describe '[polvo]', ->
     errors = outs = 0
     checker = /✓ public\/app\.(js|css).+$/m
 
-    options = compile: true, base: basic
+    options = compile: true, base: mock_basic
     stdio = 
       nocolor: true
       err:(msg) -> errors++
@@ -99,7 +101,7 @@ describe '[polvo]', ->
         outs++
         checker.test(msg).should.be.true
 
-    fs.writeFileSync basic_files.basic_pack, basic_pack
+    fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
     compile = polvo options, stdio
 
     outs.should.equal 2
@@ -110,13 +112,13 @@ describe '[polvo]', ->
     errors = outs = 0
     checker = /✓ public\/app\.(js|css).+$/m
 
-    options = release: true, base: basic
+    options = release: true, base: mock_basic
     stdio = 
       out:(msg) -> checker.test(msg).should.be.true
       err:(msg) -> errors++
       nocolor: true
 
-    fs.writeFileSync basic_files.basic_pack, basic_pack
+    fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
     release = polvo options, stdio
     errors.should.equal 0
 
@@ -131,7 +133,7 @@ describe '[polvo]', ->
         outs++
         version.should.equal require('../../package.json').version
 
-    fs.writeFileSync basic_files.basic_pack, basic_pack
+    fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
     version = polvo options, stdio
 
     outs.should.equal 1
@@ -155,7 +157,7 @@ describe '[polvo]', ->
       /✓ public\/app\.js/
     ]
 
-    options = watch: 'true', base: basic
+    options = watch: 'true', base: mock_basic
     stdio = 
       out:(msg) ->
         checkers.shift().test(msg).should.be.true
@@ -167,25 +169,25 @@ describe '[polvo]', ->
       err:(msg) -> errors++
       nocolor: true
 
-    fs.writeFileSync basic_files.basic_pack, basic_pack
-    backup = fs.readFileSync basic_files.app
+    fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
+    backup = fs.readFileSync mock_basic_files.app
 
     polvo = require '../../lib/polvo'
     watch = polvo options, stdio
 
     # editing
     new setTimeout ->
-      fs.appendFileSync basic_files.app, '\n\na = 1\n'
+      fs.appendFileSync mock_basic_files.app, '\n\na = 1\n'
     , 1000
 
     # deleting
     new setTimeout ->
-      fs.unlinkSync basic_files.app
+      fs.unlinkSync mock_basic_files.app
     , 2000
 
     # creating
     new setTimeout ->
-      fs.writeFileSync basic_files.app, backup
+      fs.writeFileSync mock_basic_files.app, backup
     , 3000
 
   it 'should start app and serve it', (done)->
@@ -200,7 +202,7 @@ describe '[polvo]', ->
 
     server = null
 
-    options = compile:true, server: 'true', base: basic
+    options = compile:true, server: 'true', base: mock_basic
     stdio = 
       out:(msg) ->
         checkers.shift().test(msg).should.be.true
@@ -215,25 +217,50 @@ describe '[polvo]', ->
       err:(msg) -> errors++
       nocolor: true
 
-    fs.writeFileSync basic_files.basic_pack, basic_pack
-    backup = fs.readFileSync basic_files.app
+    fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
+    backup = fs.readFileSync mock_basic_files.app
 
     polvo = require '../../lib/polvo'
     server = polvo options, stdio
 
-  it 'should compile app with NPM dependencies and index files', ->
+  it 'should compile app with mock_NPM dependencies and index files', (done)->
     errors = outs = 0
     checker = /✓ public\/app\.js/
 
-    options = compile: true, base: npm
+    options = compile: true, base: mock_npm
     stdio = 
       nocolor: true
       err:(msg) -> errors++
       out:(msg) ->
         outs++
         checker.test(msg).should.be.true
+        done()
 
     compile = polvo options, stdio
 
     outs.should.equal 1
     errors.should.equal 0
+
+  it 'should alert simple syntax error on file', (done)->
+    errors = outs = 0
+    checkers = [
+      /error src\/app\.coffee/
+      /✓ public\/app\.js/
+    ]
+
+    options = compile: true, base: mock_error
+    stdio = 
+      nocolor: true
+      err:(msg) ->
+        errors++
+        checkers.shift().test(msg).should.be.true
+      out:(msg) ->
+        outs++
+        checkers.shift().test(msg).should.be.true
+
+        checkers.length.should.equal 0
+        errors.should.equal 1
+        outs.should.equal 1
+        done()
+
+    compile = polvo options, stdio
