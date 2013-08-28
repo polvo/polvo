@@ -43,6 +43,9 @@ mock_error = path.join __dirname, '..', 'mocks', 'error'
 # mock nofound
 mock_notfound = path.join __dirname, '..', 'mocks', 'notfound'
 
+# mock pack_main_dir
+mock_pack_main_dir = path.join __dirname, '..', 'mocks', 'pack-main-dir'
+
 describe '[polvo]', ->
 
   before ->
@@ -327,3 +330,20 @@ describe '[polvo]', ->
           done()
 
       compile = polvo options, stdio
+
+  describe '[mock:pack-main-dir]', ->
+    it 'should alert simple syntax error on file', ->
+      errors = outs = 0
+      checker = /✓ public\/app\.js/
+
+      options = compile: true, base: mock_pack_main_dir
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(msg) ->
+          outs++
+          checker.test(msg).should.be.true
+
+      compile = polvo options, stdio
+      errors.should.equal 0
+      outs.should.equal 1
