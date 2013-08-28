@@ -5,13 +5,12 @@ path = require 'path'
 util = require 'util'
 
 dirs = require '../utils/dirs'
+{info} = require('../utils/logger')('utils/plugins')
 
 plugins = []
 registered = {}
 
 scan = (manifest_path)->
-  return unless fs.existsSync manifest_path
-
   manifest = require manifest_path
 
   for plugin of manifest.dependencies
@@ -22,6 +21,11 @@ scan = (manifest_path)->
       plugins.push require plugin
 
 scan path.join dirs.root(), 'package.json'
-scan path.join dirs.pwd(), 'package.json'
+
+app_json = path.join dirs.pwd(), 'package.json'
+if fs.existsSync app_json
+  scan app_json
+else
+  info 'app doesn\'t have a `package.json` file, loading built-in plugins only'
 
 module.exports = plugins
