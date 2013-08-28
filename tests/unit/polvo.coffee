@@ -4,16 +4,16 @@ exec = require('child_process').exec
 
 polvo = require '../../lib/polvo'
 
+# basic mock
+basic = path.join __dirname, '..', 'mocks', 'basic'
+basic_files = 
+  basic_pack: path.join basic, 'package.json'
+  app: path.join basic, 'src', 'app', 'app.coffee'
+  basic_config: path.join basic, 'polvo.yml'
+  js: path.join basic, 'public', 'app.js'
+  css: path.join basic, 'public', 'app.css'
 
-base = path.join __dirname, '..', 'mocks', 'basic'
-files = 
-  pack: path.join base, 'package.json'
-  app: path.join base, 'src', 'app', 'app.coffee'
-  config: path.join base, 'polvo.yml'
-  js: path.join base, 'public', 'app.js'
-  css: path.join base, 'public', 'app.css'
-
-config = """
+basic_config = """
 server:
   port: 8080
   root: ./public
@@ -31,18 +31,22 @@ virtual:
 boot: src/app/app
 """
 
-pack = '{"name": "basic"}'
+basic_pack = '{"name": "basic"}'
+
+
+# npm mock
+
 
 
 describe '[polvo]', ->
 
   before ->
-    fs.unlinkSync files.config if fs.existsSync files.config
-    fs.unlinkSync files.pack if fs.existsSync files.pack
-    fs.unlinkSync files.js if fs.existsSync files.js
-    fs.unlinkSync files.css if fs.existsSync files.css
+    fs.unlinkSync basic_files.basic_config if fs.existsSync basic_files.basic_config
+    fs.unlinkSync basic_files.basic_pack if fs.existsSync basic_files.basic_pack
+    fs.unlinkSync basic_files.js if fs.existsSync basic_files.js
+    fs.unlinkSync basic_files.css if fs.existsSync basic_files.css
 
-    fs.writeFileSync files.config, config
+    fs.writeFileSync basic_files.basic_config, basic_config
 
   afterEach ->
     mods = [
@@ -58,17 +62,17 @@ describe '[polvo]', ->
       delete require.cache[mod]
 
   after ->
-    fs.unlinkSync files.config if fs.existsSync files.config
-    fs.unlinkSync files.pack if fs.existsSync files.pack
-    fs.unlinkSync files.js if fs.existsSync files.js
-    fs.unlinkSync files.css if fs.existsSync files.css
+    fs.unlinkSync basic_files.basic_config if fs.existsSync basic_files.basic_config
+    fs.unlinkSync basic_files.basic_pack if fs.existsSync basic_files.basic_pack
+    fs.unlinkSync basic_files.js if fs.existsSync basic_files.js
+    fs.unlinkSync basic_files.css if fs.existsSync basic_files.css
 
 
   it 'should alert about no `package.json` file plugins during compile', ->
     errors = outs = 0
     checker = /^info app doesn't have a `package.json`/m
 
-    options = compile: true, base: base
+    options = compile: true, base: basic
     stdio = 
       nocolor: true
       err:(msg)-> errors++
@@ -87,7 +91,7 @@ describe '[polvo]', ->
     errors = outs = 0
     checker = /✓ public\/app\.(js|css).+$/m
 
-    options = compile: true, base: base
+    options = compile: true, base: basic
     stdio = 
       nocolor: true
       err:(msg) -> errors++
@@ -95,7 +99,7 @@ describe '[polvo]', ->
         outs++
         checker.test(msg).should.be.true
 
-    fs.writeFileSync files.pack, pack
+    fs.writeFileSync basic_files.basic_pack, basic_pack
     compile = polvo options, stdio
 
     outs.should.equal 2
@@ -106,13 +110,13 @@ describe '[polvo]', ->
     errors = outs = 0
     checker = /✓ public\/app\.(js|css).+$/m
 
-    options = release: true, base: base
+    options = release: true, base: basic
     stdio = 
       out:(msg) -> checker.test(msg).should.be.true
       err:(msg) -> errors++
       nocolor: true
 
-    fs.writeFileSync files.pack, pack
+    fs.writeFileSync basic_files.basic_pack, basic_pack
     release = polvo options, stdio
     errors.should.equal 0
 
@@ -127,7 +131,7 @@ describe '[polvo]', ->
         outs++
         version.should.equal require('../../package.json').version
 
-    fs.writeFileSync files.pack, pack
+    fs.writeFileSync basic_files.basic_pack, basic_pack
     version = polvo options, stdio
 
     outs.should.equal 1
@@ -151,7 +155,7 @@ describe '[polvo]', ->
       /✓ public\/app\.js/
     ]
 
-    options = watch: 'true', base: base
+    options = watch: 'true', base: basic
     stdio = 
       out:(msg) ->
         checkers.shift().test(msg).should.be.true
@@ -163,25 +167,25 @@ describe '[polvo]', ->
       err:(msg) -> errors++
       nocolor: true
 
-    fs.writeFileSync files.pack, pack
-    backup = fs.readFileSync files.app
+    fs.writeFileSync basic_files.basic_pack, basic_pack
+    backup = fs.readFileSync basic_files.app
 
     polvo = require '../../lib/polvo'
     watch = polvo options, stdio
 
     # editing
     new setTimeout ->
-      fs.appendFileSync files.app, '\n\na = 1\n'
+      fs.appendFileSync basic_files.app, '\n\na = 1\n'
     , 1000
 
     # deleting
     new setTimeout ->
-      fs.unlinkSync files.app
+      fs.unlinkSync basic_files.app
     , 2000
 
     # creating
     new setTimeout ->
-      fs.writeFileSync files.app, backup
+      fs.writeFileSync basic_files.app, backup
     , 3000
 
   it 'should start app and serve it', (done)->
@@ -196,7 +200,7 @@ describe '[polvo]', ->
 
     server = null
 
-    options = compile:true, server: 'true', base: base
+    options = compile:true, server: 'true', base: basic
     stdio = 
       out:(msg) ->
         checkers.shift().test(msg).should.be.true
@@ -211,8 +215,8 @@ describe '[polvo]', ->
       err:(msg) -> errors++
       nocolor: true
 
-    fs.writeFileSync files.pack, pack
-    backup = fs.readFileSync files.app
+    fs.writeFileSync basic_files.basic_pack, basic_pack
+    backup = fs.readFileSync basic_files.app
 
     polvo = require '../../lib/polvo'
     server = polvo options, stdio
