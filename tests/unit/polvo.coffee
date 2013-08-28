@@ -43,9 +43,6 @@ mock_error = path.join __dirname, '..', 'mocks', 'error'
 # mock nofound
 mock_notfound = path.join __dirname, '..', 'mocks', 'notfound'
 
-# mock pack_main_dir
-mock_pack_main_dir = path.join __dirname, '..', 'mocks', 'pack-main-dir'
-
 describe '[polvo]', ->
 
   before ->
@@ -263,23 +260,31 @@ describe '[polvo]', ->
 
 
   describe '[mock:npm]', ->
-    it 'should compile app with NPM dependencies and index files', (done)->
+    it 'should compile all kinds of requires, showing proper errors', (done)->
       errors = outs = 0
-      checker = /✓ public\/app\.js/
+      out_checker = /✓ public\/app\.js/
+
+      err_checkers = [
+        "error Module './local-mod-folder/none' not found for 'src/app.coffee'"
+        "error Module 'non-existent-a' not found for 'src/app.coffee'"
+        "error Module './non-existent-b' not found for 'src/app.coffee'"
+        "error Module 'mod/non-existent' not found for 'src/app.coffee'"
+      ]
 
       options = compile: true, base: mock_npm
       stdio = 
         nocolor: true
-        err:(msg) -> errors++
+        err:(msg) ->
+          errors++
+          msg.should.equal err_checkers.shift()
         out:(msg) ->
           outs++
-          checker.test(msg).should.be.true
+          out_checker.test(msg).should.be.true
+          outs.should.equal 1
+          errors.should.equal 4
           done()
 
       compile = polvo options, stdio
-
-      outs.should.equal 1
-      errors.should.equal 0
 
   describe '[mock:error]', ->
     it 'should alert simple syntax error on file', (done)->
@@ -330,20 +335,3 @@ describe '[polvo]', ->
           done()
 
       compile = polvo options, stdio
-
-  describe '[mock:pack-main-dir]', ->
-    it 'should alert simple syntax error on file', ->
-      errors = outs = 0
-      checker = /✓ public\/app\.js/
-
-      options = compile: true, base: mock_pack_main_dir
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(msg) ->
-          outs++
-          checker.test(msg).should.be.true
-
-      compile = polvo options, stdio
-      errors.should.equal 0
-      outs.should.equal 1

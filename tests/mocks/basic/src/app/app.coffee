@@ -3,3 +3,5 @@ lib = require 'mapped/lib'
 
 console.log vendor
 console.log lib
+
+a = 1
