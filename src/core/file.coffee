@@ -62,7 +62,7 @@ module.exports = class File extends MicroEvent
 
     @compiler.compile @filepath, @raw, not argv.release
       , (err)=>
-        error dirs.relative @filepath, '\n', err
+        error dirs.relative(@filepath), '-', err
 
       , (@compiled, @source_map)=>
         done()

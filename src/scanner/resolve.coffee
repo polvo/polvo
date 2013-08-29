@@ -17,7 +17,6 @@ for plugin in plugins
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
 resolve = module.exports = (filepath, id)->
-  # console.log 'resolve', filepath, id
 
   # removes js extension to normalize id
   id = id.replace /\.js$/m, ''
@@ -31,8 +30,7 @@ resolve = module.exports = (filepath, id)->
   # otherwise show error
   caller = path.relative dirs.pwd(), filepath
   error "Module '#{id}' not found for '#{caller}'"
-  # return id
-  return null
+  return id
 
 
 # Resolves the required id/path
@@ -89,7 +87,6 @@ resolve_index = ( dirpath )->
 
 # ------------------------------------------------------------------------------
 resolve_module = (filepath, id = '')->
-  # console.log 'resolve_module', filepath, id
 
   if id is ''
     non_recurse = true
@@ -119,12 +116,9 @@ resolve_module = (filepath, id = '')->
   json = path.join mod, 'package.json'
   if json and fs.existsSync json
 
-    # console.log 'yes json!'
     # tries to get the main entry in package.json
     main = (require json).main
     if main?
-
-      # console.log 'yes main!', main
 
       # trying to get it as is
       main = path.join (path.dirname json), main
@@ -135,7 +129,6 @@ resolve_module = (filepath, id = '')->
       return file if (file = resolve_index main)?
 
     else
-      # console.log 'no main'
       # if there's no main entry, tries to get the index file
       if (file = resolve_index mod)?
         return file
@@ -147,18 +140,14 @@ resolve_module = (filepath, id = '')->
   # if there's no json, move on with other searches
   idpath = (path.join nmods, id)
 
-  # console.log 'no'
   # tries to get file as is
   return file if (file = resolve_file idpath)?
 
-  # console.log 'no 2'
   # and finally as index
   return file if (file = resolve_index idpath)?
 
-  # console.log 'no 3', non_recurse
   # keep searching on parent node_module's folders
   if filepath isnt '/' and non_recurse isnt true
-    # console.log 'END OF STORY!'
     resolve_module path.join(filepath, '..'), id
 
 

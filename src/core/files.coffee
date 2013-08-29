@@ -1,4 +1,5 @@
 path = require 'path'
+fs = require 'fs'
 fsu = require 'fs-util'
 _ = require 'lodash'
 
@@ -43,17 +44,18 @@ module.exports = new class Files
     return no
 
 
-  # closes_folder:->
-    
   create_file:(filepath)->
 
-    # relative paths means file is null
-    # if filepath[0] is '.'
-    #   closest_folder = 
-      
+    if (filepath is path.resolve filepath) and not fs.existsSync filepath
+      # TODO: should possibly computates the probably path to file and watch
+      # it for changes, so when the file get there it get properly assembled
+      return
 
-    return if not @has_compiler filepath
-    return file if file = _.find @files, {filepath}
+    if not @has_compiler filepath
+      return
+
+    if file = _.find @files, {filepath}
+      return file
 
     @files.push file = new File filepath
     file.on 'new:dependencies', @bulk_create_file
@@ -133,29 +135,47 @@ module.exports = new class Files
         log_deleted location
         file = @extract_file location
 
-        # check if others have the same dependencies
+        # check if file's dependencies are used by other files or if them is
+        # under a source or mapped folder
         for depname, depath of file.dependencies
+
+          # if it is under input folders, skip and continue
+          continue if @is_under_inputs depath, true
+
+          # otherwise check other files tha may be using it
           found = 0
           for f in @files
             for dname, dpath of f.dependencies
               found++ if dpath is depath
 
-          # if none, exclude it from build
-          if not found and not @is_under_inputs(depath, true)
-            @extract_file depath unless found
+          # if none is found, remove file from build
+          if not found
+            @extract_file depath
 
-        # search for those who was depending on deleted item
-        for f in @files
-          for dname, dpath of f.dependencies
-            if dpath is file.filepath
-                f.scan_deps()
+        # them refresh dependencies and dependents
+        
+        # partial may have dependents
+        if file.is_partial
+          for dep in file.dependents
+            _.find(@files, filepath: dep.filepath).refresh()
+        
+        # non-partials may be a dependency for another files
+        else
+          for f in @files
+            for dname, dpath of f.dependencies
+              if dpath is file.filepath
+                f.refresh()
 
+        # restart compilation process
         @compile file
 
       when "change"
         file = _.find @files, filepath: location
         log_changed location
 
+        # THIS PROBLEM HAS BEEN RESOLVED (APPARENTLY) - will be kept here for
+        # a little more to confirm.
+        # 
         # if file is null
         #   msg = "Change file is apparently null, it shouldn't happened.\n"
         #   msg += "Please report this at the repo issues section."
