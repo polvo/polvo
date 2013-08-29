@@ -109,6 +109,7 @@ module.exports = new class Files
         watcher.on 'create', (file)=> @onfschange 'create', file
         watcher.on 'change', (file)=> @onfschange 'change', file
         watcher.on 'delete', (file)=> @onfschange 'delete', file
+    null
 
   close_watchers:->
     watcher.close() for watcher in @watchers
@@ -136,9 +137,10 @@ module.exports = new class Files
         for depname, depath of file.dependencies
           found = 0
           for f in @files
-            for dname, dpath of f.depenencies
+            for dname, dpath of f.dependencies
               found++ if dpath is depath
 
+          # if none, exclude it from build
           if not found and not @is_under_inputs(depath, true)
             @extract_file depath unless found
 
@@ -152,13 +154,14 @@ module.exports = new class Files
 
       when "change"
         file = _.find @files, filepath: location
+        log_changed location
 
-        if file is null
-          msg = "Change file is apparently null, it shouldn't happened.\n"
-          msg += "Please report this at the repo issues section."
-          warn msg
-        else
-          log_changed location
+        # if file is null
+        #   msg = "Change file is apparently null, it shouldn't happened.\n"
+        #   msg += "Please report this at the repo issues section."
+        #   warn msg
+        # else
+        #   log_changed location
 
         file.refresh()
         @compile file

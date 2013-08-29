@@ -86,7 +86,7 @@ module.exports = class File extends MicroEvent
       @emit 'new:dependencies', (location for id, location of @dependencies)
 
     else if (@type is 'template' or @type is 'style')
-      @dependencies = []
+      @dependencies = {}
       return @dependents = [] if not @is_partial
       @dependents = scan.dependents @, @filepath, @compiled
 
