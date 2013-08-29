@@ -42,7 +42,7 @@ module.exports = ->
 
 module.exports.close = ->
   app?.close()
-  refresher?.close()
+  refresher?.server.close()
 
 module.exports.reload = ( type )->
   return unless refresher?
