@@ -327,8 +327,9 @@ Live preview of this app.
 # Stability?
 
 Polvo is under heavy development, it's not bullet proof yet, but you can surely
-use it. It's being used in production everyday. Furthermore, build is passig and
-there's 100% overage badge. In case you find any bugs, just open an issue.
+use it. It's being used in for production websites everyday.
+
+In case you find any problem, fill up an [issue](https://github.com/polvo/polvo/issues).
 
 Have fun.
 
