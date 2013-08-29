@@ -13,4 +13,6 @@ module.exports = class MicroEvent
   off:(e, f)-> (t.splice (t.indexOf f), 1) if (t = @_init()[e])?
   once:(e, f)-> @on e, (t = => (@off e, t) && f.apply @, arguments)
   emit:(e, a...)-> l.apply @, a for l in t if (t = @_init()[e])?; 0
-  @mixin=(target)-> target::[p] = @::[p] for p of @::
+  @mixin=(target)->
+    t = if target instanceof Function then (target::) else target
+    t[p] = @::[p] for p of @::
