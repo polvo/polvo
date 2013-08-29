@@ -7,13 +7,15 @@ polvo = require '../../lib/polvo'
 # mock basic
 mock_basic = path.join __dirname, '..', 'mocks', 'basic'
 mock_basic_files = 
-  mock_basic_pack: path.join mock_basic, 'package.json'
   app: path.join mock_basic, 'src', 'app', 'app.coffee'
+  styl: path.join mock_basic, 'src', 'styles', 'top.styl'
+  js: path.join mock_basic, 'public', 'app.js'
+  dir: path.join mock_basic, 'src', 'app', 'empty'
+  css: path.join mock_basic, 'public', 'app.css'
   vendor: path.join mock_basic, 'vendors', 'some.vendor.js'
   partial: path.join mock_basic, 'src', 'templates', '_header.jade'
+  mock_basic_pack: path.join mock_basic, 'package.json'
   mock_basic_config: path.join mock_basic, 'polvo.yml'
-  js: path.join mock_basic, 'public', 'app.js'
-  css: path.join mock_basic, 'public', 'app.css'
 
 mock_basic_config = """
 server:
@@ -44,6 +46,13 @@ mock_error = path.join __dirname, '..', 'mocks', 'error'
 
 # mock nofound
 mock_notfound = path.join __dirname, '..', 'mocks', 'notfound'
+
+# mocks no-css/js output
+mock_nocss = path.join __dirname, '..', 'mocks', 'no-css-output'
+mock_nojs = path.join __dirname, '..', 'mocks', 'no-js-output'
+
+# mocks no-css/js output
+mock_css_only = path.join __dirname, '..', 'mocks', 'css-only'
 
 describe '[polvo]', ->
 
@@ -197,14 +206,18 @@ describe '[polvo]', ->
       server = polvo options, stdio
 
     it 'should start app and perform some file operations gracefully', (done)->
-      @timeout 9000 
+      @timeout 15000 
 
       errors = outs = 0
-      err_checker = /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/app.coffee'/
+      err_checkers = [
+        /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/app.coffee'/
+        /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/vendor-hold.coffee'/
+      ]
       out_checkers = [
         # fist compilation
         /✓ public\/app\.js.+/
         /✓ public\/app\.css.+/
+        /\♫  http:\/\/localhost:8080/
 
         # updating app.coffee
         /\• src\/app\/app.coffee/
@@ -233,66 +246,85 @@ describe '[polvo]', ->
         # updating _header.jade
         /\• vendors\/some\.vendor\.js/
         /✓ public\/app\.js/
+
+        # updating _header.jade
+        /\• src\/styles\/top.styl/
+        /✓ public\/app\.css/
       ]
 
-      options = watch: true, base: mock_basic
+      options = watch: true, server: true, base: mock_basic
       stdio = 
         nocolor: true
         err:(msg) ->
           errors++
-          err_checker.test(msg).should.be.true
+          err_checkers.shift().test(msg).should.be.true
         out:(msg) ->
           out_checkers.shift().test(msg).should.be.true
           if out_checkers.length is 0
-            watch.close()
-            errors.should.equal 1
+            watch_server.close()
+            errors.should.equal 2
             done()
 
       fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
       backup = fs.readFileSync mock_basic_files.app
 
-      watch = polvo options, stdio
+      watch_server = polvo options, stdio
+
+      # crating empty folder should do nothing
+      new setTimeout ->
+        fs.mkdirSync mock_basic_files.dir
+      , 1000
+
+      # deleting empty folder should do nothing
+      new setTimeout ->
+        fs.rmdirSync mock_basic_files.dir
+      , 2000
 
       # editing
       new setTimeout ->
         fs.appendFileSync mock_basic_files.app, ' '
-      , 1000
+      , 3000
 
       # deleting
       new setTimeout ->
         fs.unlinkSync mock_basic_files.app
-      , 2000
+      , 4000
 
       # creating
       new setTimeout ->
         fs.writeFileSync mock_basic_files.app, backup
-      , 3000
+      , 5000
 
       # editing a partial
       new setTimeout ->
         fs.appendFileSync mock_basic_files.partial, ' '
-      , 4000
+      , 6000
 
       # deleting a vendor
       new setTimeout ->
         fs.unlinkSync mock_basic_files.vendor
-      , 5000
+      , 7000
 
       # creating a vendor
       vendor_backup = fs.readFileSync(mock_basic_files.vendor).toString()
       new setTimeout ->
         fs.writeFileSync mock_basic_files.vendor, vendor_backup
-      , 6000
+      , 8000
 
       # editing a vendor
       new setTimeout ->
         fs.appendFileSync mock_basic_files.vendor, ' '
-      , 7000
+      , 9000
+
+      # editing a style
+      new setTimeout ->
+        fs.appendFileSync mock_basic_files.styl, ' '
+      , 10000
 
 
 
-    it 'should start app and serve it', (done)->
-      @timeout 4000
+    it 'should watch and serve app, reporting 200 and 404 codes', (done)->
+      @timeout 5000
 
       errors = outs = 0
       checkers = [
@@ -311,11 +343,15 @@ describe '[polvo]', ->
           checkers.shift().test(msg).should.be.true
           if checkers.length is 0
             new setTimeout ->
-              exec 'curl -I localhost:8080', (err, stdout, stderr)->
+              exec 'curl -I localhost:8080/app.js', (err, stdout, stderr)->
                 /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
-                done()
-                server.close()
-                errors.should.equal 0
+                exec 'curl -I localhost:8080/fake.js', (err, stdout, stderr)->
+                  /HTTP\/1\.1 404 Not Found/.test(stdout).should.be.true
+                  exec 'curl -I localhost:8080/route', (err, stdout, stderr)->
+                    /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
+                    done()
+                    server.close()
+                    errors.should.equal 0
             , 500
 
       fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
@@ -397,6 +433,78 @@ describe '[polvo]', ->
 
           checkers.length.should.equal 0
           errors.should.equal 1
+          outs.should.equal 1
+          done()
+
+      compile = polvo options, stdio
+
+  describe '[mock:not-css-output]', ->
+    it 'should alert error about css output', (done)->
+      errors = outs = 0
+      checkers = [
+        /✓ public\/app\.js/
+        /error CSS not saved, you need to set the css output in your config file/
+      ]
+
+      options = compile: true, base: mock_nocss
+      stdio = 
+        nocolor: true
+        err:(msg) ->
+          errors++
+          checkers.shift().test(msg).should.be.true
+
+          checkers.length.should.equal 0
+          errors.should.equal 1
+          outs.should.equal 1
+          done()
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+
+      compile = polvo options, stdio
+
+  describe '[mock:not-js-output]', ->
+    it 'should alert error about js output', (done)->
+      errors = outs = 0
+      checkers = [
+        /error JS not saved, you need to set the js output in your config file/
+        /✓ public\/app\.css/
+      ]
+
+      options = compile: true, base: mock_nojs
+      stdio = 
+        nocolor: true
+        err:(msg) ->
+          errors++
+          checkers.shift().test(msg).should.be.true
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+
+          checkers.length.should.equal 0
+          errors.should.equal 1
+          outs.should.equal 1
+          done()
+
+      compile = polvo options, stdio
+
+  describe '[mock:css-only]', ->
+    it 'should build a css-only project fine', (done)->
+      errors = outs = 0
+      checkers = [
+        /✓ public\/app\.css/
+      ]
+
+      options = compile: true, base: mock_css_only
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+
+          checkers.length.should.equal 0
+          errors.should.equal 0
           outs.should.equal 1
           done()
 
