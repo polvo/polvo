@@ -14,5 +14,5 @@ module.exports = class MicroEvent
   once:(e, f)-> @on e, (t = => (@off e, t) && f.apply @, arguments)
   emit:(e, a...)-> l.apply @, a for l in t if (t = @_init()[e])?; 0
   @mixin=(target)->
-    t = if target instanceof Function then (target::) else target
+    t = if typeof target is 'function' then (target::) else target
     t[p] = @::[p] for p of @::

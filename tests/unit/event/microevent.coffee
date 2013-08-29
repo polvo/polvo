@@ -3,9 +3,10 @@ Event = require '../../../lib/event/microevent'
 class Extended extends Event
 
 class Mixed
-  constructor:->
-    Event.mixin @
+  Event.mixin @
 
+obj = {}
+Event.mixin obj
 
 describe '[microevent]', ->
 
@@ -26,6 +27,13 @@ describe '[microevent]', ->
       tmp.emit 'vai'
       called.should.be.equal 1
 
+      called = 0
+      obj.once 'vai', t = -> called++
+      obj.emit 'vai'
+      obj.emit 'vai'
+      called.should.be.equal 1
+      obj.off t
+
     it 'should listen for `once` just one time', ->
       called = 0
       tmp = new Extended
@@ -41,4 +49,11 @@ describe '[microevent]', ->
       tmp.off 'vai', t
       tmp.emit 'vai'
       tmp.emit 'vai'
+      called.should.be.equal 0
+
+      called = 0
+      obj.on 'vai', -> called++
+      obj.off 'vai', -> called++
+      obj.emit 'vai'
+      obj.emit 'vai'
       called.should.be.equal 0
