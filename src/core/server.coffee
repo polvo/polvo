@@ -12,8 +12,8 @@ sourcemaps = require '../utils/sourcemaps'
 {error, warn, info, debug, log} = require('../utils/logger')('core/server')
 
 app = null
-
 refresher = null
+
 module.exports = ->
   {root, port} = config.server
 
@@ -42,6 +42,7 @@ module.exports = ->
 
 module.exports.close = ->
   app?.close()
+  refresher?.close()
 
 module.exports.reload = ( type )->
   return unless refresher?
