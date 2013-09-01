@@ -39,19 +39,13 @@ module.exports = new class Files
 
     @watch_inputs() if argv.watch
 
-  has_compiler:(filepath)->
-    (return yes if ext.test filepath) for ext in exts
-    return no
-
 
   create_file:(filepath)->
 
-    if (filepath is path.resolve filepath) and not fs.existsSync filepath
+    # relative paths means file was not found on disk!
+    if (filepath isnt path.resolve filepath)
       # TODO: should possibly computates the probably path to file and watch
       # it for changes, so when the file get there it get properly assembled
-      return
-
-    if not @has_compiler filepath
       return
 
     if file = _.find @files, {filepath}
