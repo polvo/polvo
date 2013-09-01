@@ -1,4 +1,4 @@
 language: node_js
 node_js: 0.10
-before_script: cd tests/mocks/npm && npm install && cd -
+before_script: cd tests/fixtures/npm && npm install && cd -
 script: make test.coverage.coveralls
