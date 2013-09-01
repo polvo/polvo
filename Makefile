@@ -32,7 +32,6 @@ test:
 		--reporter spec \
 		--recursive \
 		tests/unit
-	@git checkout tests/mocks
 
 test.coverage:
 	@$(ISTANBUL) cover $(_MOCHA) -- \
@@ -41,7 +40,6 @@ test.coverage:
 		--reporter spec \
 		--recursive \
 		tests/unit
-	@git checkout tests/mocks
 
 test.coverage.preview: test.coverage
 	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080
