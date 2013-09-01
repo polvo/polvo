@@ -124,7 +124,7 @@ Click the links to see individual `README` for each one.
 
 ### ★ Scripts
  1. [Javascript](https://github.com/polvo/polvo-js) (`.js`)
- 1. [CoffeeScript]((https://github.com/polvo/polvo-cs) (`.coffee`)
+ 1. [CoffeeScript](https://github.com/polvo/polvo-cs) (`.coffee`)
     * ✓ Literate Coffeescript (`.litcoffee`, `.coffee.md`)
     * ✓ Source Maps
 
