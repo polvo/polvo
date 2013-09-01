@@ -3,7 +3,7 @@ path = require 'path'
 should = require('chai').should()
 config = require '../../../lib/utils/config'
 
-base = path.join __dirname, '..', '..', 'mocks', 'basic'
+base = path.join __dirname, '..', '..', 'fixtures', 'basic'
 yml = path.join base, 'polvo.yml'
 
 # helper for writing many config files

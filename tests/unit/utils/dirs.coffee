@@ -2,7 +2,7 @@ path = require 'path'
 dirs = require '../../../lib/utils/dirs'
 should = require('chai').should()
 
-base = path.join __dirname, '..', '..', 'mocks', 'basic'
+base = path.join __dirname, '..', '..', 'fixtures', 'basic'
 app = path.join base, 'src', 'app.coffee'
 rel = path.relative base, app
 

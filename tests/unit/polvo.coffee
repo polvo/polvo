@@ -4,20 +4,20 @@ exec = require('child_process').exec
 
 polvo = require '../../lib/polvo'
 
-# mock basic
-mock_basic = path.join __dirname, '..', 'mocks', 'basic'
-mock_basic_files = 
-  app: path.join mock_basic, 'src', 'app', 'app.coffee'
-  styl: path.join mock_basic, 'src', 'styles', 'top.styl'
-  js: path.join mock_basic, 'public', 'app.js'
-  dir: path.join mock_basic, 'src', 'app', 'empty'
-  css: path.join mock_basic, 'public', 'app.css'
-  vendor: path.join mock_basic, 'vendors', 'some.vendor.js'
-  partial: path.join mock_basic, 'src', 'templates', '_header.jade'
-  mock_basic_pack: path.join mock_basic, 'package.json'
-  mock_basic_config: path.join mock_basic, 'polvo.yml'
+# fixture basic
+fix_basic = path.join __dirname, '..', 'fixtures', 'basic'
+fix_basic_files = 
+  app: path.join fix_basic, 'src', 'app', 'app.coffee'
+  styl: path.join fix_basic, 'src', 'styles', 'top.styl'
+  js: path.join fix_basic, 'public', 'app.js'
+  dir: path.join fix_basic, 'src', 'app', 'empty'
+  css: path.join fix_basic, 'public', 'app.css'
+  vendor: path.join fix_basic, 'vendors', 'some.vendor.js'
+  partial: path.join fix_basic, 'src', 'templates', '_header.jade'
+  package: path.join fix_basic, 'package.json'
+  fix_basic_config: path.join fix_basic, 'polvo.yml'
 
-mock_basic_config = """
+fix_basic_config = """
 server:
   port: 8080
   root: ./public
@@ -35,34 +35,34 @@ virtual:
 boot: src/app/app
 """
 
-mock_basic_pack = '{"name": "mock_basic"}'
+fixture_basic_pack = '{"name": "fix_basic"}'
 
 
-# mock npm
-mock_npm = path.join __dirname, '..', 'mocks', 'npm'
+# fixture npm
+fix_npm = path.join __dirname, '..', 'fixtures', 'npm'
 
-# mock error
-mock_error = path.join __dirname, '..', 'mocks', 'error'
+# fixture error
+fix_error = path.join __dirname, '..', 'fixtures', 'error'
 
-# mock nofound
-mock_notfound = path.join __dirname, '..', 'mocks', 'notfound'
+# fixture nofound
+fix_notfound = path.join __dirname, '..', 'fixtures', 'notfound'
 
-# mocks no-css/js output
-mock_nocss = path.join __dirname, '..', 'mocks', 'no-css-output'
-mock_nojs = path.join __dirname, '..', 'mocks', 'no-js-output'
+# fixture no-css/js output
+fix_nocss = path.join __dirname, '..', 'fixtures', 'no-css-output'
+fix_nojs = path.join __dirname, '..', 'fixtures', 'no-js-output'
 
-# mocks no-css/js output
-mock_css_only = path.join __dirname, '..', 'mocks', 'css-only'
+# fixture no-css/js output
+fix_css_only = path.join __dirname, '..', 'fixtures', 'css-only'
 
 describe '[polvo]', ->
 
   before ->
-    fs.unlinkSync mock_basic_files.mock_basic_config if fs.existsSync mock_basic_files.mock_basic_config
-    fs.unlinkSync mock_basic_files.mock_basic_pack if fs.existsSync mock_basic_files.mock_basic_pack
-    fs.unlinkSync mock_basic_files.js if fs.existsSync mock_basic_files.js
-    fs.unlinkSync mock_basic_files.css if fs.existsSync mock_basic_files.css
+    fs.unlinkSync fix_basic_files.fix_basic_config if fs.existsSync fix_basic_files.fix_basic_config
+    fs.unlinkSync fix_basic_files.package if fs.existsSync fix_basic_files.package
+    fs.unlinkSync fix_basic_files.js if fs.existsSync fix_basic_files.js
+    fs.unlinkSync fix_basic_files.css if fs.existsSync fix_basic_files.css
 
-    fs.writeFileSync mock_basic_files.mock_basic_config, mock_basic_config
+    fs.writeFileSync fix_basic_files.fix_basic_config, fix_basic_config
 
   afterEach ->
     mods = [
@@ -81,10 +81,10 @@ describe '[polvo]', ->
       delete require.cache[mod]
 
   after ->
-    fs.unlinkSync mock_basic_files.mock_basic_config if fs.existsSync mock_basic_files.mock_basic_config
-    fs.unlinkSync mock_basic_files.mock_basic_pack if fs.existsSync mock_basic_files.mock_basic_pack
-    fs.unlinkSync mock_basic_files.js if fs.existsSync mock_basic_files.js
-    fs.unlinkSync mock_basic_files.css if fs.existsSync mock_basic_files.css
+    fs.unlinkSync fix_basic_files.fix_basic_config if fs.existsSync fix_basic_files.fix_basic_config
+    fs.unlinkSync fix_basic_files.package if fs.existsSync fix_basic_files.package
+    fs.unlinkSync fix_basic_files.js if fs.existsSync fix_basic_files.js
+    fs.unlinkSync fix_basic_files.css if fs.existsSync fix_basic_files.css
 
 
   describe '[general]', ->
@@ -129,7 +129,7 @@ describe '[polvo]', ->
       errors = outs = 0
       checker = /^info app doesn't have a `package.json`/m
 
-      options = compile: true, base: mock_basic
+      options = compile: true, base: fix_basic
       stdio = 
         nocolor: true
         err:(msg)-> errors++
@@ -148,7 +148,7 @@ describe '[polvo]', ->
       errors = outs = 0
       checker = /✓ public\/app\.(js|css).+$/m
 
-      options = compile: true, base: mock_basic
+      options = compile: true, base: fix_basic
       stdio = 
         nocolor: true
         err:(msg) -> errors++
@@ -156,7 +156,7 @@ describe '[polvo]', ->
           outs++
           checker.test(msg).should.be.true
 
-      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
+      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
       compile = polvo options, stdio
 
       outs.should.equal 2
@@ -167,13 +167,13 @@ describe '[polvo]', ->
       errors = outs = 0
       checker = /✓ public\/app\.(js|css).+$/m
 
-      options = release: true, base: mock_basic
+      options = release: true, base: fix_basic
       stdio = 
         out:(msg) -> checker.test(msg).should.be.true
         err:(msg) -> errors++
         nocolor: true
 
-      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
+      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
       release = polvo options, stdio
       errors.should.equal 0
 
@@ -187,7 +187,7 @@ describe '[polvo]', ->
         /♫  http\:\/\/localhost:8080/
       ]
 
-      options = release: true, server: true, base: mock_basic
+      options = release: true, server: true, base: fix_basic
       stdio = 
         nocolor: true
         err:(msg) -> errors++
@@ -202,7 +202,7 @@ describe '[polvo]', ->
               done()
             , 500
 
-      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
+      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
       server = polvo options, stdio
 
     it 'should start app and perform some file operations gracefully', (done)->
@@ -252,7 +252,7 @@ describe '[polvo]', ->
         /✓ public\/app\.css/
       ]
 
-      options = watch: true, server: true, base: mock_basic
+      options = watch: true, server: true, base: fix_basic
       stdio = 
         nocolor: true
         err:(msg) ->
@@ -265,60 +265,60 @@ describe '[polvo]', ->
             errors.should.equal 2
             done()
 
-      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
-      backup = fs.readFileSync mock_basic_files.app
+      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
+      backup = fs.readFileSync fix_basic_files.app
 
       watch_server = polvo options, stdio
 
       # crating empty folder should do nothing
       new setTimeout ->
-        fs.mkdirSync mock_basic_files.dir
+        fs.mkdirSync fix_basic_files.dir
       , 1000
 
       # deleting empty folder should do nothing
       new setTimeout ->
-        fs.rmdirSync mock_basic_files.dir
+        fs.rmdirSync fix_basic_files.dir
       , 2000
 
       # editing
       new setTimeout ->
-        fs.appendFileSync mock_basic_files.app, ' '
+        fs.appendFileSync fix_basic_files.app, ' '
       , 3000
 
       # deleting
       new setTimeout ->
-        fs.unlinkSync mock_basic_files.app
+        fs.unlinkSync fix_basic_files.app
       , 4000
 
       # creating
       new setTimeout ->
-        fs.writeFileSync mock_basic_files.app, backup
+        fs.writeFileSync fix_basic_files.app, backup
       , 5000
 
       # editing a partial
       new setTimeout ->
-        fs.appendFileSync mock_basic_files.partial, ' '
+        fs.appendFileSync fix_basic_files.partial, ' '
       , 6000
 
       # deleting a vendor
       new setTimeout ->
-        fs.unlinkSync mock_basic_files.vendor
+        fs.unlinkSync fix_basic_files.vendor
       , 7000
 
       # creating a vendor
-      vendor_backup = fs.readFileSync(mock_basic_files.vendor).toString()
+      vendor_backup = fs.readFileSync(fix_basic_files.vendor).toString()
       new setTimeout ->
-        fs.writeFileSync mock_basic_files.vendor, vendor_backup
+        fs.writeFileSync fix_basic_files.vendor, vendor_backup
       , 8000
 
       # editing a vendor
       new setTimeout ->
-        fs.appendFileSync mock_basic_files.vendor, ' '
+        fs.appendFileSync fix_basic_files.vendor, ' '
       , 9000
 
       # editing a style
       new setTimeout ->
-        fs.appendFileSync mock_basic_files.styl, ' '
+        fs.appendFileSync fix_basic_files.styl, ' '
       , 10000
 
 
@@ -335,7 +335,7 @@ describe '[polvo]', ->
 
       server = null
 
-      options = compile:true, server: 'true', base: mock_basic
+      options = compile:true, server: 'true', base: fix_basic
       stdio = 
         nocolor: true
         err:(msg) -> errors++
@@ -354,8 +354,8 @@ describe '[polvo]', ->
                     errors.should.equal 0
             , 500
 
-      fs.writeFileSync mock_basic_files.mock_basic_pack, mock_basic_pack
-      backup = fs.readFileSync mock_basic_files.app
+      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
+      backup = fs.readFileSync fix_basic_files.app
 
       polvo = require '../../lib/polvo'
       server = polvo options, stdio
@@ -373,7 +373,7 @@ describe '[polvo]', ->
         "error Module 'mod/non-existent' not found for 'src/app.coffee'"
       ]
 
-      options = compile: true, base: mock_npm
+      options = compile: true, base: fix_npm
       stdio = 
         nocolor: true
         err:(msg) ->
@@ -396,7 +396,7 @@ describe '[polvo]', ->
         /✓ public\/app\.js/
       ]
 
-      options = compile: true, base: mock_error
+      options = compile: true, base: fix_error
       stdio = 
         nocolor: true
         err:(msg) ->
@@ -421,7 +421,7 @@ describe '[polvo]', ->
         /✓ public\/app\.js/
       ]
 
-      options = compile: true, base: mock_notfound
+      options = compile: true, base: fix_notfound
       stdio = 
         nocolor: true
         err:(msg) ->
@@ -446,7 +446,7 @@ describe '[polvo]', ->
         /error CSS not saved, you need to set the css output in your config file/
       ]
 
-      options = compile: true, base: mock_nocss
+      options = compile: true, base: fix_nocss
       stdio = 
         nocolor: true
         err:(msg) ->
@@ -471,7 +471,7 @@ describe '[polvo]', ->
         /✓ public\/app\.css/
       ]
 
-      options = compile: true, base: mock_nojs
+      options = compile: true, base: fix_nojs
       stdio = 
         nocolor: true
         err:(msg) ->
@@ -495,7 +495,7 @@ describe '[polvo]', ->
         /✓ public\/app\.css/
       ]
 
-      options = compile: true, base: mock_css_only
+      options = compile: true, base: fix_css_only
       stdio = 
         nocolor: true
         err:(msg) -> errors++

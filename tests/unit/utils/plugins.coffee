@@ -1,7 +1,7 @@
 path = require 'path'
 should = require('chai').should()
 
-global.global_options = base: path.join __dirname, '..', '..', 'mocks', 'basic'
+global.global_options = base: path.join __dirname, '..', '..', 'fixtures', 'basic'
 
 describe '[plugins]', ->
   it 'the full list must to be collected ', ->
