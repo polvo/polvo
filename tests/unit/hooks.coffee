@@ -20,6 +20,8 @@ afterEach ->
     mod = require.resolve m
     delete require.cache[mod]
 
+  clean()
+
 
 # keeps fixtures always unchanged, reverting changes made by tests
 backup = []
@@ -27,7 +29,7 @@ before ->
   for file in fsu.find path.join(__dirname, '..', 'fixtures'), /.+/
     backup.push path: file, raw: fs.readFileSync(file).toString()
 
-after ->
+after clean = ->
   # roll back all fiels to its original state
   for file in backup
     fs.writeFileSync file.path, file.raw

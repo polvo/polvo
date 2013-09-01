@@ -2,22 +2,22 @@ fs = require 'fs'
 path = require 'path'
 exec = require('child_process').exec
 
-polvo = require '../../lib/polvo'
+polvo = require '../../../lib/polvo'
 
 # fixture basic
-fix_basic = path.join __dirname, '..', 'fixtures', 'basic'
-fix_basic_files = 
-  app: path.join fix_basic, 'src', 'app', 'app.coffee'
-  styl: path.join fix_basic, 'src', 'styles', 'top.styl'
-  js: path.join fix_basic, 'public', 'app.js'
-  dir: path.join fix_basic, 'src', 'app', 'empty'
-  css: path.join fix_basic, 'public', 'app.css'
-  vendor: path.join fix_basic, 'vendors', 'some.vendor.js'
-  partial: path.join fix_basic, 'src', 'templates', '_header.jade'
-  package: path.join fix_basic, 'package.json'
-  fix_basic_config: path.join fix_basic, 'polvo.yml'
+fix_path = path.join __dirname, '..', '..', 'fixtures', 'basic'
+files_path = 
+  app: path.join fix_path, 'src', 'app', 'app.coffee'
+  styl: path.join fix_path, 'src', 'styles', '_header.styl'
+  js: path.join fix_path, 'public', 'app.js'
+  dir: path.join fix_path, 'src', 'app', 'empty'
+  css: path.join fix_path, 'public', 'app.css'
+  vendor: path.join fix_path, 'vendors', 'some.vendor.js'
+  jade: path.join fix_path, 'src', 'templates', '_header.jade'
+  package: path.join fix_path, 'package.json'
+  config: path.join fix_path, 'polvo.yml'
 
-fix_basic_config = """
+fix_config = """
 server:
   port: 8080
   root: ./public
@@ -35,185 +35,168 @@ virtual:
 boot: src/app/app
 """
 
-fixture_basic_pack = '{"name": "fix_basic"}'
+fix_pack = '{"name": "fix"}'
 
 
-# fixture npm
-fix_npm = path.join __dirname, '..', 'fixtures', 'npm'
+write_config = ->
+  fs.writeFileSync files_path.config, fix_config
 
-# fixture error
-fix_error = path.join __dirname, '..', 'fixtures', 'error'
+delete_config = ->
+  fs.unlinkSync files_path.config
 
-# fixture nofound
-fix_notfound = path.join __dirname, '..', 'fixtures', 'notfound'
+write_package = ->
+  fs.writeFileSync files_path.package, fix_pack
 
-# fixture no-css/js output
-fix_nocss = path.join __dirname, '..', 'fixtures', 'no-css-output'
-fix_nojs = path.join __dirname, '..', 'fixtures', 'no-js-output'
+delete_package = ->
+  fs.unlinkSync files_path.package
 
-# fixture no-css/js output
-fix_css_only = path.join __dirname, '..', 'fixtures', 'css-only'
 
-describe '[polvo]', ->
 
-  before ->
-    fs.unlinkSync fix_basic_files.fix_basic_config if fs.existsSync fix_basic_files.fix_basic_config
-    fs.unlinkSync fix_basic_files.package if fs.existsSync fix_basic_files.package
-    fs.unlinkSync fix_basic_files.js if fs.existsSync fix_basic_files.js
-    fs.unlinkSync fix_basic_files.css if fs.existsSync fix_basic_files.css
+describe '[polvo:heavy]', ->
 
-    fs.writeFileSync fix_basic_files.fix_basic_config, fix_basic_config
+  it 'should alert about no app\'s `package.json` file during compile', ->
+    errors = outs = 0
+    checker = /^info app doesn't have a `package.json`/m
 
-  afterEach ->
-    mods = [
-      '../../lib/utils/plugins'
-      '../../lib/core/compiler'
-      '../../lib/core/file'
-      '../../lib/core/files'
-      '../../lib/core/server'
+    options = compile: true, base: fix_path
+    stdio = 
+      nocolor: true
+      err:(msg)-> errors++
+      out:(msg)->
+        if outs is 0
+          checker.test(msg).should.be.true
+          outs++
 
-      '../../lib/scanner/resolve'
-      '../../lib/scanner/scan'
+    write_config()
+
+    compile = polvo options, stdio
+    outs.should.equal 1
+    errors.should.equal 0
+
+    delete_config()
+
+
+  it 'should compile app without any surprises', ->
+    errors = outs = 0
+    checker = /✓ public\/app\.(js|css).+$/m
+
+    options = compile: true, base: fix_path
+    stdio = 
+      nocolor: true
+      err:(msg) -> errors++
+      out:(msg) ->
+        outs++
+        checker.test(msg).should.be.true
+
+    write_config()
+    write_package()
+
+    compile = polvo options, stdio
+    outs.should.equal 2
+    errors.should.equal 0
+
+    delete_config()
+    delete_package()
+
+
+  it 'should release project without any surprises', ->
+    errors = outs = 0
+    checker = /✓ public\/app\.(js|css).+$/m
+
+    options = release: true, base: fix_path
+    stdio = 
+      out:(msg) -> checker.test(msg).should.be.true
+      err:(msg) -> errors++
+      nocolor: true
+
+    write_config()
+    write_package()
+
+    release = polvo options, stdio
+    errors.should.equal 0
+
+    delete_config()
+    delete_package()
+
+
+  it 'should release and serve project without any surprises', (done)->
+
+    errors = outs = 0
+    checkers = [
+      /✓ public\/app\.js.+/
+      /✓ public\/app\.css.+/
+      /♫  http\:\/\/localhost:8080/
     ]
 
-    for m in mods
-      mod = require.resolve m
-      delete require.cache[mod]
+    options = release: true, server: true, base: fix_path
+    stdio = 
+      nocolor: true
+      err:(msg) -> errors++
+      out:(msg) ->
+        outs++
+        checkers.shift().test(msg).should.be.true
+        if checkers.length is 0
+          new setTimeout ->
+            server.close()
+            errors.should.equal 0
+            outs.should.equal 3
+            delete_config()
+            delete_package()
+            done()
+          , 500
 
-  after ->
-    fs.unlinkSync fix_basic_files.fix_basic_config if fs.existsSync fix_basic_files.fix_basic_config
-    fs.unlinkSync fix_basic_files.package if fs.existsSync fix_basic_files.package
-    fs.unlinkSync fix_basic_files.js if fs.existsSync fix_basic_files.js
-    fs.unlinkSync fix_basic_files.css if fs.existsSync fix_basic_files.css
+    write_config()
+    write_package()
 
-
-  describe '[general]', ->
-    it 'should show version number `-v`', ->
-      errors = outs = 0
-
-      options = version: true
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(version) ->
-          outs++
-          version.should.equal require('../../package.json').version
-
-      version = polvo options, stdio
-
-      outs.should.equal 1
-      errors.should.equal 0
-
-    it 'should show the help screen `-h`', ->
-      errors = outs = 0
-
-      options = help: true
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(help) ->
-          outs++
-          help.indexOf('Polyvalent cephalopod mollusc').should.not.equal -1
-          help.indexOf('Usage').should.not.equal -1
-          help.indexOf('Options').should.not.equal -1
-          help.indexOf('Examples').should.not.equal -1
-
-      help = polvo null, stdio
-
-      outs.should.equal 1
-      errors.should.equal 0
+    server = polvo options, stdio
 
 
-  describe '[mock:basic]', ->
-    it 'should alert about no `package.json` file plugins during compile', ->
-      errors = outs = 0
-      checker = /^info app doesn't have a `package.json`/m
+  it 'should watch and serve app, reporting 200 and 404 codes', (done)->
 
-      options = compile: true, base: fix_basic
-      stdio = 
-        nocolor: true
-        err:(msg)-> errors++
-        out:(msg)->
-          if outs is 0
-            checker.test(msg).should.be.true
-            outs++
+    errors = outs = 0
+    checkers = [
+      /✓ public\/app\.js.+/
+      /✓ public\/app\.css.+/
+      /♫  http\:\/\/localhost:8080/
+    ]
 
-      compile = polvo options, stdio
-      
-      outs.should.equal 1
-      errors.should.equal 0
+    server = null
+
+    options = compile:true, server: 'true', base: fix_path
+    stdio = 
+      nocolor: true
+      err:(msg) -> errors++
+      out:(msg) ->
+        checkers.shift().test(msg).should.be.true
+        if checkers.length is 0
+          new setTimeout ->
+            exec 'curl -I localhost:8080/app.js', (err, stdout, stderr)->
+              /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
+              exec 'curl -I localhost:8080/fake.js', (err, stdout, stderr)->
+                /HTTP\/1\.1 404 Not Found/.test(stdout).should.be.true
+                exec 'curl -I localhost:8080/route', (err, stdout, stderr)->
+                  /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
+                  done()
+                  server.close()
+
+                  delete_config()
+                  delete_package()
+
+                  errors.should.equal 0
+          , 500
+
+    write_config()
+    write_package()
+
+    polvo = require '../../../lib/polvo'
+    server = polvo options, stdio
+
+  describe '[file:operations]', ->
 
 
-    it 'should compile app without any surprises', ->
-      errors = outs = 0
-      checker = /✓ public\/app\.(js|css).+$/m
-
-      options = compile: true, base: fix_basic
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(msg) ->
-          outs++
-          checker.test(msg).should.be.true
-
-      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
-      compile = polvo options, stdio
-
-      outs.should.equal 2
-      errors.should.equal 0
-
-
-    it 'should release project without any surprises', ->
-      errors = outs = 0
-      checker = /✓ public\/app\.(js|css).+$/m
-
-      options = release: true, base: fix_basic
-      stdio = 
-        out:(msg) -> checker.test(msg).should.be.true
-        err:(msg) -> errors++
-        nocolor: true
-
-      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
-      release = polvo options, stdio
-      errors.should.equal 0
-
-    it 'should release and serve project without any surprises', (done)->
-      @timeout 2000
-
+    it 'should start app, crate empty dirs that doesn\'t notify anything, and modify some file', (done)->
       errors = outs = 0
       checkers = [
-        /✓ public\/app\.js.+/
-        /✓ public\/app\.css.+/
-        /♫  http\:\/\/localhost:8080/
-      ]
-
-      options = release: true, server: true, base: fix_basic
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(msg) ->
-          outs++
-          checkers.shift().test(msg).should.be.true
-          if checkers.length is 0
-            new setTimeout ->
-              server.close()
-              errors.should.equal 0
-              outs.should.equal 3
-              done()
-            , 500
-
-      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
-      server = polvo options, stdio
-
-    it 'should start app and perform some file operations gracefully', (done)->
-      @timeout 15000 
-
-      errors = outs = 0
-      err_checkers = [
-        /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/app.coffee'/
-        /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/vendor-hold.coffee'/
-      ]
-      out_checkers = [
         # fist compilation
         /✓ public\/app\.js.+/
         /✓ public\/app\.css.+/
@@ -222,290 +205,278 @@ describe '[polvo]', ->
         # updating app.coffee
         /\• src\/app\/app.coffee/
         /✓ public\/app\.js/
+      ]
 
-        # deleting app.coffee
+      options = watch: true, server: true, base: fix_path
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+
+          if checkers.length is 0
+            errors.should.equal 0
+            outs.should.equal 5
+            
+            watch_server.close()
+
+            delete_config()
+            delete_package()
+
+            done()
+
+      write_config()
+      write_package()
+
+      watch_server = polvo options, stdio
+
+      # crating empty folder should do nothing
+      new setTimeout (-> fs.mkdirSync files_path.dir), 500
+
+      # deleting empty folder should do nothing
+      new setTimeout (-> fs.rmdirSync files_path.dir), 1000
+
+      # editing file
+      new setTimeout (-> fs.appendFileSync files_path.app, ' '), 1500
+
+
+    it 'deleting and creating some file', (done)->
+      errors = outs = 0
+      checkers = [
+        # fist compilation
+        /✓ public\/app\.js.+/
+        /✓ public\/app\.css.+/
+        /\♫  http:\/\/localhost:8080/
+
+        # removing app.coffee
         /\- src\/app\/app.coffee/
         /✓ public\/app\.js/
 
-        # crating app.coffee
-        /\+ src\/app\/app\.coffee/
+        # adding app.coffee
+        /\+ src\/app\/app.coffee/
         /✓ public\/app\.js/
+      ]
 
-        # updating _header.jade
-        /\• src\/templates\/_header\.jade/
+      options = watch: true, server: true, base: fix_path
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+
+          if checkers.length is 0
+            errors.should.equal 0
+            outs.should.equal 7
+            
+            watch_server.close()
+
+            delete_config()
+            delete_package()
+
+            done()
+
+      write_config()
+      write_package()
+
+      watch_server = polvo options, stdio
+
+      # deleting file
+      backup = fs.readFileSync files_path.app
+      new setTimeout (-> fs.unlinkSync files_path.app ), 500
+
+      # creating file
+      new setTimeout (-> fs.writeFileSync files_path.app, backup ), 1000
+
+
+    it 'editing, deleting and creating vendor', (done)->
+
+      errors = outs = 0
+      err_checkers = [
+        /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/app.coffee'/
+        /error Module '..\/..\/vendors\/some.vendor' not found for 'src\/app\/vendor-hold.coffee'/
+      ]
+
+      out_checkers = [
+        # fist compilation
+        /✓ public\/app\.js.+/
+        /✓ public\/app\.css.+/
+        /\♫  http:\/\/localhost:8080/
+
+        # updating a deleted vendor
+        /\• vendors\/some\.vendor\.js/
         /✓ public\/app\.js/
 
         # deleting vendor
         /\- vendors\/some\.vendor\.js/
         /✓ public\/app\.js/
 
-        # re-creating a deleted vendor
+        # creating a deleted vendor
         /\+ vendors\/some\.vendor\.js/
         /✓ public\/app\.js/
-
-        # updating _header.jade
-        /\• vendors\/some\.vendor\.js/
-        /✓ public\/app\.js/
-
-        # updating _header.jade
-        /\• src\/styles\/top.styl/
-        /✓ public\/app\.css/
       ]
 
-      options = watch: true, server: true, base: fix_basic
+      options = watch: true, server: true, base: fix_path
       stdio = 
         nocolor: true
         err:(msg) ->
-          errors++
           err_checkers.shift().test(msg).should.be.true
+          errors++
         out:(msg) ->
+          outs++
           out_checkers.shift().test(msg).should.be.true
+
           if out_checkers.length is 0
-            watch_server.close()
             errors.should.equal 2
+            outs.should.equal 9
+            
+            watch_server.close()
+
+            delete_config()
+            delete_package()
+
             done()
 
-      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
-      backup = fs.readFileSync fix_basic_files.app
+      write_config()
+      write_package()
 
       watch_server = polvo options, stdio
 
-      # crating empty folder should do nothing
-      new setTimeout ->
-        fs.mkdirSync fix_basic_files.dir
-      , 1000
-
-      # deleting empty folder should do nothing
-      new setTimeout ->
-        fs.rmdirSync fix_basic_files.dir
-      , 2000
-
       # editing
-      new setTimeout ->
-        fs.appendFileSync fix_basic_files.app, ' '
-      , 3000
+      backup = fs.readFileSync files_path.vendor
+      new setTimeout (-> fs.appendFileSync files_path.vendor, ' ' ), 500
 
       # deleting
-      new setTimeout ->
-        fs.unlinkSync fix_basic_files.app
-      , 4000
+      new setTimeout (-> fs.unlinkSync files_path.vendor ), 1000
 
-      # creating
-      new setTimeout ->
-        fs.writeFileSync fix_basic_files.app, backup
-      , 5000
-
-      # editing a partial
-      new setTimeout ->
-        fs.appendFileSync fix_basic_files.partial, ' '
-      , 6000
-
-      # deleting a vendor
-      new setTimeout ->
-        fs.unlinkSync fix_basic_files.vendor
-      , 7000
-
-      # creating a vendor
-      vendor_backup = fs.readFileSync(fix_basic_files.vendor).toString()
-      new setTimeout ->
-        fs.writeFileSync fix_basic_files.vendor, vendor_backup
-      , 8000
-
-      # editing a vendor
-      new setTimeout ->
-        fs.appendFileSync fix_basic_files.vendor, ' '
-      , 9000
-
-      # editing a style
-      new setTimeout ->
-        fs.appendFileSync fix_basic_files.styl, ' '
-      , 10000
+      # crating
+      new setTimeout (-> fs.writeFileSync files_path.vendor, backup ), 1500
 
 
-
-    it 'should watch and serve app, reporting 200 and 404 codes', (done)->
-      @timeout 5000
+    it 'editing, deleting and creating template partial', (done)->
 
       errors = outs = 0
-      checkers = [
+      err_checkers = [
+        # alert that _header.jade wasn't found for top.jade 
+        /src\/templates\/top\.jade.+no such file or directory.+_header\.jade/
+      ]
+
+      out_checkers = [
+        # fist compilation
         /✓ public\/app\.js.+/
         /✓ public\/app\.css.+/
-        /♫  http\:\/\/localhost:8080/
+        /\♫  http:\/\/localhost:8080/
+
+        # updating partial
+        /\• src\/templates\/_header\.jade/
+        /✓ public\/app\.js/
+
+        # deleting partial
+        /\- src\/templates\/_header\.jade/
+        /✓ public\/app\.js/
+
+        # creating partial
+        /\+ src\/templates\/_header\.jade/
+        /✓ public\/app\.js/
       ]
 
-      server = null
-
-      options = compile:true, server: 'true', base: fix_basic
+      options = watch: true, server: true, base: fix_path
       stdio = 
         nocolor: true
-        err:(msg) -> errors++
+        err:(msg) ->
+          err_checkers.shift().test(msg.replace(/\n/g, '')).should.be.true
+          errors++
         out:(msg) ->
-          checkers.shift().test(msg).should.be.true
-          if checkers.length is 0
-            new setTimeout ->
-              exec 'curl -I localhost:8080/app.js', (err, stdout, stderr)->
-                /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
-                exec 'curl -I localhost:8080/fake.js', (err, stdout, stderr)->
-                  /HTTP\/1\.1 404 Not Found/.test(stdout).should.be.true
-                  exec 'curl -I localhost:8080/route', (err, stdout, stderr)->
-                    /HTTP\/1\.1 200 OK/.test(stdout).should.be.true
-                    done()
-                    server.close()
-                    errors.should.equal 0
-            , 500
+          outs++
+          out_checkers.shift().test(msg).should.be.true
 
-      fs.writeFileSync fix_basic_files.package, fixture_basic_pack
-      backup = fs.readFileSync fix_basic_files.app
+          if out_checkers.length is 0
+            errors.should.equal 1
+            outs.should.equal 9
+            
+            watch_server.close()
 
-      polvo = require '../../lib/polvo'
-      server = polvo options, stdio
+            delete_config()
+            delete_package()
+
+            done()
+
+      write_config()
+      write_package()
+
+      watch_server = polvo options, stdio
+
+      # editing
+      backup = fs.readFileSync files_path.jade
+      new setTimeout (-> fs.appendFileSync files_path.jade, ' ' ), 500
+
+      # deleting
+      new setTimeout (-> fs.unlinkSync files_path.jade ), 1000
+
+      # crating
+      new setTimeout (-> fs.writeFileSync files_path.jade, backup ), 1500
 
 
-  describe '[mock:npm]', ->
-    it 'should compile all kinds of requires, showing proper errors', (done)->
+    it 'editing, deleting and creating style partial', (done)->
+
       errors = outs = 0
-      out_checker = /✓ public\/app\.js/
-
       err_checkers = [
-        "error Module './local-mod-folder/none' not found for 'src/app.coffee'"
-        "error Module 'non-existent-a' not found for 'src/app.coffee'"
-        "error Module './non-existent-b' not found for 'src/app.coffee'"
-        "error Module 'mod/non-existent' not found for 'src/app.coffee'"
+        # alert that _header.jade wasn't found for top.jade 
+        /src\/styles\/top\.styl.+failed to locate.+_header\.styl/
       ]
 
-      options = compile: true, base: fix_npm
-      stdio = 
-        nocolor: true
-        err:(msg) ->
-          errors++
-          msg.should.equal err_checkers.shift()
-        out:(msg) ->
-          outs++
-          out_checker.test(msg).should.be.true
-          outs.should.equal 1
-          errors.should.equal 4
-          done()
+      out_checkers = [
+        # fist compilation
+        /✓ public\/app\.js.+/
+        /✓ public\/app\.css.+/
+        /\♫  http:\/\/localhost:8080/
 
-      compile = polvo options, stdio
+        # updating partial
+        /\• src\/styles\/_header\.styl/
+        /✓ public\/app\.css/
 
-  describe '[mock:error]', ->
-    it 'should alert simple syntax error on file', (done)->
-      errors = outs = 0
-      checkers = [
-        /error src\/app\.coffee/
-        /✓ public\/app\.js/
-      ]
+        # deleting partial
+        /\- src\/styles\/_header\.styl/
+        /✓ public\/app\.css/
 
-      options = compile: true, base: fix_error
-      stdio = 
-        nocolor: true
-        err:(msg) ->
-          errors++
-          checkers.shift().test(msg).should.be.true
-        out:(msg) ->
-          outs++
-          checkers.shift().test(msg).should.be.true
-
-          checkers.length.should.equal 0
-          errors.should.equal 1
-          outs.should.equal 1
-          done()
-
-      compile = polvo options, stdio
-
-  describe '[mock:notfound]', ->
-    it 'should alert simple syntax error on file', (done)->
-      errors = outs = 0
-      checkers = [
-        /error Module '\.\/not\/existent' not found for 'src\/app\.coffee'/
-        /✓ public\/app\.js/
-      ]
-
-      options = compile: true, base: fix_notfound
-      stdio = 
-        nocolor: true
-        err:(msg) ->
-          errors++
-          checkers.shift().test(msg).should.be.true
-        out:(msg) ->
-          outs++
-          checkers.shift().test(msg).should.be.true
-
-          checkers.length.should.equal 0
-          errors.should.equal 1
-          outs.should.equal 1
-          done()
-
-      compile = polvo options, stdio
-
-  describe '[mock:not-css-output]', ->
-    it 'should alert error about css output', (done)->
-      errors = outs = 0
-      checkers = [
-        /✓ public\/app\.js/
-        /error CSS not saved, you need to set the css output in your config file/
-      ]
-
-      options = compile: true, base: fix_nocss
-      stdio = 
-        nocolor: true
-        err:(msg) ->
-          errors++
-          checkers.shift().test(msg).should.be.true
-
-          checkers.length.should.equal 0
-          errors.should.equal 1
-          outs.should.equal 1
-          done()
-        out:(msg) ->
-          outs++
-          checkers.shift().test(msg).should.be.true
-
-      compile = polvo options, stdio
-
-  describe '[mock:not-js-output]', ->
-    it 'should alert error about js output', (done)->
-      errors = outs = 0
-      checkers = [
-        /error JS not saved, you need to set the js output in your config file/
+        # creating partial
+        /\+ src\/styles\/_header\.styl/
         /✓ public\/app\.css/
       ]
 
-      options = compile: true, base: fix_nojs
+      options = watch: true, server: true, base: fix_path
       stdio = 
         nocolor: true
         err:(msg) ->
+          err_checkers.shift().test(msg.replace(/\n/g, '')).should.be.true
           errors++
-          checkers.shift().test(msg).should.be.true
         out:(msg) ->
           outs++
-          checkers.shift().test(msg).should.be.true
+          out_checkers.shift().test(msg).should.be.true
 
-          checkers.length.should.equal 0
-          errors.should.equal 1
-          outs.should.equal 1
-          done()
+          if out_checkers.length is 0
+            errors.should.equal 1
+            outs.should.equal 9
+            
+            watch_server.close()
 
-      compile = polvo options, stdio
+            delete_config()
+            delete_package()
 
-  describe '[mock:css-only]', ->
-    it 'should build a css-only project fine', (done)->
-      errors = outs = 0
-      checkers = [
-        /✓ public\/app\.css/
-      ]
+            done()
 
-      options = compile: true, base: fix_css_only
-      stdio = 
-        nocolor: true
-        err:(msg) -> errors++
-        out:(msg) ->
-          outs++
-          checkers.shift().test(msg).should.be.true
+      write_config()
+      write_package()
 
-          checkers.length.should.equal 0
-          errors.should.equal 0
-          outs.should.equal 1
-          done()
+      watch_server = polvo options, stdio
 
-      compile = polvo options, stdio
+      # editing
+      backup = fs.readFileSync files_path.styl
+      new setTimeout (-> fs.appendFileSync files_path.styl, ' ' ), 500
+
+      # deleting
+      new setTimeout (-> fs.unlinkSync files_path.styl ), 1000
+
+      # crating
+      new setTimeout (-> fs.writeFileSync files_path.styl, backup ), 1500
