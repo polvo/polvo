@@ -26,7 +26,7 @@ exports.dependents = (file, filepath, raw)->
         filepath: filepath
         raw: fs.readFileSync(filepath).toString()
 
-  file.compiler.resolve_dependents file, files
+  file.compiler.resolve_dependents file.filepath, files
 
 
 filter_dependencies = (node, found = [])->
