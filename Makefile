@@ -31,7 +31,7 @@ test:
 		--ui bdd \
 		--reporter spec \
 		--recursive \
-		--timeout 3000 \
+		--timeout 5000 \
 		tests/unit
 
 test.coverage:
@@ -40,7 +40,7 @@ test.coverage:
 		--ui bdd \
 		--reporter spec \
 		--recursive \
-		--timeout 3000 \
+		--timeout 5000 \
 		tests/unit
 
 test.coverage.preview: test.coverage
