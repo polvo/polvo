@@ -8,6 +8,8 @@ polvo = require '../../../lib/polvo'
 fix_path = path.join __dirname, '..', '..', 'fixtures', 'basic'
 files_path = 
   app: path.join fix_path, 'src', 'app', 'app.coffee'
+  script: path.join fix_path, 'src', 'app', 'temp.coffee'
+  unrecognized: path.join fix_path, 'src', 'app', 'unrecognized.ext'
   styl: path.join fix_path, 'src', 'styles', '_header.styl'
   js: path.join fix_path, 'public', 'app.js'
   dir: path.join fix_path, 'src', 'app', 'empty'
@@ -194,7 +196,7 @@ describe '[polvo:heavy]', ->
   describe '[file:operations]', ->
 
 
-    it 'should start app, crate empty dirs that doesn\'t notify anything, and modify some file', (done)->
+    it 'should start app, crate empty dirs, and modify some file', (done)->
       errors = outs = 0
       checkers = [
         # fist compilation
@@ -480,3 +482,91 @@ describe '[polvo:heavy]', ->
 
       # crating
       new setTimeout (-> fs.writeFileSync files_path.styl, backup ), 1500
+
+    it 'creating script with inexistent require', (done)->
+
+      errors = outs = 0
+      err_checkers = [
+        /error Module '.\/non\/existent' not found for 'src\/app\/temp.coffee'/
+      ]
+
+      out_checkers = [
+        # fist compilation
+        /✓ public\/app\.js.+/
+        /✓ public\/app\.css.+/
+        /\♫  http:\/\/localhost:8080/
+
+        # creating script
+        /\+ src\/app\/temp\.coffee/
+        /✓ public\/app\.js/
+      ]
+
+      options = watch: true, server: true, base: fix_path
+      stdio = 
+        nocolor: true
+        err:(msg) ->
+          err_checkers.shift().test(msg.replace(/\n/g, '')).should.be.true
+          errors++
+        out:(msg) ->
+          outs++
+          out_checkers.shift().test(msg).should.be.true
+
+          if out_checkers.length is 0
+            errors.should.equal 1
+            outs.should.equal 5
+            
+            watch_server.close()
+
+            delete_config()
+            delete_package()
+
+            done()
+
+      write_config()
+      write_package()
+
+      watch_server = polvo options, stdio
+
+      # creating
+      content = 'require "./non/existent"'
+      new setTimeout (-> fs.writeFileSync files_path.script, content ), 1500
+
+    it 'creating file with unrecognized ext should do nothing', (done)->
+
+      errors = outs = 0
+      checkers = [
+        # fist compilation
+        /✓ public\/app\.js.+/
+        /✓ public\/app\.css.+/
+        /\♫  http:\/\/localhost:8080/
+      ]
+
+      options = watch: true, server: true, base: fix_path
+      stdio = 
+        nocolor: true
+        err:(msg) -> errors++
+        out:(msg) ->
+          outs++
+          checkers.shift().test(msg).should.be.true
+
+      write_config()
+      write_package()
+
+      watch_server = polvo options, stdio
+
+      new setTimeout ->
+        content = 'Just some useless content'
+        fs.writeFileSync files_path.unrecognized, content
+      , 1500
+
+      new setTimeout ->
+        errors.should.equal 0
+        outs.should.equal 3
+        
+        watch_server.close()
+
+        delete_config()
+        delete_package()
+
+        done()
+      , 3000
