@@ -10,12 +10,23 @@ dirs = require '../utils/dirs'
 plugins = []
 registered = {}
 
+get_plugin_manifest = ( plugin )->
+  current = path.dirname require.resolve plugin
+  while current isnt '/'
+    manifest = path.join current, 'package.json'
+    if fs.existsSync manifest
+      return manifest
+    else
+      current = path.join current, '..'
+
 scan = (folder)->
 
   manifest_path = path.join folder, 'package.json'
   manifest = require manifest_path
 
   for plugin of manifest.dependencies
+    absolute = get_plugin_manifest plugin
+
     pfolder = path.join folder, 'node_modules', plugin
     pmanifest = require path.join pfolder, 'package.json'
 
