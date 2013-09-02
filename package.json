@@ -15,12 +15,12 @@
     "html",
     "css"
   ],
-  "main": "./src/polvo",
+  "main": "./lib/polvo",
   "scripts": {
     "test": "make test"
   },
   "dirs": {
-    "polvo": "lib/"
+    "polvo": "lib"
   },
   "repository": {
     "type": "git",
