@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "coffee-script": "1.6.x",
-    "mversion": "~0.2.0",
+    "mversion": "0.2.x",
     "chai": "1.7.x",
     "mocha": "1.12.x",
     "istanbul": "0.1.x",
