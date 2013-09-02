@@ -91,8 +91,8 @@ resolve_module = (filepath, id = '')->
   if id is ''
     non_recurse = true
 
-  if config.virtual?
-    for map, location of config.virtual
+  if config.alias?
+    for map, location of config.alias
       if id.indexOf(map) is 0
         nmods = path.join dirs.pwd(), location
 

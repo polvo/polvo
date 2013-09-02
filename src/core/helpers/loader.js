@@ -4,7 +4,7 @@ function require(path, parent){
   if(parent)
   {
     realpath = require.mods[parent].aliases[path];
-    if(!realpath) realpath = require.virtual( path );
+    if(!realpath) realpath = require.alias( path );
   }
   else
     realpath = path;
@@ -35,11 +35,11 @@ require.register = function(path, mod, aliases){
   };
 }
 
-require.virtual = function(path) {
-  for(var virtual in require.virtual.conf)
-    if(path.indexOf(virtual) == 0)
-      return require.virtual.conf[virtual] + path.match(/\/(.+)/)[0];
+require.alias = function(path) {
+  for(var alias in require.aliases)
+    if(path.indexOf(alias) == 0)
+      return require.aliases[alias] + path.match(/\/(.+)/)[0];
   return null;
 }
 
-require.virtual.conf = ~VIRTUAL;
+require.aliases = ~ALIASES;

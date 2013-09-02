@@ -31,7 +31,7 @@ output:
   js: public/app.js
   css: public/app.css
 
-virtual:
+alias:
   mapped: mapped/src
 
 boot: src/app/app

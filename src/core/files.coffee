@@ -65,18 +65,18 @@ module.exports = new class Files
     index = _.findIndex @files, (f)-> f.filepath is filepath
     @files.splice(index, 1)[0]
 
-  is_under_inputs:( filepath, consider_virtuals )->
+  is_under_inputs:( filepath, consider_aliases )->
     input = true
     for dirpath in config.input
       input and= filepath.indexOf(dirpath) is 0
 
-    if consider_virtuals
-      virtual = true
-      for map, dirpath of config.virtual
+    if consider_aliases
+      alias = true
+      for map, dirpath of config.alias
         dirpath = path.join dirs.pwd(), dirpath
-        virtual and= filepath.indexOf(dirpath) is 0
+        alias and= filepath.indexOf(dirpath) is 0
 
-    input or virtual
+    input or alias
 
   bulk_create_file:(deps)=>
     @create_file dep for dep in deps

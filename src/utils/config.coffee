@@ -80,15 +80,15 @@ exports.parse = ->
     error 'You need at least one output in config file'
     return null
 
-  # mapping
-  if config.virtual?
-    for name, location of config.virtual
+  # alias
+  if config.alias?
+    for name, location of config.alias
       abs_location = path.join dirs.pwd(), location
       unless fs.existsSync abs_location
-        error "Virtual map for '#{name}' does not exist ~>", location
+        error "Alias '#{name}' does not exist ~>", location
         return null
       else
-        config.virtual[name] = dirs.relative abs_location
+        config.alias[name] = dirs.relative abs_location
 
   # minify
   config.minify = {} unless config.minify?

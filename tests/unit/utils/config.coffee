@@ -31,9 +31,9 @@ configs =
       inexistent: 'output:\n  css: non/existent/folder/app.css'
       valid: 'output:\n  css: public/app.css'
 
-  virtual:
-    inexistent: 'virtual:\n  mapped: non/existent/folder'
-    valid: 'virtual:\n  mapped: mapped/src'
+  alias:
+    inexistent: 'alias:\n  mapped: non/existent/folder'
+    valid: 'alias:\n  mapped: mapped/src'
 
   boot:
     empty: 'boot:\n'
@@ -151,11 +151,11 @@ describe   '[config]', ->
 
 
 
-  describe '[key:virtual]', ->
+  describe '[key:alias]', ->
 
     it 'error should be shown when mapped folder doesn\'t exist', (done)->
       out = 0
-      err_msg = 'error Virtual map for \'mapped\' does not exist ~> '
+      err_msg = 'error Alias \'mapped\' does not exist ~> '
       err_msg += 'non/existent/folder'
 
       global.__stdout = (data)-> out++
@@ -167,7 +167,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.virtual.inexistent
+                   configs.alias.inexistent
       config.parse()
 
 
@@ -187,7 +187,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.virtual.valid
+                   configs.alias.valid
       config.parse()
 
     it 'error should be shown when server root dir is not set', (done)->
@@ -204,7 +204,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.virtual.valid,
+                   configs.alias.valid,
                    configs.server.empty
       config.parse()
 
@@ -226,7 +226,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.virtual.valid,
+                   configs.alias.valid,
                    configs.server.inexistent
       config.parse()
 
@@ -249,7 +249,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
                    configs.output.js.valid,
                    configs.output.css.valid,
-                   configs.virtual.valid,
+                   configs.alias.valid,
                    configs.server.valid
 
       config.parse()
@@ -261,7 +261,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
-             configs.virtual.valid,
+             configs.alias.valid,
              configs.server.valid,
              configs.boot.valid
 
@@ -275,7 +275,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
-             configs.virtual.valid,
+             configs.alias.valid,
              configs.server.valid,
              configs.minify.js.off,
              configs.boot.valid
@@ -289,7 +289,7 @@ describe   '[config]', ->
       write_config configs.input.valid,
              configs.output.js.valid,
              configs.output.css.valid,
-             configs.virtual.valid,
+             configs.alias.valid,
              configs.server.valid,
              configs.minify.css.off,
              configs.boot.valid
