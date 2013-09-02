@@ -1,11 +1,5 @@
 ![Polvo - Polyvalent cephalopod mollusc](assets/polvo.png)
 
-<!--
-# Polvo
-
-Polyvalent cephalopod mollusc.
--->
-
 [![Stories in Ready](https://badge.waffle.io/polvo/polvo.png)](http://waffle.io/polvo/polvo)
 
 [![Build Status](https://secure.travis-ci.org/polvo/polvo.png)](http://travis-ci.org/polvo/polvo) [![Coverage Status](https://coveralls.io/repos/polvo/polvo/badge.png?branch=feature%2Frevamping)](https://coveralls.io/r/polvo/polvo?branch=feature%2Frevamping)
@@ -16,21 +10,7 @@ Polyvalent cephalopod mollusc.
 
 Polvo is an application assembler for the browser.
 
-You can think of Polvo as a mix of
-[Browserify](https://github.com/substack/node-browserify) and
-[Brunch](https://github.com/brunch/brunch).
-
- * `Browserify` assembles all your local requires for in-browser use.
-   * **Polvo** do it as well.
- * `Brunch` assembles all your `scripts`, `templates` and `styles` for multiple
- languages with a miminal config file compared to other tools such as
- [Grunt](https://github.com/gruntjs/grunt).
-   * **Polvo's** config file is *truly* minimalistic - given the local approach
-   borrowed from `Browserify`, it is very simple and intuitive.
-
-> Polvo is not a replacement for any of these tools (even it may be), but an
-alternative that combines some of their features, which you won't find bundled
-together as it is provided here.
+*Yet another one*.
 
 <!--
 # TL;DR
@@ -40,51 +20,65 @@ Tired of reading?
 > Video Screenshot + Screencast link
 -->
 
+# Seriously?
+
+Yes, built with *simplicity* in mind and based on a *straightforard*
+[plugin's](#plugins) architecture, Polvo is also agnostic to languages,
+libraries, frameworks and weather, like the majority of his friends.
+
 # Philosophy (in short)
 
  1. Your `scripts` and templates becomes all one `javascript`, and your `styles`
  becomes one `css`
  
  1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
- required usually as you'd do in NodeJS - `require('../path/to/my/file')`
+ required usually as you'd do in NodeJS.
  
  1. You end up with 2 files, `app.js` and `app.css`
  
 Included both in your `html` and you're done!
 
-# Docs
+# Features
 
- - [Features](#features)
+ * **Auto-build** on every change
+ * **LiveReload** on every change
+ * **Syntax-check** on every change
+ * **SourceMaps** support (for languages that provided it)
+ * **Partials** supported for `templates` and `styles`
+ * **Simple Embeded Webserver** <sup>[[1](#embeded-webserver)]</sup> powered by
+ [Connect](https://github.com/senchalabs/connect)
+ * **Compression** capabilities powered by
+ [UglifyJS](https://github.com/mishoo/UglifyJS) and
+ [CleanCSS](https://github.com/GoalSmashers/clean-css)
+ * **Multi-purpose resolution algorithm** for both files and partials
+ * **Simplistic [Plugins])** architecture available for interoperability
+
+<a name="embeded-webserver"></a>
+<sup>[[1](#embeded-webserver)] Simple convenience for *Single Page Applications*
+.</sup>
+
+
+# Contents
+
  - [Dependency Resolution](#dependency-resolution)
  - [Packaging Systems](#packaging-systems)
  - [Plugins](#plugins-supported-languages)
-   - [Built in](#built-in-plugins)
+ - [CLI](#cli)
  - [Config file](#config)
    - [server](#server)
    - [input](#input)
    - [output](#output)
-   - [virtual](#virtual)
+   - [alias](#alias)
    - [minify](#minify)
    - [boot](#boot)
- - [CLI](#cli)
  - [Stability](#stability)
  - [Examples](#examples)
- - [History](#history)
 
-# Features
- * Simple embeded webserver for *Single Page Applications*
- * Automatic LiveReload in `development` mode
- * Watch'n'compile in `development` mode
- * Automatic syntax-check for everything
- * Automatic compression in `release` mode
- * Automatic SourceMaps support in `development` mode
- * Automatic, automatic..
 
 <!-- * Vendors management-->
-<!-- * Source Maps *(`coffeescript` only)*-->
 <!-- * Broken and circular-loop dependencies validation-->
 <!-- * Growl support for notifications-->
-<!-- * ~~Scaffolding routines~~-->
+<!-- * Scaffolding routines-->
 
 # Dependency Resolution
 
@@ -100,21 +94,25 @@ you won't be able to use it.
 # Packaging Systems
 
 In order not to lock you with one single packaging system, Polvo is intended to
-support them all. It's not fully functional yet, but at the moment you can use:
+support most of them. It's not fully functional yet but the plans are there.
+
+At the moment you can use:
 
  * NPM (fully supported)
  * Bower (through local/relative `require` calls only)
  * ~~Components~~ (yet to be done)
  * ~~Ender~~ (yet to be done)
 
+These few may be considered as a TODO-list.
+
 # Plugins (supported languages)
 
-Polvo is agnostic to languages, however it needs plugins for each one in order
-to properly assemble it. Some of them is built in out of the box, and others
-should be done / installed separately.
+Again, Polvo is agnostic to languages -- however it needs plugins for each
+language individually in order to properly assemble it. Some of them is built
+in out of the box, and others should be done / installed separately.
 
 Polvo will search and initialize all plugins present in the `dependencies` field
-of your `package.json` file.
+of your `package.json` file, as well as all plugins provided by default.
 
 ## Built in plugins
 
@@ -123,23 +121,49 @@ Each plugin is an independent repository.
 Click the links to see individual `README` for each one.
 
 ### ★ Scripts
- 1. [Javascript](https://github.com/polvo/polvo-js) (`.js`)
- 1. [CoffeeScript](https://github.com/polvo/polvo-cs) (`.coffee`)
+ 1. [Javascript](https://github.com/polvo/polvo-js) (`.js`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-js.png)](http://travis-ci.org/polvo/polvo-js) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-js/badge.png)](https://coveralls.io/r/polvo/polvo-js)
+ 1. [CoffeeScript](https://github.com/polvo/polvo-cs) (`.coffee`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-cs.png)](http://travis-ci.org/polvo/polvo-cs) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-cs/badge.png)](https://coveralls.io/r/polvo/polvo-cs)
     * ✓ Literate Coffeescript (`.litcoffee`, `.coffee.md`)
     * ✓ Source Maps
 
 ### ★ Styles
- 1. [CSS](https://github.com/polvo/polvo-css) (`.css`)
+ 1. [CSS](https://github.com/polvo/polvo-css) (`.css`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-css.png)](http://travis-ci.org/polvo/polvo-css) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-css/badge.png)](https://coveralls.io/r/polvo/polvo-css)
      * ✓ `partials` supported
- 1. [Stylus](https://github.com/polvo/polvo-stylus) (`.styl`)
+ 1. [Stylus](https://github.com/polvo/polvo-stylus) (`.styl`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-stylus.png)](http://travis-ci.org/polvo/polvo-stylus) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-stylus/badge.png)](https://coveralls.io/r/polvo/polvo-stylus)
      * ✓ `nib` available
      * ✓ `partials` supported
 
 ### ★ Templates
- 1. [HTML](https://github.com/polvo/polvo-html) (`.htm`, `.html`)
+ 1. [HTML](https://github.com/polvo/polvo-html) (`.htm`, `.html`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-html.png)](http://travis-ci.org/polvo/polvo-html) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-html/badge.png)](https://coveralls.io/r/polvo/polvo-html)
     * ✓ `partials` supported
- 1. [Jade](https://github.com/polvo/polvo-jade) (`.jade`)
+ 1. [Jade](https://github.com/polvo/polvo-jade) (`.jade`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-jade.png)](http://travis-ci.org/polvo/polvo-jade) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-jade/badge.png)](https://coveralls.io/r/polvo/polvo-jade)
     * ✓ `partials` supported
+
+# CLI
+
+Command line interface.
+
+````
+Usage:
+  polvo [options] [params]
+
+Options:
+  -w, --watch        Start watching/compiling in dev mode                
+  -c, --compile      Compile project in development mode                 
+  -r, --release      Compile project in release mode                     
+  -s, --server       Serves project statically, options in config file   
+  -f, --config-file  Path to a different config file                     
+  -b, --base         Path to app's root folder (when its not the current)
+  -v, --version      Show Polvo's version                                
+  -h, --help         Shows this help screen                              
+
+Examples:
+  polvo -c
+  polvo -cs
+  polvo -w
+  polvo -ws
+  polvo -wsf custom-config-file.yml
+````
 
 # Config
 
@@ -150,7 +174,7 @@ You'll may need to setup *six* simple options to adjust Polvo to your needs:
  1. [server](#server)
  1. [input](#input)
  1. [output](#output)
- 1. [virtual](#virtual)
+ 1. [alias](#alias)
  1. [minify](#minify)
  1. [boot](#boot)
 
@@ -170,14 +194,14 @@ output:
   js: ./public/app.js
   css: ./public/app.css
 
-virtual:
-  app: src/
+alias:
+  app: ./src/app
 
 minify:
   js: false
   css: false
 
-boot: src/app/app
+boot: ./src/app/app
 ````
 
 ### Server
@@ -230,11 +254,11 @@ as easy as:
 Controller = require '../../../vendors/myframework/src/lib/controller'
 ````
 
-However, sometimes these relative paths can get nasty. In these cases, virtual
+However, sometimes these relative paths can get nasty. In these cases, aliases
 maps can help the way. Imagine this one:
 
 ````yml
-virtual:
+alias:
   myframework: vendors/myframework/src
 ````
 
@@ -250,12 +274,11 @@ Not that:
 
  1. The `myframework` keywork is the virtual alias in the config file 
  1. It points to the folder `vendors/myframework/src`
- 1. So requiring `myframewok/***` will be the same as requiring
- `vendors/myframework/src/***`
- 1. Be cautious while using virtual maps, for instance if you have have a
- virtual  map with the same name of a module you have in your  `node_modules`
- folder,  you'll end up with seirous problems - hopefully you'll notice this
- immediately.
+ 1. So requiring `myframewok/**/*` will be the same as requiring
+ `vendors/myframework/src/**/*`
+ 1. Be cautious while using aliases, for instance if you have have an alias with
+  the same name of a module you have in your  `node_modules` folder,  you'll end
+  up with serious problems - hopefully you'll notice this immediately.
 
 ### Minify
 
@@ -288,55 +311,22 @@ Following the config presented above, it'd be:
 require( 'src/app/app' );
 ````
 
-# CLI
-
-Command line interface.
-
-````
-Usage:
-  polvo [options] [params]
-
-Options:
-  -w, --watch        Start watching/compiling in dev mode                
-  -c, --compile      Compile project in development mode                 
-  -r, --release      Compile project in release mode                     
-  -s, --server       Serves project statically, options in config file   
-  -f, --config-file  Path to a different config file                     
-  -b, --base         Path to app's root folder (when its not the current)
-  -v, --version      Show Polvo's version                                
-  -h, --help         Shows this help screen                              
-
-Examples:
-  polvo -c
-  polvo -cs
-  polvo -w
-  polvo -ws
-  polvo -wsf custom-config-file.yml
-````
-
+<!--
 # Examples
-
-There's an `example-app` using all built in plugins.
-
-  * [repo-link](…)
-
-Live preview of this app.
-
-  * [app-link](…)
+  
+  * [Demo app](...)
+  * [Live preview](...)
+-->
 
 # Stability?
 
-Polvo is under heavy development, it's not bullet proof yet, but you can surely
-use it. It's being used in for production websites everyday.
+Polvo and all its built-in plugin's tests are passing with 100% coverage fancy
+badge.
 
-In case you find any problem, fill up an [issue](https://github.com/polvo/polvo/issues).
+However, you know how it goes. I mean, it's not bullet proof yet, and there are
+features to be added. But you can surely use it.
 
-Have fun.
+It's being used in for production projects everyday.
 
-## History
-
-> Polvo started as a natural evolution of
-[Coffee Toaster](http://github.com/polvo/coffee-toaster) -- *a build system for
-CoffeeScript*. As Toaster became too specific about CoffeeScript, Polvo comes
-out to be a more inclusive build tool covering more languages around the same
-goal.
+In case you find any problem, fill up an
+[issue](https://github.com/polvo/polvo/issues).
