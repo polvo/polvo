@@ -1,4 +1,10 @@
+---
 language: node_js
-node_js: 0.10
+node_js: 0.1
 before_script: cd tests/fixtures/npm && npm install && cd -
 script: make test.coverage.coveralls
+env:
+  global:
+    secure: ! 'i6z0Zws9WXKV6r8KKomBzWEnNERxCOZpRtZvAt6M1vpW5yFqQEB5/nGDhDlx2qNxW
+               rNf8IpHDLQxfzp2AaJ5T8anLsnOe1bhDSx/5muymldCFZch0NobKU61FGVW1zX/rs
+               2/VWqe7gkdb0r1FybEtK/aDfjS6BPZZkOuirz8yYU='
