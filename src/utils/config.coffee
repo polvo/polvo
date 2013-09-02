@@ -99,5 +99,7 @@ exports.parse = ->
   unless config.boot?
     error "Boot module not informed in config file"
     return null
+  else
+    config.boot = dirs.relative config.boot
 
   config
