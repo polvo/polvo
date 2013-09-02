@@ -72,7 +72,6 @@ Included both in your `html` and you're done!
    - [alias](#alias)
    - [minify](#minify)
    - [boot](#boot)
- - [Stability](#stability)
  - [Examples](#examples)
 
 
@@ -318,19 +317,3 @@ require( 'src/app/app' );
   * [Demo app](...)
   * [Live preview](...)
 -->
-
-# Stability?
-
-Polvo and all its built-in plugin's tests are passing with a 100% coverage fancy
-badge.
-
-However, you know how it goes.
-It's not bullet proof yet.
-There are features to be added.
-More tests to be done. And more minors to bumb up until 1.0.
-
-But you can surely use it. It's being used in for production
-projects everyday.
-
-In case you find any problem, fill up an
-[issue](https://github.com/polvo/polvo/issues).
