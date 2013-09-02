@@ -14,15 +14,16 @@ POLVO=bin/polvo
 
 
 setup:
-	npm link
+	@npm link
+	@cd tests/fixtures/npm && npm install
 
 
 
 watch:
-	$(CS) -bwmco lib src
+	@$(CS) -bwmco lib src
 
 build:
-	$(CS) -bmco lib src
+	@$(CS) -bmco lib src
 
 
 
