@@ -43,9 +43,9 @@ Included both in your `html` and you're done!
  * **Auto-build** on every change
  * **LiveReload** on every change
  * **Syntax-check** on every change
- * **SourceMaps** support (for languages that provided it)
+ * **SourceMaps** support <sup>[[1](#sourcemap)]</sup>
  * **Partials** supported for `templates` and `styles`
- * **Simple Embeded Webserver** <sup>[[1](#embeded-webserver)]</sup> powered by
+ * **Simple Embeded Webserver** <sup>[[2](#embeded-webserver)]</sup> powered by
  [Connect](https://github.com/senchalabs/connect)
  * **Compression** capabilities powered by
  [UglifyJS](https://github.com/mishoo/UglifyJS) and
@@ -53,9 +53,10 @@ Included both in your `html` and you're done!
  * **Multi-purpose resolution algorithm** for both files and partials
  * **Simplistic [Plugins])** architecture available for interoperability
 
+<a name="sourcemap"></a>
+<sup>[[1](#sourcemap)]</sup> *For languages that provide it*.<br/>
 <a name="embeded-webserver"></a>
-<sup>[[1](#embeded-webserver)] Simple convenience for *Single Page Applications*
-.</sup>
+<sup>[[2](#embeded-webserver)]</sup> Simple convenience for *Single Page Applications*.<br/>
 
 
 # Contents
@@ -320,13 +321,16 @@ require( 'src/app/app' );
 
 # Stability?
 
-Polvo and all its built-in plugin's tests are passing with 100% coverage fancy
+Polvo and all its built-in plugin's tests are passing with a 100% coverage fancy
 badge.
 
-However, you know how it goes. I mean, it's not bullet proof yet, and there are
-features to be added. But you can surely use it.
+However, you know how it goes.
+It's not bullet proof yet.
+There are features to be added.
+More tests to be done. And more minors to bumb up until 1.0.
 
-It's being used in for production projects everyday.
+But you can surely use it. It's being used in for production
+projects everyday.
 
 In case you find any problem, fill up an
 [issue](https://github.com/polvo/polvo/issues).
