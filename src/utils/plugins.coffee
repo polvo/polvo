@@ -30,10 +30,7 @@ scan = (folder)->
   manifest = require manifest_path
 
   for plugin of manifest.dependencies
-    absolute = get_plugin_manifest folder, plugin
-
-    pfolder = path.join folder, 'node_modules', plugin
-    pmanifest = require path.join pfolder, 'package.json'
+    pmanifest = require get_plugin_manifest folder, plugin
 
     if pmanifest.polvo and not registered[pmanifest.name]
       registered[pmanifest.name] = true
