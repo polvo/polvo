@@ -1,8 +1,8 @@
 # global module require for npm module 
-_ = require 'lodash'
+_ = require 'somelib'
 
 # relative module require for npm module 
-_2 = require '../node_modules/lodash'
+_2 = require '../node_modules/somelib'
 
 # global module require for mapped folder
 a = require 'mod'
