@@ -11,26 +11,24 @@ plugins = []
 registered = {}
 
 get_plugin_manifest = ( folder, plugin )->
-
   manifest = path.join folder, 'node_modules', plugin, 'package.json'
-  if fs.existsSync manifest
-    return manifest
+  return manifest if fs.existsSync manifest
 
-  current = path.dirname require.resolve plugin
-  while current isnt '/'
-    manifest = path.join current, 'package.json'
-    if fs.existsSync manifest
-      return manifest
-    else
-      current = path.join current, '..'
+  return null if folder is path.join folder, '..'
+  get_plugin_manifest path.join(folder, '..'), plugin
 
 scan = (folder)->
-
   manifest_path = path.join folder, 'package.json'
   manifest = require manifest_path
 
   for plugin of manifest.dependencies
-    pmanifest = require get_plugin_manifest folder, plugin
+    pmanifest_path = get_plugin_manifest folder, plugin
+
+    if pmanifest_path is null
+      info "dependency '#{plugin}' not installed, can\'t check if its a plugin"
+      continue
+
+    pmanifest = require pmanifest_path
 
     if pmanifest.polvo and not registered[pmanifest.name]
       registered[pmanifest.name] = true
