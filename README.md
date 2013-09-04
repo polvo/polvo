@@ -63,7 +63,7 @@ npm install -g polvo
 <a name="sourcemap"></a>
 <sup>[[1](#sourcemap)]</sup> *For languages that provide it*.<br/>
 <a name="embeded-webserver"></a>
-<sup>[[2](#embeded-webserver)]</sup> Simple convenience for *Single Page Applications*.<br/>
+<sup>[[2](#embeded-webserver)]</sup>Simple convenience (also for *[SPA](http://en.wikipedia.org/wiki/Single-page_application)*, redirecting routes to default `index.html`).<br/>
 
 
 # Contents
