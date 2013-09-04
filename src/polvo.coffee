@@ -49,3 +49,6 @@ module.exports.close = ->
 
   files.close_watchers()
   server.close()
+
+module.exports.read_config = ->
+  require('./utils/config').parse()
