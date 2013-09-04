@@ -15,28 +15,35 @@ Polvo is an application assembler for the browser.
 <!--
 # TL;DR
 
-Tired of reading?
+Tired of reading extensive README's files?
 
-> Video Screenshot + Screencast link
+> Video Screenshot with link to the screencast
 -->
 
 # Seriously?
 
 Yes, built with *simplicity* in mind and based on a *straightforard*
 [plugin's](#plugins) architecture, Polvo is also agnostic to languages,
-libraries, frameworks and weather, like the majority of his friends.
+libraries, frameworks and weather, like the majority of his ~~competitors~~
+friends.
 
 # Philosophy (in short)
 
- 1. Your `scripts` and templates becomes all one `javascript`, and your `styles`
- becomes one `css`
+ 1. Your `scripts` and `templates` become all one `javascript`, and your `styles`
+ become one `css`
  
  1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
  required usually as you'd do in NodeJS.
  
  1. You end up with 2 files, `app.js` and `app.css`
  
-Included both in your `html` and you're done!
+Include both in your `html` and you're done!
+
+# Installation
+
+````shell
+npm install -g polvo
+````
 
 # Features
 
@@ -88,7 +95,7 @@ building a NodeJS app. In the end, everything will be ready for in-browser use.
 
 > Of couse, you won't be able to use NodeJS core modules once inside the
 Browser, such as `fs`, `process`, `cluster` and so on. The same applies to any
-other module you may find, if it uses API's not available for in-browser use,
+other module you may find, if it uses any API not available for in-browser use,
 you won't be able to use it.
 
 # Packaging Systems
@@ -103,16 +110,16 @@ At the moment you can use:
  * ~~Components~~ (yet to be done)
  * ~~Ender~~ (yet to be done)
 
-These few may be considered as a TODO-list.
+These missing may be considered as a TODO-list, in the presented order.
 
 # Plugins (supported languages)
 
-Again, Polvo is agnostic to languages -- however it needs plugins for each
-language individually in order to properly assemble it. Some of them is built
-in out of the box, and others should be done / installed separately.
+Again, Polvo is agnostic to languages -- however it needs individual plugins
+for each language in order to properly assemble it. Some of them is built
+in out of the box for you joy, and others should be done / installed separately.
 
-Polvo will search and initialize all plugins present in the `dependencies` field
-of your `package.json` file, as well as all plugins provided by default.
+Polvo will search and initialize aditional plugins present in the `dependencies`
+field of your `package.json` file.
 
 ## Built in plugins
 
@@ -141,7 +148,7 @@ Click the links to see individual `README` for each one.
 
 # CLI
 
-Command line interface.
+Command line interface help screen.
 
 ````
 Usage:
@@ -219,10 +226,12 @@ Project's input `src` folders, can be one or many.
 
 Project's output `files`, at least one should be specified.
 
-### Virtual
+### Alias
 
 It's a handy option that lets you map some `names` to specific `dirs`. These
-names will make folders act like modules.
+names will make folders act like gobal modules in your `node_modules` folder
+with all dirs listed in `package.json` directories field, so you can require
+them as such.
 
 For example, imagine a structure like this:
 
@@ -255,11 +264,11 @@ Controller = require '../../../vendors/myframework/src/lib/controller'
 ````
 
 However, sometimes these relative paths can get nasty. In these cases, aliases
-maps can help the way. Imagine this one:
+can helps the way. Imagine this one:
 
 ````yml
 alias:
-  myframework: vendors/myframework/src
+  myframework: ./vendors/myframework/src
 ````
 
 With this, `myframework` folder will act as if it was a NPM module present in
