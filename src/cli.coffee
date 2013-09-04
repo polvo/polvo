@@ -69,9 +69,6 @@ exports.argv = ->
     .boolean('h')
     .describe('h', 'Shows this help screen')
 
-    # .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
-    # .boolean( 'stdio' )
-
   return optimistic.argv
 
 exports.argv()
