@@ -1,67 +1,65 @@
 cli = require '../../lib/cli'
 should = require('chai').should()
 
+inject = (opts)->
+  global.cli_options = opts
+
 describe '[cli]', ->
+
+  after ->
+    global.cli_options = null
+    delete global.cli_options
 
   describe '[options injection]', ->
     it 'single line options', ->
-      argv = cli.argv w: true
+      inject w: true
+      argv = cli.argv()
       argv.watch.should.be.true
       argv.w.should.be.true
 
     it 'multi line options', ->
-      argv = cli.argv watch: true
+      inject watch: true
+      argv = cli.argv()
       argv.watch.should.be.true
       argv.w.should.be.true
 
     it 'option watch', ->
-      argv = cli.argv watch: true
+      inject watch: true
+      argv = cli.argv()
       argv.watch.should.be.true
       argv.w.should.be.true
 
     it 'option compile', ->
-      argv = cli.argv compile: true
+      inject compile: true
+      argv = cli.argv()
       argv.compile.should.be.true
       argv.c.should.be.true
 
     it 'option release', ->
-      argv = cli.argv release: true
+      inject release: true
+      argv = cli.argv()
       argv.release.should.be.true
       argv.r.should.be.true
 
     it 'option sever', ->
-      argv = cli.argv server: true
+      inject server: true
+      argv = cli.argv()
       argv.server.should.be.true
       argv.s.should.be.true
 
     it 'option config-file', ->
-      argv = cli.argv 'config-file': 'sample.yml'
+      inject 'config-file': 'sample.yml'
+      argv = cli.argv()
       argv['config-file'].should.equal 'sample.yml'
       argv.f.should.equal 'sample.yml'
-
-    # it 'option stdio', ->
-    #   argv = cli.argv stdio: true
-    #   argv.stdio.should.be.true
-
-    it 'option base', ->
-      argv = cli.argv base: '/some/dir'
-      argv.base.should.equal '/some/dir'
 
   describe '[help]', ->
     it 'help should show the help text', ->
       help = cli.help()
       help.should.be.string
 
-  describe '[global_params]', ->
-    it 'cli_options should be caught automatically when setted', ->
-      global.cli_options = f: 'sample.yml'
-      argv = cli.argv()
-      argv['config-file'].should.equal 'sample.yml'
-      argv.f.should.equal 'sample.yml'
-      global.cli_options = null
-      delete global.cli_options
-   
     it 'cli_options should not be cached between executions', ->
+      inject()
       argv = cli.argv()
       should.not.exist argv['config-file']
       should.not.exist argv.f

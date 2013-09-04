@@ -46,24 +46,30 @@ configs =
 
 
 
-describe   '[config]', ->
-
-
-  before -> global.__nocolor = true
-  after -> global.__nocolor = null && delete global.__nocolor
+describe '[config]', ->
 
   beforeEach ->
     global.cli_options = base: base
 
   afterEach ->
-    fs.unlinkSync yml if fs.existsSync yml
+    global.cli_options = null
+    delete global.cli_options
+    
+  before ->
+    global.__nocolor = true
+    global.cli_options = base: base
 
-    global.__stdout = global.__stderr = global.cli_options = null
+  after ->
+    global.__nocolor = 
+    global.__stdout =
+    global.__stderr = null
+
+    delete global.__nocolor
     delete global.__stdout
     delete global.__stderr
-    delete global.cli_options
 
-
+  afterEach ->
+    fs.unlinkSync yml if fs.existsSync yml
 
   describe '[config not found]', ->
     it 'error should be shown when config file is not found', (done)->
@@ -208,9 +214,6 @@ describe   '[config]', ->
                    configs.server.empty
       config.parse()
 
-      global.cli_options.server = null
-      delete global.cli_options
-
     it 'error should be shown when server root dir does not exist', (done)->
       out = 0
       root_dir = path.join base, 'not', 'existent', 'folder'
@@ -229,9 +232,6 @@ describe   '[config]', ->
                    configs.alias.valid,
                    configs.server.inexistent
       config.parse()
-
-      global.cli_options.server = null
-      delete global.cli_options
 
 
 
@@ -316,9 +316,6 @@ describe   '[config]', ->
 
       config.parse()
 
-      global.cli_options['config-file'] = null
-      delete global.cli_options
-
     it 'error should be shown when informed config file is a directory', (done)->
 
       out = 0
@@ -333,9 +330,6 @@ describe   '[config]', ->
         done()
 
       config.parse()
-
-      global.cli_options['config-file'] = null
-      delete global.cli_options
 
   describe '[option:base]', ->
     it 'error should be shown when informed base dir does not exist', (done)->

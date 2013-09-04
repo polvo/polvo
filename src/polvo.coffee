@@ -3,7 +3,8 @@
 
 module.exports = (options = {}, io)->
 
-  global.cli_options = options
+  if options?
+    global.cli_options = options
 
   if io?
     global.__stdout = io.out

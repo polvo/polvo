@@ -26,21 +26,17 @@ optimistic = null
 exports.help = ->
   "#{optimistic.help()}\n#{examples}"
 
-exports.argv = (opts)->
+exports.argv = ->
 
-  if opts?
-    options = opts
-  else if cli_options?
-    options = cli_options
+  if cli_options?
+    options = []
+    for key, val of (cli_options or {})
+      options.push if key.length is 1 then "-#{key}" else "--#{key}"
+      options.push "#{val}"
+  else
+    options = $argv.slice 0
 
-  injection = []
-  for key, val of (options or {})
-    injection.push if key.length is 1 then "-#{key}" else "--#{key}"
-    injection.push "#{val}"
-
-  process.argv = $argv.slice(0).concat injection
-
-  optimistic = optimist( process.argv ).usage( usage )
+  optimistic = optimist( options ).usage( usage )
     .alias('w', 'watch')
     .boolean( 'w' )
     .describe('w', "Start watching/compiling in dev mode")
@@ -75,7 +71,6 @@ exports.argv = (opts)->
 
     # .describe('stdio', 'Pipe stdio when forking `polvo` as a child process')
     # .boolean( 'stdio' )
-
 
   return optimistic.argv
 
