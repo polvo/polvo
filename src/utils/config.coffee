@@ -100,6 +100,7 @@ exports.parse = ->
     error "Boot module not informed in config file"
     return null
   else
+    config.boot = path.join dirs.pwd(), config.boot
     config.boot = dirs.relative config.boot
 
   config
