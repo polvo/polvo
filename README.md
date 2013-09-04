@@ -22,8 +22,8 @@ Tired of reading extensive README's files?
 
 # Seriously?
 
-Yes, built with *simplicity* in mind and based on a *straightforard*
-[plugin's](#plugins) architecture, Polvo is also agnostic to languages,
+Yes, built with *simplicity* in mind and based on a *straightforward*
+[plugins](#plugins) architecture, Polvo is also agnostic to languages,
 libraries, frameworks and weather, like the majority of his ~~competitors~~
 friends.
 
@@ -33,7 +33,7 @@ friends.
  become one `css`
  
  1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
- required usually as you'd do in NodeJS.
+ required regularly as you'd do in NodeJS.
  
  1. You end up with 2 files, `app.js` and `app.css`
  
@@ -95,12 +95,12 @@ building a NodeJS app. In the end, everything will be ready for in-browser use.
 
 > Of couse, you won't be able to use NodeJS core modules once inside the
 Browser, such as `fs`, `process`, `cluster` and so on. The same applies to any
-other module you may find, if it uses any API not available for in-browser use,
+other module you may find - if it uses any API not available for in-browser use,
 you won't be able to use it.
 
 # Packaging Systems
 
-In order not to lock you with one single packaging system, Polvo is intended to
+In order to not lock you up with one single packaging system, Polvo is intended to
 support most of them. It's not fully functional yet but the plans are there.
 
 At the moment you can use:
@@ -264,7 +264,7 @@ Controller = require '../../../vendors/myframework/src/lib/controller'
 ````
 
 However, sometimes these relative paths can get nasty. In these cases, aliases
-can helps the way. Imagine this one:
+can help the way. Imagine this one:
 
 ````yml
 alias:
@@ -279,19 +279,19 @@ regardless of which file is requiring it:
 Controller = require 'myfraework/lib/controller'
 ````
 
-Not that:
+Note that:
 
  1. The `myframework` keywork is the virtual alias in the config file 
  1. It points to the folder `vendors/myframework/src`
  1. So requiring `myframewok/**/*` will be the same as requiring
  `vendors/myframework/src/**/*`
- 1. Be cautious while using aliases, for instance if you have have an alias with
+ 1. Be cautious while using aliases. For instance if you have have an alias with
   the same name of a module you have in your  `node_modules` folder,  you'll end
   up with serious problems - hopefully you'll notice this immediately.
 
 ### Minify
 
-In some cases you may want to disable minification in `release` mode, even tough
+In some cases you may want to disable minification in `release` mode, even though
 in both `development` and `release` mode you'll always have a single `.js` and
 `.css` file.
 
