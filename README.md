@@ -58,7 +58,7 @@ npm install -g polvo
  [UglifyJS](https://github.com/mishoo/UglifyJS) and
  [CleanCSS](https://github.com/GoalSmashers/clean-css)
  * **Multi-purpose resolution algorithm** for both files and partials
- * **Simplistic [Plugins])** architecture available for interoperability
+ * **Simplistic Plugins** architecture available for interoperability
 
 <a name="sourcemap"></a>
 <sup>[[1](#sourcemap)]</sup> *For languages that provide it*.<br/>
