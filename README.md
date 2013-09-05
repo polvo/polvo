@@ -2,7 +2,7 @@
 
 [![Stories in Ready](https://badge.waffle.io/polvo/polvo.png)](http://waffle.io/polvo/polvo)
 
-[![Build Status](https://secure.travis-ci.org/polvo/polvo.png)](http://travis-ci.org/polvo/polvo) [![Coverage Status](https://coveralls.io/repos/polvo/polvo/badge.png?branch=feature%2Frevamping)](https://coveralls.io/r/polvo/polvo?branch=feature%2Frevamping)
+[![Build Status](https://secure.travis-ci.org/polvo/polvo.png)](http://travis-ci.org/polvo/polvo) [![Coverage Status](https://coveralls.io/repos/polvo/polvo/badge.png)](https://coveralls.io/r/polvo/polvo)
 
 [![Dependency Status](https://gemnasium.com/polvo/polvo.png)](https://gemnasium.com/polvo/polvo) [![NPM version](https://badge.fury.io/js/polvo.png)](http://badge.fury.io/js/polvo)
 
@@ -335,7 +335,7 @@ require( 'src/app/app' );
 
 The MIT License (MIT)
 
-Copyright (c) 2013 Anderson Arboleya <anderson@arboleya.me>
+Copyright (c) 2013 Anderson Arboleya
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

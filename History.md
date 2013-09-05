@@ -1,3 +1,15 @@
+0.5.0 / 2013-09-05
+===================
+ * Redesigning and rewriting Polvo from the ground up
+ * Optimizing everything
+ * Adding plugins support
+ * Adding full test coverage
+ * Switching concept to CJS instead of AMD
+ * Building always single JS file, for both production and development modes
+ * Mimicking NodeJS resolution algorithm for local and global modules
+ * Drastically reducing config file
+ * And a lot of more things
+
 0.4.4 / 2013-08-07
 ===================
  * Fixing optimization routine to properly handle cases when one single dep is
