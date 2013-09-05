@@ -80,7 +80,7 @@ inexistent urls to `index.html`)*<br/>
    - [alias](#alias)
    - [minify](#minify)
    - [boot](#boot)
-  - [License](#license)
+ - [License](#license)
 
 <!--
  - [Examples](#examples)
