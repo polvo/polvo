@@ -23,9 +23,9 @@ Tired of reading extensive README's files?
 # Seriously?
 
 Yes, built with *simplicity* in mind and based on a *straightforward*
-[plugins](#plugins) architecture, Polvo is also agnostic to languages,
-libraries, frameworks and weather, like the majority of his ~~competitors~~
-friends.
+[plugins](#plugins-supported-languages) architecture, Polvo is also agnostic to
+languages, libraries, frameworks and weather, like the majority of his
+~~competitors~~ friends.
 
 # Philosophy (in short)
 
