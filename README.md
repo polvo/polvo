@@ -33,7 +33,7 @@ friends.
  become one `css`
  
  1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
- required regularly as you'd do in NodeJS.
+ `require`d regularly as you'd do in NodeJS.
  
  1. You end up with 2 files, `app.js` and `app.css`
  
@@ -61,10 +61,11 @@ npm install -g polvo
  * **Simplistic Plugins** architecture available for interoperability
 
 <a name="sourcemap"></a>
-<sup>[[1](#sourcemap)]</sup> *For languages that provide it*.<br/>
+<sup>[[1](#sourcemap)]</sup> *For languages that provide it*<br/>
 <a name="embeded-webserver"></a>
-<sup>[[2](#embeded-webserver)]</sup>Simple convenience (also for *[SPA](http://en.wikipedia.org/wiki/Single-page_application)*, redirecting routes to default `index.html`).<br/>
-
+<sup>[[2](#embeded-webserver)]</sup> *Simple convenience (also for
+[SPA](http://en.wikipedia.org/wiki/Single-page_application), redirecting
+inexistent urls to `index.html`)*<br/>
 
 # Contents
 
@@ -93,7 +94,7 @@ npm install -g polvo
 # Dependency Resolution
 
 Polvo uses the same resolution algorithm presented in NodeJS, so you can code
-your libraries doing global or local requires as you wish, like if you were
+your libraries doing global or local `require`s as you wish, like if you were
 building a NodeJS app. In the end, everything will be ready for in-browser use.
 
 > Of couse, you won't be able to use NodeJS core modules once inside the
@@ -233,7 +234,7 @@ Project's output `files`, at least one should be specified.
 
 It's a handy option that lets you map some `names` to specific `dirs`. These
 names will make folders act like gobal modules in your `node_modules` folder
-with all dirs listed in `package.json` directories field, so you can require
+with all dirs listed in `package.json` directories field, so you can `require`
 them as such.
 
 For example, imagine a structure like this:
@@ -259,7 +260,7 @@ myapp
                 └── view.coffee
 ````
 
-The app's `controller.coffee` can require the framework's `controller.coffee`
+The app's `controller.coffee` can `require` the framework's `controller.coffee`
 as easy as:
 
 ````coffeescript
@@ -294,9 +295,9 @@ Note that:
 
 ### Minify
 
-In some cases you may want to disable minification in `release` mode, even though
-in both `development` and `release` mode you'll always have a single `.js` and
-`.css` file.
+In some cases you may want to disable minification in `release` mode, even
+though in both `development` and `release` mode you'll always have a single
+`.js` and `.css` file.
 
 So what's the catch?
 
@@ -310,11 +311,11 @@ same time keep it uncompressed. In case you do, that's the way to go.
 ### Boot
 
 By default, Polvo will wrap all your `scripts` and `templates` in CJS module and
-register them all at startup. However, none will be required and therefore none
-will be initialized.
+register them all at startup. However, none will be `require`d and therefore
+none will be initialized.
 
 You need to specify your app's entry point within the `boot` property. With this
-Polvo will do a simple require to this file at startup, after everything is
+Polvo will do a simple `require` to this file at startup, after everything is
 registered.
 
 Following the config presented above, it'd be:
