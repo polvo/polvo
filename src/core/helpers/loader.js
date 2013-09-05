@@ -1,16 +1,6 @@
 function require(path, parent){
-  var m, realpath;
-
-  if(parent)
-  {
-    realpath = require.mods[parent].aliases[path];
-    if(!realpath) realpath = require.alias( path );
-  }
-  else
-    realpath = path;
-
-  if(!(m = require.mods[realpath]))
-    return console.error('Module not found: ', path);
+  var realpath = require.resolve(path, parent),
+      m = require.mods[realpath];
 
   if(!m.init)
   {
@@ -24,7 +14,9 @@ function require(path, parent){
 require.mods = {}
 
 require.local = function( path ){
-  return function( id ) { return require( id, path ); }
+  var r = function( id ) { return require( id, path ); }
+  r.resolve = function( id ) { return require.resolve( id, path ); }
+  return r;
 }
 
 require.register = function(path, mod, aliases){
@@ -35,6 +27,7 @@ require.register = function(path, mod, aliases){
   };
 }
 
+require.aliases = ~ALIASES;
 require.alias = function(path) {
   for(var alias in require.aliases)
     if(path.indexOf(alias) == 0)
@@ -42,4 +35,21 @@ require.alias = function(path) {
   return null;
 }
 
-require.aliases = ~ALIASES;
+
+require.resolve = function(path, parent)
+{
+  var realpath;
+
+  if(parent)
+  {
+    if(!(realpath = require.mods[parent].aliases[path]))
+      realpath = require.alias( path );
+  }
+  else
+    realpath = path;
+
+  if(!require.mods[realpath])
+      throw new Error('Module not found: ' + path);
+
+  return realpath;
+}
