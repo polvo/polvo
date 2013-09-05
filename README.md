@@ -33,7 +33,7 @@ languages, libraries, frameworks and weather, like the majority of his
  become one `css`
  
  1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
- `require`d regularly as you'd do in NodeJS.
+ `required` regularly as you'd do in NodeJS.
  
  1. You end up with 2 files, `app.js` and `app.css`
  
