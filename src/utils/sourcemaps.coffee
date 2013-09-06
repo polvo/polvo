@@ -40,10 +40,7 @@ exports.assemble = (files)->
 
   for file in files when file.source_map?
 
-    clean_raw = file.raw
-    clean_raw = clean_raw.replace /\\/g, '\\\\'
-    clean_raw = clean_raw.replace /"/g, '\\"'
-    clean_raw = clean_raw.replace /\n/g, '\\n'
+    clean_raw = exports.clean file.raw
 
     sbuffer = section.replace '~SOURCE', dirs.relative file.filepath
     sbuffer = sbuffer.replace '~LINE', file.source_map_offset
@@ -56,3 +53,8 @@ exports.assemble = (files)->
 
 exports.get_assembled_64 = ->
   new Buffer(sourcemaps).toString 'base64'
+
+exports.clean = (contents)->
+  contents = contents.replace /\\/g, '\\\\'
+  contents = contents.replace /"/g, '\\"'
+  contents = contents.replace /\n/g, '\\n'
