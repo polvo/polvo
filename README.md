@@ -165,6 +165,7 @@ Options:
   -s, --server       Serves project statically, options in config file   
   -f, --config-file  Path to a different config file                     
   -b, --base         Path to app's root folder (when its not the current)
+  -x, --split        Compile files individually - useful for tests coverage
   -v, --version      Show Polvo's version                                
   -h, --help         Shows this help screen                              
 

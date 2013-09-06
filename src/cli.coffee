@@ -62,7 +62,7 @@ exports.argv = ->
     .string( 'b' )
 
     .alias('x', 'split')
-    .describe('x', 'Split certain output files according config file')
+    .describe('x', 'Compile files individually - useful for tests coverage')
     .boolean( 'x' )
 
     .alias('v', 'version')
