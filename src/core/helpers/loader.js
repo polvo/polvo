@@ -53,3 +53,5 @@ require.resolve = function(path, parent)
 
   return realpath;
 }
+
+window.require = require;
