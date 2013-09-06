@@ -64,19 +64,24 @@ exports.build = ->
 
 
 exports.release = ->
-  exports.build_js()
+  jss = exports.build_js()
   exports.build_css()
 
   if config.minify.js
-    uncompressed = fs.readFileSync config.output.js
-    fs.writeFileSync config.output.js, minify.js uncompressed.toString()
+    for js in jss
+
+      # fixing split paths
+      if /__split__/.test js
+        js = path.join config.server.root, js
+
+      uncompressed = fs.readFileSync js
+      fs.writeFileSync js, minify.js uncompressed.toString()
+      exports.notify js
 
   if config.minify.css
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
-
-  exports.notify config.output.js
-  exports.notify config.output.css
+    exports.notify config.output.css
 
 exports.build_js = (notify) ->
 
@@ -91,7 +96,9 @@ exports.build_js = (notify) ->
     return
 
   if argv.split
-    split_paths = build_js_split all, notify 
+    split_paths = build_js_split all, notify
+  else
+    split_paths = []
 
   helpers = {}
   merged = []
@@ -163,8 +170,13 @@ exports.build_js = (notify) ->
 
   fs.writeFileSync config.output.js, buffer
 
-  server.reload 'js'
-  exports.notify config.output.js if notify
+  if not argv.release
+    server.reload 'js'
+
+  if notify
+    exports.notify config.output.js
+
+  [config.output.js].concat split_paths
 
 exports.build_css = (notify) ->
   files.files = _.sortBy files.files, 'filepath'
