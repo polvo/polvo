@@ -70,9 +70,9 @@ exports.release = ->
   if config.minify.js
     for js in jss
 
-      # fixing split paths
+      # resolving right patn for --split files
       if /__split__/.test js
-        js = path.join config.server.root, js
+        js = path.join path.dirname(config.output.js), js
 
       uncompressed = fs.readFileSync js
       fs.writeFileSync js, minify.js uncompressed.toString()
@@ -253,6 +253,7 @@ build_js_split = (files, notify)->
     fsu.mkdir_p folder unless fs.existsSync folder
     fs.writeFileSync output, buffer
     
-    exports.notify output
+    if notify
+      exports.notify output
 
   paths
