@@ -211,7 +211,6 @@ get_split_base_dir = (files)->
       else
         return buffer.join(path.sep)
 
-show = false
 build_js_split = (files, notify)->
   base = get_split_base_dir files
   paths = []
@@ -229,8 +228,9 @@ build_js_split = (files, notify)->
     if file.source_map?
       
       map = JSON.parse(file.source_map)
-      map.file = filename
-      map.sourceContents = sourcemaps.clean file.raw
+      map.file = path.basename output
+      map.sources = ['/' + dirs.relative file.filepath]
+      map.sourcesContent = [file.raw]
 
       map64 = new Buffer(JSON.stringify(map)).toString 'base64'
 
