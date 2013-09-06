@@ -1,7 +1,7 @@
 (require 'source-map-support').install
   handleUncaughtExceptions: false
 
-module.exports = (options = {}, io)->
+module.exports = (options, io)->
 
   if options?
     global.cli_options = options
