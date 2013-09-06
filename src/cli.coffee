@@ -61,6 +61,10 @@ exports.argv = ->
     .describe('b', 'Path to app\'s root folder (when its not the current)')
     .string( 'b' )
 
+    .alias('x', 'split')
+    .describe('x', 'Split certain output files according config file')
+    .boolean( 'x' )
+
     .alias('v', 'version')
     .boolean('v')
     .describe('v', 'Show Polvo\'s version')
