@@ -31,7 +31,8 @@ describe '[polvo:general]', ->
         help.indexOf('Options').should.not.equal -1
         help.indexOf('Examples').should.not.equal -1
 
-    help = polvo null, stdio
+    help = polvo options, stdio
+    help = polvo {}, stdio
 
-    outs.should.equal 1
+    outs.should.equal 2
     errors.should.equal 0
