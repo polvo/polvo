@@ -100,8 +100,45 @@ describe '[polvo:heavy]', ->
     delete_config()
     delete_package()
 
+  it 'should compile app using --split without any surprises', ->
+    errors = outs = 0
+    # checker = /✓ public\/app\.(js|css).+$/m
+    checker = ///
+      (
+        ✓ public/__split__/polvo/tests/fixtures/
+        (
+          basic/mapped/src/lib.js
+          | basic/src/app/app.js
+          | basic/src/app/vendor-hold.js
+          | basic/src/templates/_header.js
+          | basic/src/templates/top.js
+          | basic/vendors/another.vendor.js
+          | basic/vendors/some.vendor.js
+        ).+
+      )?
+      |(✓ public/app.js)
+      |(✓ public/app.css)
+    ///
 
-  it 'should release project without any surprises', ->
+    options = compile: true, base: fix_path, split: true
+    stdio = 
+      nocolor: true
+      err:(msg) -> errors++
+      out:(msg) ->
+        outs++
+        checker.test(msg).should.be.true
+
+    write_config()
+    write_package()
+
+    compile = polvo options, stdio
+    outs.should.equal 9
+    errors.should.equal 0
+
+    delete_config()
+    delete_package()
+
+  it 'should release app without any surprises', ->
     errors = outs = 0
     checker = /✓ public\/app\.(js|css).+$/m
 
@@ -120,8 +157,45 @@ describe '[polvo:heavy]', ->
     delete_config()
     delete_package()
 
+  it 'should release app using --split without any surprises', ->
+    errors = outs = 0
+    checker = ///
+      (
+        ✓ public/__split__/polvo/tests/fixtures/
+        (
+          basic/mapped/src/lib.js
+          | basic/src/app/app.js
+          | basic/src/app/vendor-hold.js
+          | basic/src/templates/_header.js
+          | basic/src/templates/top.js
+          | basic/vendors/another.vendor.js
+          | basic/vendors/some.vendor.js
+        ).+
+      )?
+      |(✓ public/app.js)
+      |(✓ public/app.css)
+    ///
 
-  it 'should release and serve project without any surprises', (done)->
+    options = release: true, base: fix_path, split: true
+    stdio = 
+      nocolor: true
+      err:(msg) -> errors++
+      out:(msg) ->
+        outs++
+        checker.test(msg).should.be.true
+
+    write_config()
+    write_package()
+
+    compile = polvo options, stdio
+    outs.should.equal 9
+    errors.should.equal 0
+
+    delete_config()
+    delete_package()
+
+
+  it 'should release and serve app without any surprises', (done)->
 
     errors = outs = 0
     checkers = [
