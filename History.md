@@ -1,3 +1,9 @@
+0.5.1 / 2013-09-06
+===================
+ * Fixing command line usage
+ * Upgrading dependencies
+ * Improving polvo-general test
+
 0.5.0 / 2013-09-05
 ===================
  * Redesigning and rewriting Polvo from the ground up
