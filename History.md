@@ -1,3 +1,7 @@
+0.5.2 / 2013-09-06
+===================
+ * Adding --split option (essential for specific tests-coverage approaches)
+
 0.5.1 / 2013-09-06
 ===================
  * Fixing command line usage
