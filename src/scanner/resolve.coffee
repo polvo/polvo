@@ -14,6 +14,9 @@ exts = []
 for plugin in plugins
   exts = exts.concat plugin.exts if plugin.output is 'js'
 
+mod_kinds = 'node_modules bower_components components'.split ' '
+mod_manifests = 'package.json bower.json component.json'.split ' '
+
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
 module.exports = (filepath, id)->
@@ -22,7 +25,10 @@ module.exports = (filepath, id)->
   id = id.replace /\.js$/m, ''
 
   # try to resolve its real path
-  file = resolve_id filepath, id
+  for kind, index in mod_kinds
+    manifest = mod_manifests[index]
+    file = resolve_id kind, manifest, filepath, id
+    break if file?
 
   # return normalized path if file is found
   return (path.resolve file) if file?
@@ -35,11 +41,11 @@ module.exports = (filepath, id)->
 
 # Resolves the required id/path
 # ------------------------------------------------------------------------------
-resolve_id = (filepath, id)->
+resolve_id = (kind, manifest, filepath, id)->
 
   # for globals, always go on for module
   if id[0] isnt '.'
-    return resolve_module filepath, id
+    return resolve_module kind, manifest, filepath, id
 
   # breaks id path nodes (if there's some)
   segs = [].concat (id.split '/')
@@ -56,7 +62,7 @@ resolve_id = (filepath, id)->
   return file if (file = resolve_file idpath)
 
   # module
-  return file if (file = resolve_module idpath)
+  return file if (file = resolve_module kind, manifest, idpath)
 
   # mod not found
   return null
@@ -86,7 +92,7 @@ resolve_index = ( dirpath )->
 
 
 # ------------------------------------------------------------------------------
-resolve_module = (filepath, id = '')->
+resolve_module = (kind, manifest, filepath, id = '')->
 
   if id is ''
     non_recurse = true
@@ -106,7 +112,7 @@ resolve_module = (filepath, id = '')->
     if id is ''
       nmods = filepath
     else
-      nmods = closest_node_modules filepath
+      nmods = closest_mod_folder kind, filepath
 
   # if no node_modules is found, return null
   return null if not nmods
@@ -144,12 +150,12 @@ resolve_module = (filepath, id = '')->
 
   # keep searching on parent node_module's folders
   if filepath isnt '/' and non_recurse isnt true
-    resolve_module path.join(filepath, '..'), id
+    resolve_module kind, manifest, path.join(filepath, '..'), id
 
 
 # searches for the closest node_modules folder in the parent dirs
 # ------------------------------------------------------------------------------
-closest_node_modules = (filepath)->
+closest_mod_folder = (kind, filepath)->
   if (path.extname filepath) isnt '' 
     if not fs.lstatSync(filepath).isDirectory()
       tmp = path.dirname filepath
@@ -157,7 +163,7 @@ closest_node_modules = (filepath)->
     tmp = filepath
 
   while tmp isnt '/'
-    nmods = path.join tmp, 'node_modules'
+    nmods = path.join tmp, kind
     if fs.existsSync nmods
       return nmods
     else
