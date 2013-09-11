@@ -43,14 +43,14 @@
     "js-yaml": "2.1.x",
     "lodash": "1.3.x",
     "esprima": "1.0.x",
-    "filesize": "1.10.x",
     "clean-css": "1.1.x",
     "polvo-cs": "*",
     "polvo-js": "*",
     "polvo-html": "*",
     "polvo-jade": "*",
     "polvo-stylus": "*",
-    "polvo-css": "*"
+    "polvo-css": "*",
+    "humanize": "0.0.x"
   },
   "devDependencies": {
     "coffee-script": "1.6.x",

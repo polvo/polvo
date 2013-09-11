@@ -1,8 +1,10 @@
 _ = require 'lodash'
 fs = require 'fs'
+zlib = require 'zlib'
+
 fsu = require 'fs-util'
 path = require 'path'
-filesize = require 'filesize'
+humanize = require 'humanize'
 
 files = require './files'
 server = require './server'
@@ -70,7 +72,7 @@ exports.release = ->
   if config.minify.js
     for js in jss
 
-      # resolving right patn for --split files
+      # resolving right path for --split files
       if /__split__/.test js
         js = path.join path.dirname(config.output.js), js
 
@@ -200,8 +202,16 @@ exports.build_css = (notify) ->
   exports.notify config.output.css if notify
 
 exports.notify = ( filepath )->
-  fsize = filesize (fs.statSync filepath).size
-  log_compiled "#{filepath} (#{fsize})"
+  fsize = humanize.filesize fs.statSync(filepath).size
+
+  if not argv.release
+    return log_compiled "#{filepath} (#{fsize})"
+
+  zlib.gzip fs.readFileSync(filepath, 'utf-8'), (err, gzip)->
+    fs.writeFileSync filepath + '.tmp.gzip', gzip
+    gsize = humanize.filesize fs.statSync(filepath + '.tmp.gzip').size
+    log_compiled "#{filepath} (#{fsize}) (#{gsize} gzipped)"
+    fs.unlinkSync filepath + '.tmp.gzip'
 
 
 get_split_base_dir = (files)->
