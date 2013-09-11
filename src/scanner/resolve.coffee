@@ -16,7 +16,7 @@ for plugin in plugins
 
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
-resolve = module.exports = (filepath, id)->
+module.exports = (filepath, id)->
 
   # removes js extension to normalize id
   id = id.replace /\.js$/m, ''
@@ -58,8 +58,8 @@ resolve_id = (filepath, id)->
   # module
   return file if (file = resolve_module idpath)
 
-  # # dir/index.js
-  # return file if (file = resolve_index idpath)
+  # mod not found
+  return null
 
 
 # tries to get the file by its name
@@ -132,10 +132,6 @@ resolve_module = (filepath, id = '')->
       # if there's no main entry, tries to get the index file
       if (file = resolve_index mod)?
         return file
-
-      # # keep searching on parent node_module's folders
-      # if filepath is not '/' and non_recurse isnt true
-      #   resolve_module path.join(filepath, '..'), mod
   
   # if there's no json, move on with other searches
   idpath = (path.join nmods, id)

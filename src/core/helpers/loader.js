@@ -2,8 +2,7 @@ function require(path, parent){
   var realpath = require.resolve(path, parent),
       m = require.mods[realpath];
 
-  if(!m.init)
-  {
+  if(!m.init){
     m.factory.call(this, require.local(realpath), m.module, m.module.exports);
     m.init = true;
   }
@@ -14,8 +13,8 @@ function require(path, parent){
 require.mods = {}
 
 require.local = function( path ){
-  var r = function( id ) { return require( id, path ); }
-  r.resolve = function( id ) { return require.resolve( id, path ); }
+  var r = function( id ){ return require( id, path ); }
+  r.resolve = function( id ){ return require.resolve( id, path ); }
   return r;
 }
 
@@ -28,7 +27,7 @@ require.register = function(path, mod, aliases){
 }
 
 require.aliases = ~ALIASES;
-require.alias = function(path) {
+require.alias = function(path){
   for(var alias in require.aliases)
     if(path.indexOf(alias) == 0)
       return require.aliases[alias] + path.match(/\/(.+)/)[0];
@@ -36,12 +35,10 @@ require.alias = function(path) {
 }
 
 
-require.resolve = function(path, parent)
-{
+require.resolve = function(path, parent){
   var realpath;
 
-  if(parent)
-  {
+  if(parent){
     if(!(realpath = require.mods[parent].aliases[path]))
       realpath = require.alias( path );
   }
