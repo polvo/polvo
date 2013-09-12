@@ -10,6 +10,7 @@ compiler = require './compiler'
 {argv} = require '../cli'
 plugins = require '../utils/plugins'
 logger = require('../utils/logger')('core/files')
+require('../extras/component-normalizer')()
 
 {error, warn, info, debug} = logger
 
