@@ -9,15 +9,13 @@ humanize = require 'humanize'
 files = require './files'
 server = require './server'
 
-cli = require '../cli'
+{argv} = require '../cli'
 dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
 logger = require('../utils/logger')('core/compiler')
 
-
-argv = cli.argv()
 
 {error, warn, info, debug} = logger
 log_compiled = logger.file.compiled

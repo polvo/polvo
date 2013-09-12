@@ -1,10 +1,8 @@
 path = require 'path'
 fs = require 'fs'
 
-cli = require '../cli'
 {error, warn, info, debug, log} = require('./logger')('utils/dirs')
-
-argv = cli.argv()
+{argv} = require '../cli'
 
 exports.root = path.join __dirname, '..', '..'
 

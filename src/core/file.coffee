@@ -3,13 +3,13 @@ path = require 'path'
 
 _ = require 'lodash'
 
-cli = require '../cli'
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
 scan = require '../scanner/scan'
 
 MicroEvent = require '../event/microevent'
 
+{argv} = require '../cli'
 {error, warn, info, debug} = require('../utils/logger')('core/file')
 
 prefix = "require.register('~path', function(require, module, exports){"
@@ -17,8 +17,6 @@ sufix = "}, ~deps);"
 
 
 module.exports = class File extends MicroEvent
-
-  argv = cli.argv()
 
   raw: null
   filepath: null

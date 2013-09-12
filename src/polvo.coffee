@@ -15,7 +15,7 @@ module.exports = (options, io)->
   version = require './utils/version'
   logger = require('./utils/logger')('polvo')
 
-  argv = cli.argv()
+  {argv} = cli
   {error, warn, info, debug, log} = logger
 
   if argv.version

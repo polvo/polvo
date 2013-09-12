@@ -4,11 +4,9 @@ util = require 'util'
 
 require 'js-yaml'
 dirs = require './dirs'
-cli = require '../cli'
+{argv} = require '../cli'
 
 {error, warn, info, debug} = require('./logger')('utils/config')
-
-argv = cli.argv()
 
 if dirs.pwd?
   if argv['config-file']?

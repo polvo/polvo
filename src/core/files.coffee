@@ -7,7 +7,7 @@ dirs = require '../utils/dirs'
 config = require '../utils/config'
 compiler = require './compiler'
 
-cli = require '../cli'
+{argv} = require '../cli'
 plugins = require '../utils/plugins'
 logger = require('../utils/logger')('core/files')
 
@@ -21,7 +21,6 @@ File = require './file'
 
 module.exports = new class Files
 
-  argv = cli.argv()
   exts = (plugin.ext for plugin in plugins)
 
   files: null
