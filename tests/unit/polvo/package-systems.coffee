@@ -1,7 +1,9 @@
+fs = require 'fs'
 path = require 'path'
 
 polvo = require '../../../lib/polvo'
 fix_path = path.join __dirname, '..', '..', 'fixtures', 'package-systems'
+css_path = path.join fix_path, 'public', 'app.css'
 
 describe '[polvo:package-systems]', ->
   it 'should compile all kinds of requires, showing proper errors', (done)->
@@ -30,6 +32,10 @@ describe '[polvo:package-systems]', ->
         if out_checkers.length is 0
           outs.should.equal 2
           errors.should.equal 4
+
+          compiled_css = fs.readFileSync css_path, 'utf-8'
+          compiled_css.indexOf('.calendar-table .prev-day,').should.be.above -1
+
           done()
 
     compile = polvo options, stdio
