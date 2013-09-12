@@ -14,8 +14,8 @@ exts = []
 for plugin in plugins
   exts = exts.concat plugin.exts if plugin.output is 'js'
 
-mod_kinds = 'node_modules bower_components components'.split ' '
-mod_manifests = 'package.json bower.json component.json'.split ' '
+mod_kinds = 'node_modules components bower_components'.split ' '
+mod_manifests = 'package.json component.json bower.json'.split ' '
 
 # resolve the given id relatively to the current filepath
 # ------------------------------------------------------------------------------
@@ -101,11 +101,11 @@ resolve_module = (kind, manifest, filepath, id = '')->
     for map, location of config.alias
       if id.indexOf(map) is 0
         nmods = path.join dirs.pwd, location
-
         if ~id.indexOf('/')
           id = id.match(/\/(.+)/)[0]
         else
           id = ''
+
         break
 
   unless nmods?
@@ -117,12 +117,12 @@ resolve_module = (kind, manifest, filepath, id = '')->
   # if no node_modules is found, return null
   return null if not nmods
 
-  # trying to reach the `main` entry in package.json (if there's one)
+  # trying to reach the `main` entry in manifest (if there's one)
   mod = path.join nmods, id
-  json = path.join mod, 'package.json'
+  json = path.join mod, manifest
   if json and fs.existsSync json
 
-    # tries to get the main entry in package.json
+    # tries to get the main entry in manifest
     main = (require json).main
     if main?
 
