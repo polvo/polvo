@@ -1,9 +1,9 @@
 path = require 'path'
 
 polvo = require '../../../lib/polvo'
-fix_path = path.join __dirname, '..', '..', 'fixtures', 'npm'
+fix_path = path.join __dirname, '..', '..', 'fixtures', 'package-systems'
 
-describe '[polvo:npm]', ->
+describe '[polvo:package-systems]', ->
   it 'should compile all kinds of requires, showing proper errors', (done)->
     errors = outs = 0
     out_checkers = [
