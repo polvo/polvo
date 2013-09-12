@@ -73,7 +73,7 @@ module.exports = new class Files
     if consider_aliases
       alias = true
       for map, dirpath of config.alias
-        dirpath = path.join dirs.pwd(), dirpath
+        dirpath = path.join dirs.pwd, dirpath
         alias and= filepath.indexOf(dirpath) is 0
 
     input or alias

@@ -34,7 +34,7 @@ module.exports = (filepath, id)->
   return (path.resolve file) if file?
 
   # otherwise show error
-  caller = path.relative dirs.pwd(), filepath
+  caller = path.relative dirs.pwd, filepath
   error "Module '#{id}' not found for '#{caller}'"
   return id
 
@@ -100,7 +100,7 @@ resolve_module = (kind, manifest, filepath, id = '')->
   if config.alias?
     for map, location of config.alias
       if id.indexOf(map) is 0
-        nmods = path.join dirs.pwd(), location
+        nmods = path.join dirs.pwd, location
 
         if ~id.indexOf('/')
           id = id.match(/\/(.+)/)[0]

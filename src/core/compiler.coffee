@@ -27,7 +27,7 @@ log_compiled = logger.file.compiled
 prefix = ";(function(){"
 
 # helpers folder path
-helpers_path = path.join dirs.root(), 'src', 'core', 'helpers'
+helpers_path = path.join dirs.root, 'src', 'core', 'helpers'
 
 # cjs loader
 loader_path = path.join helpers_path, 'loader.js'
@@ -39,7 +39,7 @@ split_loader_path = path.join helpers_path, 'split.loader.js'
 split_loader = fs.readFileSync split_loader_path, 'utf-8'
 
 # auto reload
-io_path = path.join dirs.root(), 'node_modules', 'socket.io', 'node_modules'
+io_path = path.join dirs.root, 'node_modules', 'socket.io', 'node_modules'
 io_path = path.join io_path, 'socket.io-client', 'dist', 'socket.io.js'
 reloader_path = loader_path.replace 'loader.js', 'reloader.js'
 

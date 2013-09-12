@@ -1,5 +1,4 @@
 path = require 'path'
-dirs = require '../../../lib/utils/dirs'
 should = require('chai').should()
 
 base = path.join __dirname, '..', '..', 'fixtures', 'basic'
@@ -13,15 +12,21 @@ describe '[dirs]', ->
 
   it 'getting pwd', ->
     pwd = path.join __dirname, '..', '..', '..'
-    dirs.pwd().should.equal pwd
+    dirs = require '../../../lib/utils/dirs'
+    dirs.pwd.should.equal pwd
 
   it 'getting root', ->
     pwd = path.join __dirname, '..', '..', '..'
-    dirs.root().should.equal pwd
+
+    dirs = require '../../../lib/utils/dirs'
+    dirs.root.should.equal pwd
 
   it 'getting pwd after --base inject', ->
     global.cli_options = base: base
-    dirs.pwd().should.equal base
+
+    dirs = require '../../../lib/utils/dirs'
+    dirs.pwd.should.equal base
+
     global.cli_options = null
     delete global.cli_options
 
@@ -38,12 +43,15 @@ describe '[dirs]', ->
       data.should.equal err_msg
       done()
     
-    dirs.pwd()
+    require '../../../lib/utils/dirs'
     global.cli_options = null
     delete global.cli_options
 
   it 'getting relative path', ->
     global.cli_options = base: base
+
+    dirs = require '../../../lib/utils/dirs'
     dirs.relative(app).should.equal rel
+
     global.cli_options = null
     delete global.cli_options

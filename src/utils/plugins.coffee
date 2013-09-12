@@ -34,11 +34,11 @@ scan = (folder)->
       registered[pmanifest.name] = true
       plugins.push require plugin
 
-scan path.join dirs.root()
+scan path.join dirs.root
 
-app_json = path.join dirs.pwd(), 'package.json'
+app_json = path.join dirs.pwd, 'package.json'
 if fs.existsSync app_json
-  scan dirs.pwd()
+  scan dirs.pwd
 else
   info 'app doesn\'t have a `package.json` file, loading built-in plugins only'
 

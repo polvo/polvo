@@ -10,11 +10,11 @@ cli = require '../cli'
 
 argv = cli.argv()
 
-if dirs.pwd()?
+if dirs.pwd?
   if argv['config-file']?
-    yml = path.join dirs.pwd(), argv['config-file']
+    yml = path.join dirs.pwd, argv['config-file']
   else
-    yml = path.join dirs.pwd(), "polvo.yml"
+    yml = path.join dirs.pwd, "polvo.yml"
 
 unless fs.existsSync yml
   error 'Config file not found ~>', yml
@@ -34,7 +34,7 @@ if argv.server
 
     config.server.port ?= 3000
     if config.server.root
-      root = config.server.root = path.join dirs.pwd(), config.server.root
+      root = config.server.root = path.join dirs.pwd, config.server.root
       unless fs.existsSync root
         error 'Server\'s root dir does not exist ~>', root
         return null
@@ -49,7 +49,7 @@ if argv.server
 # input
 if config.input? and config.input.length
   for dirpath, index in config.input
-    tmp = config.input[index] = path.join dirs.pwd(), dirpath
+    tmp = config.input[index] = path.join dirs.pwd, dirpath
     unless fs.existsSync tmp
       error 'Input dir does not exist ~>', dirs.relative tmp
       return null
@@ -61,14 +61,14 @@ else
 if config.output?
 
   if config.output.js?
-    config.output.js = path.join dirs.pwd(), config.output.js
+    config.output.js = path.join dirs.pwd, config.output.js
     tmp = path.dirname config.output.js
     unless fs.existsSync tmp
       error 'JS\'s output dir does not exist ~>', dirs.relative tmp
       return null
 
   if config.output.css?
-    config.output.css = path.join dirs.pwd(), config.output.css
+    config.output.css = path.join dirs.pwd, config.output.css
     tmp = path.dirname config.output.css
     unless fs.existsSync tmp
       error 'CSS\'s output dir does not exist ~>', dirs.relative tmp
@@ -81,7 +81,7 @@ else
 # alias
 if config.alias?
   for name, location of config.alias
-    abs_location = path.join dirs.pwd(), location
+    abs_location = path.join dirs.pwd, location
     unless fs.existsSync abs_location
       error "Alias '#{name}' does not exist ~>", location
       return null
@@ -98,7 +98,7 @@ unless config.boot?
   error "Boot module not informed in config file"
   return null
 else
-  config.boot = path.join dirs.pwd(), config.boot
+  config.boot = path.join dirs.pwd, config.boot
   config.boot = dirs.relative config.boot
 
 

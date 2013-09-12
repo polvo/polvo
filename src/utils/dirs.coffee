@@ -4,19 +4,18 @@ fs = require 'fs'
 cli = require '../cli'
 {error, warn, info, debug, log} = require('./logger')('utils/dirs')
 
-exports.root = ->
-  path.join __dirname, '..', '..'
+argv = cli.argv()
 
-exports.pwd = ->
-  argv = cli.argv()
-  
-  if argv.base?
-    unless fs.existsSync (pwd = path.resolve argv.base)
-      error 'Dir informed with [--base] option doesn\'t exist ~>', argv.base
-      return null
-    else return pwd
-  
-  path.resolve '.'
+exports.root = path.join __dirname, '..', '..'
+
+if argv.base?
+  unless fs.existsSync (pwd = path.resolve argv.base)
+    error 'Dir informed with [--base] option doesn\'t exist ~>', argv.base
+    pwd = null
+else
+  pwd = path.resolve '.'
+
+exports.pwd = pwd
 
 exports.relative = (filepath)->
-  path.relative exports.pwd(), filepath
+  path.relative exports.pwd, filepath
