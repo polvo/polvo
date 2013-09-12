@@ -10,7 +10,7 @@ compiler = require './compiler'
 {argv} = require '../cli'
 plugins = require '../utils/plugins'
 logger = require('../utils/logger')('core/files')
-require('../extras/component-normalizer')()
+components = require '../extras/component-normalizer'
 
 {error, warn, info, debug} = logger
 
@@ -33,14 +33,25 @@ module.exports = new class Files
 
   collect:->
     @files = []
+
+    # collecting files from disk
     for dirpath in config.input
       for filepath in fsu.find dirpath, exts
         @create_file filepath
+
+    # collecting component files
+    for filepath in components
+      @create_file filepath
 
     @watch_inputs() if argv.watch
 
 
   create_file:(filepath)->
+
+    # premature abort in case extension is not recognized
+    supported = false
+    supported or= ext.test filepath for ext in exts
+    return unless supported
 
     # relative paths means file was not found on disk!
     if (filepath isnt path.resolve filepath)
