@@ -104,8 +104,8 @@ you won't be able to use it.
 
 # Packaging Systems
 
-In order to not lock you up with one single packaging system, Polvo is intended to
-support some of them. It's not fully functional yet but the plans are there.
+In order to not lock you up with one single packaging system, Polvo is intended
+to support some of them. It's not fully functional yet but the plans are there.
 
 > **NOTE**: As each packaging system approach the subject in its own opinionated
 way, it may be impossible to aggregate them all in an universal way. However its
@@ -113,25 +113,22 @@ under serious study and implementation right now to check possibilities.
 
 At the moment you can use:
 
- * NPM (*fully supported*) <sup>[[1](#npm-full)]</sup>
- * Component (*partially supported*) <sup>[[2](#component-partial)]</sup>
- * Bower (*partially supported* - with some caveats)
- <sup>[[3](#bower-caveats)]</sup>
- * ~~Ender~~ (yet to be done) <sup>[[4](#ender-tbd)]</sup>
+ * [NPM](https://github.com/isaacs/npm) Full support, hooray!
+ * [Component](https://github.com/component/component) Partial support
+ <sup>[[1](#component-partial)]</sup>
+ * [Bower](https://github.com/bower/bower) Partial support, with some caveats 
+ <sup>[[2](#bower-caveats)]</sup>
+ * ~~[Ender](https://github.com/ender-js/Ender)~~ Yet to be done
+ <sup>[[3](#ender-tbd)]</sup>
 
-<a name="npm-full"></a>
-<sup>[[1](#npm-full)]</sup> ***Horray!*** \o/<br/>
-<!---->
 <a name="component-partial"></a>
-<sup>[[2](#component-partial)]</sup> *Supporting only `js` and `css` for now,
-**full implementation is a WIP***<br/>
-<!---->
+<sup>[[1](#component-partial)]</sup> Supporting only `js` and `css` for now,
+*full implementation is a WIP*<br/>
 <a name="bower-caveats"></a>
-<sup>[[3](#bower-cavets)]</sup> ***Caveats** to be described.*<br/>
-<!---->
+<sup>[[2](#bower-cavets)]</sup> TODO: Describe caveats<br/>
 <a name="ender-tbd"></a>
-<sup>[[4](#bower-cavets)]</sup> *Pondering the real benefits and possibilities
-of implementing **Ender***
+<sup>[[3](#bower-cavets)]</sup> Pondering the real benefits and possibilities
+of implementing *Ender*
 
 # Plugins (supported languages)
 
