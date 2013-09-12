@@ -157,7 +157,7 @@ describe '[polvo:heavy]', ->
     delete_config()
     delete_package()
 
-  it 'should release app using --split without any surprises', ->
+  it 'should release app using --split without any surprises', (done)->
     errors = outs = 0
     checker = ///
       (
@@ -181,18 +181,18 @@ describe '[polvo:heavy]', ->
       nocolor: true
       err:(msg) -> errors++
       out:(msg) ->
-        outs++
         checker.test(msg).should.be.true
+        if ++outs is 9
+          errors.should.equal 0
+
+          delete_config()
+          delete_package()
+          done?()
 
     write_config()
     write_package()
 
     compile = polvo options, stdio
-    outs.should.equal 9
-    errors.should.equal 0
-
-    delete_config()
-    delete_package()
 
 
   it 'should release and serve app without any surprises', (done)->
