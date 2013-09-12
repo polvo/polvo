@@ -1,8 +1,16 @@
 ---
 language: node_js
+
 node_js: 0.1
-before_script: cd tests/fixtures/npm && npm install && cd -
+
+before_script:
+  - npm install -g component bower
+  - cd tests/fixtures/npm && npm install && cd -
+  - cd tests/fixtures/npm && component install && cd -
+  - cd tests/fixtures/npm && bower install && cd -
+
 script: make test.coverage.coveralls
+
 env:
   global:
     secure: ! 'i6z0Zws9WXKV6r8KKomBzWEnNERxCOZpRtZvAt6M1vpW5yFqQEB5/nGDhDlx2qNxW
