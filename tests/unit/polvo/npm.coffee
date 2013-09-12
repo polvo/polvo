@@ -6,7 +6,10 @@ fix_path = path.join __dirname, '..', '..', 'fixtures', 'npm'
 describe '[polvo:npm]', ->
   it 'should compile all kinds of requires, showing proper errors', (done)->
     errors = outs = 0
-    out_checker = /✓ public\/app\.js/
+    out_checkers = [
+      /✓ public\/app\.js/
+      /✓ public\/app\.css/
+    ]
 
     err_checkers = [
       "error Module './local-mod-folder/none' not found for 'src/app.coffee'"
@@ -23,9 +26,10 @@ describe '[polvo:npm]', ->
         msg.should.equal err_checkers.shift()
       out:(msg) ->
         outs++
-        out_checker.test(msg).should.be.true
-        outs.should.equal 1
-        errors.should.equal 4
-        done()
+        out_checkers.shift().test(msg).should.be.true
+        if out_checkers.length is 0
+          outs.should.equal 2
+          errors.should.equal 4
+          done()
 
     compile = polvo options, stdio

@@ -3,6 +3,7 @@ input:
 
 output:
   js: public/app.js
+  css: public/app.css
 
 alias:
   mod: mod

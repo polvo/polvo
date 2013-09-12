@@ -1,3 +1,6 @@
+# NPM
+# ------------------------------------------------------------------------------
+
 # global module require for npm module 
 _ = require 'somelib'
 
@@ -31,3 +34,14 @@ h = require './local-mod-no-main'
 i = require 'non-existent-a'
 j = require './non-existent-b'
 l = require 'mod/non-existent'
+
+
+# COMPONENT
+# ------------------------------------------------------------------------------
+calendar = require 'calendar'
+
+
+# BOWER
+# ------------------------------------------------------------------------------
+
+stringify = require 'stringify-object'

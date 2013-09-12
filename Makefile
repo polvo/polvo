@@ -16,6 +16,8 @@ POLVO=bin/polvo
 setup:
 	@npm link
 	@cd tests/fixtures/npm && npm install
+	@cd tests/fixtures/npm && bower install
+	@cd tests/fixtures/npm && component install
 
 
 

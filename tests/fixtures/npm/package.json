@@ -1,5 +1,5 @@
 {
-  "name": "polvo-mock-test-npm",
+  "name": "polvo-npm-deps",
   "dependencies": {
     "lodash": "*"
   }
