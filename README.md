@@ -105,16 +105,33 @@ you won't be able to use it.
 # Packaging Systems
 
 In order to not lock you up with one single packaging system, Polvo is intended to
-support most of them. It's not fully functional yet but the plans are there.
+support some of them. It's not fully functional yet but the plans are there.
+
+> **NOTE**: As each packaging system approach the subject in its own opinionated
+way, it may be impossible to aggregate them all in an universal way. However its
+under serious study and implementation right now to check possibilities.
 
 At the moment you can use:
 
- * NPM (fully supported)
- * Bower (through local/relative `require` calls only)
- * ~~Components~~ (yet to be done)
- * ~~Ender~~ (yet to be done)
+ * NPM (*fully supported*) <sup>[[1](#npm-full)]</sup>
+ * Component (*partially supported*) <sup>[[2](#component-partial)]</sup>
+ * Bower (*partially supported* - with some caveats)
+ <sup>[[3](#bower-caveats)]</sup>
+ * ~~Ender~~ (yet to be done) <sup>[[4](#ender-tbd)]</sup>
 
-These missing may be considered as a TODO-list, in the presented order.
+<a name="npm-full"></a>
+<sup>[[1](#npm-full)]</sup> ***Horray!*** \o/<br/>
+<!---->
+<a name="component-partial"></a>
+<sup>[[2](#component-partial)]</sup> *Supporting only `js` and `css` for now,
+**full implementation is a WIP***<br/>
+<!---->
+<a name="bower-caveats"></a>
+<sup>[[3](#bower-cavets)]</sup> ***Caveats** to be described.*<br/>
+<!---->
+<a name="ender-tbd"></a>
+<sup>[[4](#bower-cavets)]</sup> *Pondering the real benefits and possibilities
+of implementing **Ender***
 
 # Plugins (supported languages)
 
