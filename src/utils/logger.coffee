@@ -3,13 +3,10 @@ colors = require 'colors'
 
 # dirs module is required above to avoid circular-loop
 dirs = null
-{argv} = require '../cli'
 
 log_to_stdout = ( args ) ->
   args = [].concat args
 
-  # if process.send and not argv.stdio
-  #   process.send channel: 'stdout', msg: args.join ' '
   if __stdout?
     msg = args.join(' ')
     msg = msg.stripColors if __nocolor? and __nocolor
@@ -20,8 +17,6 @@ log_to_stdout = ( args ) ->
 log_to_stderr = ( args )->
   args = [].concat args
 
-  # if process.send and not argv.stidio
-  #   process.send channel: 'stderr', msg: args.join ' '
   if __stderr?
     msg = args.join(' ')
     msg = msg.stripColors if __nocolor? and __nocolor
