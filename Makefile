@@ -15,9 +15,6 @@ POLVO=bin/polvo
 
 setup:
 	@npm link
-	@cd tests/fixtures/package-systems && npm install
-	@cd tests/fixtures/package-systems && bower install
-	@cd tests/fixtures/package-systems && component install
 
 
 
@@ -27,9 +24,17 @@ watch:
 build:
 	@$(CS) -bmco lib src
 
+test.dependencies:
+	@cd tests/fixtures/package-systems && npm install
+	@cd tests/fixtures/package-systems && bower install
+	@cd tests/fixtures/package-systems && component install
+
+test.clean:
+	@git clean -fdx tests/fixtures
+	@make test.dependencies
 
 
-test:
+test: test.clean
 	@$(MOCHA) --compilers coffee:coffee-script \
 		--ui bdd \
 		--reporter spec \
@@ -37,7 +42,7 @@ test:
 		--timeout 5000 \
 		tests/unit
 
-test.coverage:
+test.coverage: test.clean
 	@$(ISTANBUL) cover $(_MOCHA) -- \
 		--compilers coffee:coffee-script \
 		--ui bdd \
