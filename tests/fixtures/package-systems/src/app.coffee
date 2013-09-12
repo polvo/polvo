@@ -39,7 +39,7 @@ l = require 'mod/non-existent'
 # COMPONENT
 # ------------------------------------------------------------------------------
 calendar = require 'calendar'
-
+bootstrap = require 'bootstrap'
 
 # BOWER
 # ------------------------------------------------------------------------------

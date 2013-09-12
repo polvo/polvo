@@ -1,6 +1,7 @@
 {
   "name": "polvo-component-deps",
   "dependencies": {
-    "component/calendar": "*"
+    "component/calendar": "*",
+    "brighthas/bootstrap": "*"
   }
 }
