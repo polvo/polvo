@@ -1,3 +1,9 @@
+0.5.3 / 2013-09-12
+===================
+ * Using modules cache again to speed up things
+ * Adding partial support for Component
+ * Adding partial support for Bower
+
 0.5.2 / 2013-09-06
 ===================
  * Adding --split option (essential for specific tests-coverage approaches)

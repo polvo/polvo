@@ -1,6 +1,6 @@
 {
   "name": "polvo",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
   "description": "Polyvalent cephalopod mollusc. (aka ambitious app assember)",
   "keywords": [
@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "colors": "0.6.x",
-    "connect": "2.8.x",
+    "connect": "2.9.x",
     "fs-util": "0.3.x",
     "optimist": "0.6.x",
     "socket.io": "0.9.x",
