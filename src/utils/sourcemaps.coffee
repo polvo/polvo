@@ -2,7 +2,7 @@ path = require 'path'
 fs = require 'fs'
 
 dirs = require './dirs'
-config = require('./config').parse()
+config = require './config'
 
 
 map = """

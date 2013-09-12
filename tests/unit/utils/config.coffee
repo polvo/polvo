@@ -1,7 +1,7 @@
 fs = require 'fs'
 path = require 'path'
 should = require('chai').should()
-config = require '../../../lib/utils/config'
+# require '../../../lib/utils/config'
 
 base = path.join __dirname, '..', '..', 'fixtures', 'basic'
 yml = path.join base, 'polvo.yml'
@@ -82,7 +82,7 @@ describe '[config]', ->
         reg.test(data).should.be.true
         done()
 
-      config.parse()
+      require '../../../lib/utils/config'
 
 
 
@@ -98,7 +98,7 @@ describe '[config]', ->
         done()
 
       write_config ''
-      config.parse()
+      require '../../../lib/utils/config'
 
     it 'error should be shown when input dir does not exist', (done)->
       out = 0
@@ -111,7 +111,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.inexistent
-      config.parse()
+      require '../../../lib/utils/config'
 
 
 
@@ -127,7 +127,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.valid
-      config.parse()
+      require '../../../lib/utils/config'
 
     it 'error should be shown when js\'s output dir does not exist', (done)->
       out = 0
@@ -140,7 +140,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.valid, configs.output.js.inexistent
-      config.parse()
+      require '../../../lib/utils/config'
 
     it 'error should be shown when css\'s output dir does not exist', (done)->
       out = 0
@@ -153,7 +153,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.valid, configs.output.css.inexistent
-      config.parse()
+      require '../../../lib/utils/config'
 
 
 
@@ -174,7 +174,7 @@ describe '[config]', ->
                    configs.output.js.valid,
                    configs.output.css.valid,
                    configs.alias.inexistent
-      config.parse()
+      require '../../../lib/utils/config'
 
 
 
@@ -194,7 +194,7 @@ describe '[config]', ->
                    configs.output.js.valid,
                    configs.output.css.valid,
                    configs.alias.valid
-      config.parse()
+      require '../../../lib/utils/config'
 
     it 'error should be shown when server root dir is not set', (done)->
       out = 0
@@ -212,7 +212,7 @@ describe '[config]', ->
                    configs.output.css.valid,
                    configs.alias.valid,
                    configs.server.empty
-      config.parse()
+      require '../../../lib/utils/config'
 
     it 'error should be shown when server root dir does not exist', (done)->
       out = 0
@@ -231,7 +231,7 @@ describe '[config]', ->
                    configs.output.css.valid,
                    configs.alias.valid,
                    configs.server.inexistent
-      config.parse()
+      require '../../../lib/utils/config'
 
 
 
@@ -252,7 +252,7 @@ describe '[config]', ->
                    configs.alias.valid,
                    configs.server.valid
 
-      config.parse()
+      require '../../../lib/utils/config'
 
 
 
@@ -265,11 +265,11 @@ describe '[config]', ->
              configs.server.valid,
              configs.boot.valid
 
-      conf = config.parse()
-      
-      should.exist conf.minify
-      conf.minify.css.should.be.true
-      conf.minify.js.should.be.true
+      config = require '../../../lib/utils/config'
+
+      should.exist config.minify
+      config.minify.css.should.be.true
+      config.minify.js.should.be.true
 
     it 'minify.css may be turned off', ->
       write_config configs.input.valid,
@@ -280,10 +280,10 @@ describe '[config]', ->
              configs.minify.js.off,
              configs.boot.valid
 
-      conf = config.parse()
-      
-      should.exist conf.minify
-      conf.minify.js.should.be.false
+      config = require '../../../lib/utils/config'
+
+      should.exist config.minify
+      config.minify.js.should.be.false
 
     it 'minify.js may be turned off', ->
       write_config configs.input.valid,
@@ -294,10 +294,10 @@ describe '[config]', ->
              configs.minify.css.off,
              configs.boot.valid
 
-      conf = config.parse()
+      config = require '../../../lib/utils/config'
       
-      should.exist conf.minify
-      conf.minify.css.should.be.false
+      should.exist config.minify
+      config.minify.css.should.be.false
 
 
   describe '[option:config-file]', ->
@@ -314,7 +314,7 @@ describe '[config]', ->
         data.should.equal err_msg
         done()
 
-      config.parse()
+      require '../../../lib/utils/config'
 
     it 'error should be shown when informed config file is a directory', (done)->
 
@@ -329,7 +329,7 @@ describe '[config]', ->
         data.should.equal err_msg
         done()
 
-      config.parse()
+      require '../../../lib/utils/config'
 
   describe '[option:base]', ->
     it 'error should be shown when informed base dir does not exist', (done)->
@@ -342,9 +342,8 @@ describe '[config]', ->
       global.cli_options.base = 'non/existent/folder'
       global.__stdout = (data)-> out++
       global.__stderr = (data)->
-        # console.log data
         out.should.equal 0
         data.should.equal error_msgs.shift()
         done() unless error_msgs.length
 
-      config.parse()
+      require '../../../lib/utils/config'

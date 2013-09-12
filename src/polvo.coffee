@@ -23,7 +23,7 @@ module.exports = (options, io)->
 
   else if argv.compile or argv.watch or argv.release
 
-    config = require('./utils/config').parse()
+    config = require './utils/config'
 
     if config?
       compiler = require './core/compiler'
@@ -51,4 +51,4 @@ module.exports.close = ->
   server.close()
 
 module.exports.read_config = ->
-  require('./utils/config').parse()
+  require './utils/config'

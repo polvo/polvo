@@ -7,7 +7,7 @@ esprima = require 'esprima'
 fsu = require 'fs-util'
 
 dirs = require '../utils/dirs'
-config = require('../utils/config').parse()
+config = require '../utils/config'
 resolve = require './resolve'
 
 
