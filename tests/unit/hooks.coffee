@@ -3,24 +3,19 @@ fs = require 'fs'
 path = require 'path'
 _ = require 'lodash'
 
+# listing all modes for further cleanup
+lib = path.join __dirname, '..', '..', 'lib'
+mods = fsu.find lib, /\.js/
+
 # clear cache between all tests
 afterEach ->
-  mods = [
-    '../../lib/utils/plugins'
-    '../../lib/utils/config'
-    '../../lib/core/compiler'
-    '../../lib/core/file'
-    '../../lib/core/files'
-    '../../lib/core/server'
 
-    '../../lib/scanner/resolve'
-    '../../lib/scanner/scan'
-  ]
-
+  # clean up all mods cache
   for m in mods
     mod = require.resolve m
     delete require.cache[mod]
 
+  # clean file's state after each test
   clean()
 
 
