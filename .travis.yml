@@ -5,9 +5,9 @@ node_js: 0.1
 
 before_script:
   - npm install -g component bower
-  - cd tests/fixtures/npm && npm install && cd -
-  - cd tests/fixtures/npm && component install && cd -
-  - cd tests/fixtures/npm && bower install && cd -
+  - cd tests/fixtures/package-systems && npm install && cd -
+  - cd tests/fixtures/package-systems && component install && cd -
+  - cd tests/fixtures/package-systems && bower install && cd -
 
 script: make test.coverage.coveralls
 
