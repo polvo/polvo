@@ -36,8 +36,7 @@ module.exports = (options, io)->
         server() if argv.server
       
       else if argv.release
-        compiler.release()
-        server() if argv.server
+        compiler.release -> server() if argv.server
 
   else
     log cli.help()

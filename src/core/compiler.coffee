@@ -65,12 +65,17 @@ exports.build = ->
   exports.build_css true
 
 
-exports.release = ->
+exports.release = (done) ->
   jss = exports.build_js()
   exports.build_css()
 
+  pending = 0
+  after = -> done?() if --pending is 0
+
   if config.minify.js
+
     for js in jss
+      pending++
 
       # resolving right path for --split files
       if /__split__/.test js
@@ -78,12 +83,13 @@ exports.release = ->
 
       uncompressed = fs.readFileSync js
       fs.writeFileSync js, minify.js uncompressed.toString()
-      exports.notify js
+      exports.notify js, after
 
   if config.minify.css
+    pending++
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
-    exports.notify config.output.css
+    exports.notify config.output.css, after
 
 exports.build_js = (notify) ->
 
@@ -201,17 +207,19 @@ exports.build_css = (notify) ->
   server.reload 'css'
   exports.notify config.output.css if notify
 
-exports.notify = ( filepath )->
+exports.notify = ( filepath, done )->
   fsize = humanize.filesize fs.statSync(filepath).size
 
   if not argv.release
-    return log_compiled "#{filepath} (#{fsize})"
+    log_compiled "#{filepath} (#{fsize})"
+    return done?()
 
   zlib.gzip fs.readFileSync(filepath, 'utf-8'), (err, gzip)->
     fs.writeFileSync filepath + '.tmp.gzip', gzip
     gsize = humanize.filesize fs.statSync(filepath + '.tmp.gzip').size
     log_compiled "#{filepath} (#{fsize}) (#{gsize} gzipped)"
     fs.unlinkSync filepath + '.tmp.gzip'
+    done?()
 
 
 get_split_base_dir = (files)->
