@@ -83,7 +83,7 @@ exports.release = (done) ->
       fs.writeFileSync js, minify.js uncompressed.toString()
       exports.notify js, after
 
-  if config.minify.css
+  if config.minify.css and fs.existsSync config.output.css
     pending++
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
