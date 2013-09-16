@@ -1,3 +1,7 @@
+0.5.4 / 2013-09-16
+===================
+ * Checking CSS existence before compressing it
+
 0.5.3 / 2013-09-12
 ===================
  * Using modules cache again to speed up things
