@@ -1,3 +1,8 @@
+0.5.5 / 2013-09-20
+===================
+ * Fixing folder's evaluation when searching for modules
+ * Adding `no cache` for styles-refresh when in dev mode
+
 0.5.4 / 2013-09-16
 ===================
  * Checking CSS existence before compressing it
