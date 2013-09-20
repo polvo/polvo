@@ -8,7 +8,7 @@
 
 # What the ★★★★?
 
-Polvo is built system and an application assembler for the browser.
+Polvo is a built system and an application assembler for the browser.
 
 *Yet another one*.
 
@@ -33,7 +33,7 @@ languages, libraries, frameworks and weather, like the majority of his
  become one `css`
  
  1. Both `scripts` and `templates` are wrapped as CJS modules and thus can be
- `require`d regularly as you'd do in NodeJS.
+ `require`-d regularly as you'd do in NodeJS.
  
  1. You end up with 2 files, `app.js` and `app.css`
  
@@ -94,7 +94,7 @@ inexistent urls to `index.html`)*<br/>
 # Dependency Resolution
 
 Polvo uses the same resolution algorithm presented in NodeJS, so you can code
-your libraries doing global or local `require`s as you wish, like if you were
+your libraries doing global or local `require`-s as you wish, like if you were
 building a NodeJS app. In the end, everything will be ready for in-browser use.
 
 > Of couse, you won't be able to use NodeJS core modules once inside the
@@ -107,9 +107,10 @@ you won't be able to use it.
 In order to not lock you up with one single packaging system, Polvo is intended
 to support some of them. It's not fully functional yet but the plans are there.
 
-> **NOTE**: As each packaging system approach the subject in its own opinionated
-way, it may be impossible to aggregate them all in an universal way. However its
-under serious study and implementation right now to check possibilities.
+> **NOTE**: As each packaging system approaches the subject in its own
+opinionated way, it may be impossible to aggregate them all in an universal way.
+However its under serious study and implementation right now to check all
+possibilities.
 
 At the moment you can use:
 
@@ -326,7 +327,7 @@ same time keep it uncompressed. In case you do, that's the way to go.
 ### Boot
 
 By default, Polvo will wrap all your `scripts` and `templates` in CJS module and
-register them all at startup. However, none will be `require`d and therefore
+register them all at startup. However, none will be `require`-d and therefore
 none will be initialized.
 
 You need to specify your app's entry point within the `boot` property. With this
