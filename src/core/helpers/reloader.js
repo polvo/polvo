@@ -3,7 +3,7 @@
   var reloader = io.connect( host, {port: 53211} );
   reloader.on("refresh", function(data)
   {
-    var i, suspects, suspect, newlink, href;
+    var i, suspects, suspect, newlink, href, nocache;
 
     // javascript = reload
     if(data.type == 'js')
@@ -24,9 +24,10 @@
         href = suspect.getAttribute('href');
         name = href != null ? href.split('/').pop() : null;
 
-        if (name && name == data.css_output)
+        if (name && ~name.indexOf(data.css_output))
         {
-          newlink.setAttribute('href', href);
+          nocache = '?nocache=' + new Date().getTime()
+          newlink.setAttribute('href', data.css_output + nocache);
           suspect.parentNode.appendChild(newlink);
           setTimeout(function(){
             suspect.parentNode.removeChild(suspect);
