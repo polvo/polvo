@@ -115,7 +115,7 @@ resolve_module = (kind, manifest, filepath, id = '')->
       nmods = closest_mod_folder kind, filepath
 
   # if no node_modules is found, return null
-  return null if not nmods
+  return null unless nmods?
 
   # trying to reach the `main` entry in manifest (if there's one)
   mod = path.join nmods, id
@@ -159,8 +159,8 @@ closest_mod_folder = (kind, filepath)->
   if (path.extname filepath) isnt '' 
     if not fs.lstatSync(filepath).isDirectory()
       tmp = path.dirname filepath
-  else
-    tmp = filepath
+
+  tmp or= filepath
 
   while tmp isnt '/'
     nmods = path.join tmp, kind
