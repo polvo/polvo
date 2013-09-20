@@ -8,7 +8,7 @@
 
 # What the ★★★★?
 
-Polvo is an application assembler for the browser.
+Polvo is built system and an application assembler for the browser.
 
 *Yet another one*.
 
