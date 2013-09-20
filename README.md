@@ -1,4 +1,4 @@
-![Polvo - Polyvalent cephalopod mollusc](assets/polvo.png)
+![Polvo - Polyvalent cephalopod mollusc](https://raw.github.com/polvo/polvo/master/assets/polvo.png)
 
 [![Stories in Ready](https://badge.waffle.io/polvo/polvo.png)](http://waffle.io/polvo/polvo)
 
