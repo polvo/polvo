@@ -95,6 +95,9 @@ exports.build_js = (notify) ->
 
   all = _.filter files.files, output: 'js'
   
+  if config.output.html?
+    all = _.filter files.files, type: 'script'
+
   return unless all.length
 
   unless config.output.js?
