@@ -18,6 +18,8 @@ sufix = "}, ~deps);"
 
 module.exports = class File extends MicroEvent
 
+  initialized: false
+
   raw: null
   filepath: null
   relativepath: null
@@ -45,7 +47,11 @@ module.exports = class File extends MicroEvent
     @is_partial = @compiler.partials is on and @compiler.is_partial @filepath
 
   init:->
-    @refresh()
+    if @is_partial and not @initialized
+        @initialized = true
+        return
+
+      @refresh()
 
   refresh:->
     @raw = fs.readFileSync @filepath, "utf-8"
