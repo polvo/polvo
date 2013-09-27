@@ -9,3 +9,6 @@ exports.js = ( uncompressed )->
 
 exports.css = ( uncompressed )->
   cleancss.process uncompressed
+
+exports.html = ( uncompressed )->
+  uncompressed.replace /\n/g, ''

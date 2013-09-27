@@ -90,6 +90,7 @@ if config.alias?
 config.minify = {} unless config.minify?
 config.minify.js = true unless config.minify.js?
 config.minify.css = true unless config.minify.css?
+config.minify.html = config.output.html? unless config.minify.css?
 
 # boot
 unless config.boot?

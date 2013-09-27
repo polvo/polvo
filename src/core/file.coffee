@@ -6,7 +6,8 @@ _ = require 'lodash'
 dirs = require '../utils/dirs'
 plugins = require '../utils/plugins'
 scan = require '../scanner/scan'
-
+config = require '../utils/config'
+notify = require '../utils/notifier'
 MicroEvent = require '../event/microevent'
 
 {argv} = require '../cli'
@@ -23,6 +24,7 @@ module.exports = class File extends MicroEvent
   raw: null
   filepath: null
   relativepath: null
+  outputpath: null
 
   id: null
   type: null
@@ -43,6 +45,7 @@ module.exports = class File extends MicroEvent
   constructor:(@filepath)->
     @relativepath = dirs.relative @filepath
     @compiler = @get_compiler()
+    @compiler.config = config
     {@type, @output} = @compiler
     @is_partial = @compiler.partials is on and @compiler.is_partial @filepath
 
@@ -69,6 +72,21 @@ module.exports = class File extends MicroEvent
         error dirs.relative(@filepath), '-', err
 
       , (@compiled, @source_map)=>
+        if @compiler.type is 'template' and config.output.html?
+          for input in config.input
+            if ~@filepath.indexOf(input)
+              relative = @filepath.replace input, ''
+              break
+
+          @outputpath = path.join config.output.html, relative
+          @outputpath = @outputpath.replace @compiler.ext, '.html'
+          @outputpath = path.join dirs.pwd, @outputpath
+
+          unless argv.release
+            notify @outputpath
+
+          fs.writeFileSync @outputpath, @compiled
+
         done()
 
   wrap:->

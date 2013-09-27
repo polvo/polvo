@@ -60,6 +60,7 @@ exports.build = ->
 exports.release = (done) ->
   jss = exports.build_js()
   exports.build_css()
+  htmls = _.filter files.files, type: 'template', is_partial: off
 
   pending = 0
   after = -> done?() if --pending is 0
@@ -80,6 +81,18 @@ exports.release = (done) ->
     pending++
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
+  
+  if config.minify.html?
+    for file in htmls
+      uncompressed = fs.readFileSync file.filepath
+      fs.writeFileSync file.filepath, minify.html uncompressed.toString()
+
+  for file in htmls
+    pending++
+    uncompressed = fs.readFileSync file.outputpath
+    fs.writeFileSync file.outputpath, minify.html uncompressed.toString()
+    notify file.outputpath, after
+
   notify js, after
   notify config.output.css, after
 
