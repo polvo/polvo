@@ -1,10 +1,8 @@
 _ = require 'lodash'
 fs = require 'fs'
-zlib = require 'zlib'
 
 fsu = require 'fs-util'
 path = require 'path'
-humanize = require 'humanize'
 
 files = require './files'
 server = require './server'
@@ -14,11 +12,7 @@ dirs = require '../utils/dirs'
 config = require '../utils/config'
 minify = require '../utils/minify'
 sourcemaps = require '../utils/sourcemaps'
-logger = require('../utils/logger')('core/compiler')
-
-
-{error, warn, info, debug} = logger
-log_compiled = logger.file.compiled
+notify = require '../utils/notifier'
 
 
 # prefix
@@ -81,15 +75,15 @@ exports.release = (done) ->
 
       uncompressed = fs.readFileSync js
       fs.writeFileSync js, minify.js uncompressed.toString()
-      exports.notify js, after
 
   if config.minify.css and fs.existsSync config.output.css
     pending++
     uncompressed = fs.readFileSync config.output.css
     fs.writeFileSync config.output.css, minify.css uncompressed.toString()
-    exports.notify config.output.css, after
+  notify js, after
+  notify config.output.css, after
 
-exports.build_js = (notify) ->
+exports.build_js = (_notify) ->
 
   files.files = _.sortBy files.files, 'filepath'
 
@@ -105,7 +99,7 @@ exports.build_js = (notify) ->
     return
 
   if argv.split
-    split_paths = build_js_split all, notify
+    split_paths = build_js_split all, _notify
   else
     split_paths = []
 
@@ -182,12 +176,12 @@ exports.build_js = (notify) ->
   if not argv.release
     server.reload 'js'
 
-  if notify
-    exports.notify config.output.js
+  if _notify
+    notify config.output.js
 
   [config.output.js].concat split_paths
 
-exports.build_css = (notify) ->
+exports.build_css = (_notify) ->
   files.files = _.sortBy files.files, 'filepath'
 
   all = _.filter files.files, output: 'css'
@@ -206,21 +200,7 @@ exports.build_css = (notify) ->
 
   fs.writeFileSync config.output.css, merged
   server.reload 'css'
-  exports.notify config.output.css if notify
-
-exports.notify = ( filepath, done )->
-  fsize = humanize.filesize fs.statSync(filepath).size
-
-  if not argv.release
-    log_compiled "#{filepath} (#{fsize})"
-    return done?()
-
-  zlib.gzip fs.readFileSync(filepath, 'utf-8'), (err, gzip)->
-    fs.writeFileSync filepath + '.tmp.gzip', gzip
-    gsize = humanize.filesize fs.statSync(filepath + '.tmp.gzip').size
-    log_compiled "#{filepath} (#{fsize}) (#{gsize} gzipped)"
-    fs.unlinkSync filepath + '.tmp.gzip'
-    done?()
+  notify config.output.css if _notify
 
 
 get_split_base_dir = (files)->
@@ -242,7 +222,7 @@ get_split_base_dir = (files)->
       else
         return buffer.join(path.sep)
 
-build_js_split = (files, notify)->
+build_js_split = (files, _notify)->
   base = get_split_base_dir files
   paths = []
 
@@ -272,7 +252,7 @@ build_js_split = (files, notify)->
     fsu.mkdir_p folder unless fs.existsSync folder
     fs.writeFileSync output, buffer
     
-    if notify
-      exports.notify output
+    if _notify
+      notify output
 
   paths
