@@ -40,7 +40,7 @@ describe '[cli]', ->
       argv.release.should.be.true
       argv.r.should.be.true
 
-    it 'option sever', ->
+    it 'option server', ->
       inject server: true
       {argv} = require '../../lib/cli'
       argv.server.should.be.true
