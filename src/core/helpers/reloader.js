@@ -3,7 +3,7 @@
   var reloader = io.connect( host, {port: 53211} );
   reloader.on("refresh", function(data)
   {
-    var i, suspects, suspect, newlink, href, nocache;
+    var i, suspects, suspect, newlink, href, newhref, nocache;
 
     // javascript = reload
     if(data.type == 'js')
@@ -18,22 +18,26 @@
       suspects = document.getElementsByTagName('link');
       for( i=suspects.length; i>= 0; --i)
       {
-        suspect = suspects[i]
+        suspect = suspects[i];
         if( suspect == null) continue;
 
         href = suspect.getAttribute('href');
-        name = href != null ? href.split('/').pop() : null;
 
-        if (name && ~name.indexOf(data.css_output))
-        {
-          nocache = '?nocache=' + new Date().getTime()
-          newlink.setAttribute('href', data.css_output + nocache);
-          suspect.parentNode.appendChild(newlink);
-          setTimeout(function(){
-            suspect.parentNode.removeChild(suspect);
-          }, 100);
-          break;
-        }
+        if( href.indexOf( data.css_output ) < 0 )
+          continue;
+
+        newhref = href.replace(/(\.css).+/g, "$1");
+        nocache = '?nocache=' + new Date().getTime();
+        newhref += nocache;
+
+        newlink.setAttribute('href', newhref);
+        suspect.parentNode.appendChild(newlink);
+
+        setTimeout(function(){
+          suspect.parentNode.removeChild(suspect);
+        }, 100);
+
+        break;
       }
     }
   });
