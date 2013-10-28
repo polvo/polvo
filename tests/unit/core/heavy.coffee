@@ -270,7 +270,7 @@ describe '[polvo:heavy]', ->
   describe '[file:operations]', ->
 
 
-    it 'should start app, crate empty dirs, and modify some file', (done)->
+    it 'should start app, cerate empty dirs, and modify some file', (done)->
       errors = outs = 0
       checkers = [
         # fist compilation
