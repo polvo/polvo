@@ -1,3 +1,8 @@
+0.5.6 / 2013-10-28
+===================
+ * Fixing LiveReload for styles
+ * Fixing config file validation
+
 0.5.5 / 2013-09-20
 ===================
  * Fixing folder's evaluation when searching for modules
