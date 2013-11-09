@@ -248,9 +248,10 @@ build_js_split = (files, notify)->
     filefolder = path.dirname file.filepath
 
     httpath = path.join '/__split__', filefolder.replace(base, ''), filename
+    js_folder = path.dirname config.output.js.replace config.server.root, ''
     output = path.join path.dirname(config.output.js), httpath
 
-    paths.push httpath
+    paths.push path.join js_folder, httpath
     buffer = file.wrapped
 
     if file.source_map?
