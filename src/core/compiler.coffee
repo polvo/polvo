@@ -149,18 +149,21 @@ exports.build_js = (notify) ->
   buffer += "\n// POLVO :: LOADER\n"
   buffer += loader
 
+  unless argv.split
+    buffer += "\n// POLVO :: MERGED FILES\n"
+
   start = buffer.split('\n').length
   for each in all
     each.source_map_offset += start
-  sourcemaps.assemble all
+
+  src_maps = sourcemaps.assemble all
 
   unless argv.split
-    buffer += "\n// POLVO :: MERGED FILES\n"
     buffer += merged
 
   buffer += "\n// POLVO :: INITIALIZER\n"
-
   boot = "require('#{config.boot}');"
+
   if argv.split
     tmp = split_loader.replace '~SRCS', JSON.stringify(split_paths)
     tmp = tmp.replace '~BOOT', boot
@@ -170,7 +173,8 @@ exports.build_js = (notify) ->
 
   unless argv.split
     buffer += "\n"
-    buffer += source_maps_header.replace '~MAP', sourcemaps.get_assembled_64()
+    base64_maps = sourcemaps.encode_base64 src_maps
+    buffer += source_maps_header.replace '~MAP', base64_maps
   
   buffer += sufix
 
@@ -256,12 +260,10 @@ build_js_split = (files, notify)->
 
     if file.source_map?
       
-      map = JSON.parse(file.source_map)
-      map.file = path.basename output
-      map.sources = ['/' + dirs.relative file.filepath]
-      map.sourcesContent = [file.raw]
-
-      map64 = new Buffer(JSON.stringify(map)).toString 'base64'
+      # hard moving offset to 1 (jumping over module registration)
+      file.source_map_offset = 1
+      map = sourcemaps.assemble [file]
+      map64 = sourcemaps.encode_base64 map
 
       buffer += '\n'
       buffer += source_maps_header.replace '~MAP', map64
