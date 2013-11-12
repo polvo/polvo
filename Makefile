@@ -32,9 +32,10 @@ test.dependencies:
 test.clean:
 	@git clean -fdx tests/fixtures
 	@make test.dependencies
+	@make test
 
 
-test: test.clean
+test:
 	@$(MOCHA) --compilers coffee:coffee-script \
 		--ui bdd \
 		--reporter spec \
