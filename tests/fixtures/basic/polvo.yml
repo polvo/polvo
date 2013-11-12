@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  root: ./public
+
+input:
+  - src
+
+output:
+  js: public/app.js
+  css: public/app.css
+
+alias:
+  mapped: mapped/src
+
+boot: src/app/app
