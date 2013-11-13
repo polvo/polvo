@@ -204,13 +204,13 @@ describe '[acceptance] fs-operations', ->
 
     # editing
     backup = fs.readFileSync files_path.jade
-    new setTimeout (-> fs.appendFileSync files_path.jade, ' ' ), 500
+    new setTimeout (-> fs.appendFileSync files_path.jade, ' ' ), 800
 
     # deleting
-    new setTimeout (-> fs.unlinkSync files_path.jade ), 1000
+    new setTimeout (-> fs.unlinkSync files_path.jade ), 1600
 
     # crating
-    new setTimeout (-> fs.writeFileSync files_path.jade, backup ), 1500
+    new setTimeout (-> fs.writeFileSync files_path.jade, backup ), 2400
 
 
   it 'editing, deleting and creating style partial', (done)->
@@ -260,13 +260,13 @@ describe '[acceptance] fs-operations', ->
 
     # editing
     backup = fs.readFileSync files_path.styl
-    new setTimeout (-> fs.appendFileSync files_path.styl, ' ' ), 500
+    new setTimeout (-> fs.appendFileSync files_path.styl, ' ' ), 800
 
     # deleting
-    new setTimeout (-> fs.unlinkSync files_path.styl ), 1000
+    new setTimeout (-> fs.unlinkSync files_path.styl ), 1600
 
     # crating
-    new setTimeout (-> fs.writeFileSync files_path.styl, backup ), 1500
+    new setTimeout (-> fs.writeFileSync files_path.styl, backup ), 2400
 
   it 'creating script with inexistent require', (done)->
 
