@@ -1,5 +1,5 @@
+CleanCSS = require 'clean-css'
 uglify = require 'uglify-js'
-cleancss = require 'clean-css'
 
 exports.js = ( uncompressed )->
   ast = uglify.parse uncompressed
@@ -8,4 +8,4 @@ exports.js = ( uncompressed )->
   compiled = stream.toString()
 
 exports.css = ( uncompressed )->
-  cleancss.process uncompressed
+  new CleanCSS().minify uncompressed
