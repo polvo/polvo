@@ -24,15 +24,14 @@ watch:
 build:
 	@$(CS) -bmco lib src
 
+test.clear:
+	@git clean -fdx tests/fixtures
+	@make test.dependencies
+
 test.dependencies:
 	@cd tests/fixtures/package-systems && npm install
 	@cd tests/fixtures/package-systems && bower install
 	@cd tests/fixtures/package-systems && component install
-
-test.clean:
-	@git clean -fdx tests/fixtures
-	@make test.dependencies
-	@make test
 
 
 test:
@@ -40,17 +39,17 @@ test:
 		--ui bdd \
 		--reporter spec \
 		--recursive \
-		--timeout 5000 \
-		tests/unit
+		--timeout 10000 \
+		tests/tests
 
-test.coverage: test.clean
+test.coverage:
 	@$(ISTANBUL) cover $(_MOCHA) -- \
 		--compilers coffee:coffee-script \
 		--ui bdd \
 		--reporter spec \
 		--recursive \
-		--timeout 5000 \
-		tests/unit
+		--timeout 10000 \
+		tests/tests
 
 test.coverage.preview: test.coverage
 	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080

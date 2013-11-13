@@ -1,14 +1,14 @@
 path = require 'path'
 
 polvo = require '../../../lib/polvo'
-fix_path = path.join __dirname, '..', '..', 'fixtures', 'notfound'
+fix_path = path.join __dirname, '..', '..', 'fixtures', 'no-css-output'
 
-describe '[polvo:notfound]', ->
-  it 'should alert simple syntax error on file', (done)->
+describe '[acceptance] nocss', ->
+  it 'should alert error about css output', (done)->
     errors = outs = 0
     checkers = [
-      /error Module '\.\/not\/existent' not found for 'src\/app\.coffee'/
       /✓ public\/app\.js/
+      /error CSS not saved, you need to set the css output in your config file/
     ]
 
     options = compile: true, base: fix_path
@@ -17,13 +17,13 @@ describe '[polvo:notfound]', ->
       err:(msg) ->
         errors++
         checkers.shift().test(msg).should.be.true
-      out:(msg) ->
-        outs++
-        checkers.shift().test(msg).should.be.true
 
         checkers.length.should.equal 0
         errors.should.equal 1
         outs.should.equal 1
         done()
+      out:(msg) ->
+        outs++
+        checkers.shift().test(msg).should.be.true
 
     compile = polvo options, stdio

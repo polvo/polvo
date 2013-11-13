@@ -1,30 +1,29 @@
 path = require 'path'
 should = require('chai').should()
 
-base = path.join __dirname, '..', '..', 'fixtures', 'basic'
+base = path.join __dirname, '..', '..', '..', 'fixtures', 'basic'
 app = path.join base, 'src', 'app.coffee'
 rel = path.relative base, app
 
-describe '[dirs]', ->
+describe '[unit][utils] dirs', ->
 
   before -> global.__nocolor = true
   after -> global.__nocolor = null && delete global.__nocolor
 
   it 'getting pwd', ->
-    pwd = path.join __dirname, '..', '..', '..'
-    dirs = require '../../../lib/utils/dirs'
-    dirs.pwd.should.equal pwd
+    global.cli_options = base: base
+    dirs = require '../../../../lib/utils/dirs'
+    dirs.pwd.should.equal base
 
   it 'getting root', ->
-    pwd = path.join __dirname, '..', '..', '..'
-
-    dirs = require '../../../lib/utils/dirs'
-    dirs.root.should.equal pwd
+    global.cli_options = base: base
+    dirs = require '../../../../lib/utils/dirs'
+    dirs.root.should.equal path.join __dirname, '..', '..', '..', '..'
 
   it 'getting pwd after --base inject', ->
     global.cli_options = base: base
 
-    dirs = require '../../../lib/utils/dirs'
+    dirs = require '../../../../lib/utils/dirs'
     dirs.pwd.should.equal base
 
     global.cli_options = null
@@ -43,14 +42,14 @@ describe '[dirs]', ->
       data.should.equal err_msg
       done()
     
-    require '../../../lib/utils/dirs'
+    require '../../../../lib/utils/dirs'
     global.cli_options = null
     delete global.cli_options
 
   it 'getting relative path', ->
     global.cli_options = base: base
 
-    dirs = require '../../../lib/utils/dirs'
+    dirs = require '../../../../lib/utils/dirs'
     dirs.relative(app).should.equal rel
 
     global.cli_options = null

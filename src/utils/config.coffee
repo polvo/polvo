@@ -15,20 +15,17 @@ if dirs.pwd?
     yml = path.join dirs.pwd, "polvo.yml"
 
 if fs.existsSync yml
-
   if fs.statSync( yml ).isDirectory()
     error 'Config file\'s path is a directory  ~>', yml
-    process.exit()
+   # process.exit()
   else
     config = require(yml) or {}
     delete require.cache[require.resolve yml]
 else
   error 'Config file not found ~>', yml
-  process.exit()
+  # process.exit()
 
-# if config exists
-if config?
-
+parse_config = ->
   # server
   if argv.server
 
@@ -38,26 +35,21 @@ if config?
       if config.server.root
         root = config.server.root = path.join dirs.pwd, config.server.root
         unless fs.existsSync root
-          error 'Server\'s root dir does not exist ~>', root
-          process.exit()
+          return error 'Server\'s root dir does not exist ~>', root
       else
-        error 'Server\'s root not set in in config file'
-        process.exit()
+        return error 'Server\'s root not set in in config file'
 
     else
-      error 'Server\'s config not set in config file'
-      process.exit()
+      return error 'Server\'s config not set in config file'
 
   # input
   if config.input? and config.input.length
     for dirpath, index in config.input
       tmp = config.input[index] = path.join dirs.pwd, dirpath
       unless fs.existsSync tmp
-        error 'Input dir does not exist ~>', dirs.relative tmp
-        proccess.exit()
+        return error 'Input dir does not exist ~>', dirs.relative tmp
   else
-    error 'You need at least one input dir in config file'
-    process.exit()
+    return error 'You need at least one input dir in config file'
 
   # output
   if config.output?
@@ -66,27 +58,23 @@ if config?
       config.output.js = path.join dirs.pwd, config.output.js
       tmp = path.dirname config.output.js
       unless fs.existsSync tmp
-        error 'JS\'s output dir does not exist ~>', dirs.relative tmp
-        process.exit()
+        return error 'JS\'s output dir does not exist ~>', dirs.relative tmp
 
     if config.output.css?
       config.output.css = path.join dirs.pwd, config.output.css
       tmp = path.dirname config.output.css
       unless fs.existsSync tmp
-        error 'CSS\'s output dir does not exist ~>', dirs.relative tmp
-        process.exit()
+        return error 'CSS\'s output dir does not exist ~>', dirs.relative tmp
 
   else
-    error 'You need at least one output in config file'
-    process.exit()
+    return error 'You need at least one output in config file'
 
   # alias
   if config.alias?
     for name, location of config.alias
       abs_location = path.join dirs.pwd, location
       unless fs.existsSync abs_location
-        error "Alias '#{name}' does not exist ~>", location
-        process.exit()
+        return error "Alias '#{name}' does not exist ~>", location
       else
         config.alias[name] = dirs.relative abs_location
 
@@ -97,10 +85,15 @@ if config?
 
   # boot
   unless config.boot?
-    error "Boot module not informed in config file"
-    process.exit()
+    return error "Boot module not informed in config file"
   else
     config.boot = path.join dirs.pwd, config.boot
     config.boot = dirs.relative config.boot
+
+
+# if config exists
+if config?
+  parse_config()
+
 
 module.exports = config

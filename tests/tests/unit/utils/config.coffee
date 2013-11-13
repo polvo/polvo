@@ -1,15 +1,17 @@
 fs = require 'fs'
 path = require 'path'
 should = require('chai').should()
-# require '../../../lib/utils/config'
+# require '../../../../lib/utils/config'
 
-base = path.join __dirname, '..', '..', 'fixtures', 'basic'
-yml = path.join base, 'polvo.yml'
+base = path.join __dirname, '..', '..', '..', 'fixtures', 'basic'
+
+original_config_path = path.join base, 'polvo.yml'
+original_config =  fs.readFileSync original_config_path, 'utf-8'
 
 # helper for writing many config files
 write_config = (contents...)->
   buffer =  contents.join '\n\n'
-  fs.writeFileSync yml, buffer
+  fs.writeFileSync original_config_path, buffer
 
 # config variations templates
 configs = 
@@ -46,48 +48,44 @@ configs =
 
 
 
-describe '[config]', ->
+describe '[unit][config]', ->
+
+  after ->
+    fs.writeFileSync original_config_path, original_config
 
   beforeEach ->
+    global.__nocolor = true
     global.cli_options = base: base
 
   afterEach ->
     global.cli_options = null
     delete global.cli_options
-    
-  before ->
-    global.__nocolor = true
-    global.cli_options = base: base
-
-  after ->
-    global.__nocolor = 
-    global.__stdout =
-    global.__stderr = null
-
     delete global.__nocolor
     delete global.__stdout
     delete global.__stderr
 
-  afterEach ->
-    fs.unlinkSync yml if fs.existsSync yml
-
   describe '[config not found]', ->
+
     it 'error should be shown when config file is not found', (done)->
+      fs.unlinkSync original_config_path
+
       out = 0
       reg = /error Config file not found ~>.+\/polvo.yml/m
 
-      global.__stdout = (data)-> out++
+      global.__stdout = (data)->
+        out++
       global.__stderr = (data)->
         out.should.equal 0
         reg.test(data).should.be.true
+        fs.writeFileSync original_config_path, original_config
         done()
 
-      require '../../../lib/utils/config'
-
-
+      require '../../../../lib/utils/config'
 
   describe '[key:input]', ->
+
     it 'error should be shown when key is not set', (done)->
+
       out = 0
       err_msg = 'error You need at least one input dir in config file'
 
@@ -98,7 +96,7 @@ describe '[config]', ->
         done()
 
       write_config ''
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
     it 'error should be shown when input dir does not exist', (done)->
       out = 0
@@ -111,7 +109,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.inexistent
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
 
 
@@ -127,7 +125,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.valid
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
     it 'error should be shown when js\'s output dir does not exist', (done)->
       out = 0
@@ -140,7 +138,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.valid, configs.output.js.inexistent
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
     it 'error should be shown when css\'s output dir does not exist', (done)->
       out = 0
@@ -153,7 +151,7 @@ describe '[config]', ->
         done()
 
       write_config configs.input.valid, configs.output.css.inexistent
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
 
 
@@ -174,7 +172,7 @@ describe '[config]', ->
                    configs.output.js.valid,
                    configs.output.css.valid,
                    configs.alias.inexistent
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
 
 
@@ -194,7 +192,7 @@ describe '[config]', ->
                    configs.output.js.valid,
                    configs.output.css.valid,
                    configs.alias.valid
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
     it 'error should be shown when server root dir is not set', (done)->
       out = 0
@@ -212,7 +210,7 @@ describe '[config]', ->
                    configs.output.css.valid,
                    configs.alias.valid,
                    configs.server.empty
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
     it 'error should be shown when server root dir does not exist', (done)->
       out = 0
@@ -231,7 +229,7 @@ describe '[config]', ->
                    configs.output.css.valid,
                    configs.alias.valid,
                    configs.server.inexistent
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
 
 
@@ -252,7 +250,7 @@ describe '[config]', ->
                    configs.alias.valid,
                    configs.server.valid
 
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
 
 
@@ -265,7 +263,7 @@ describe '[config]', ->
              configs.server.valid,
              configs.boot.valid
 
-      config = require '../../../lib/utils/config'
+      config = require '../../../../lib/utils/config'
 
       should.exist config.minify
       config.minify.css.should.be.true
@@ -280,7 +278,7 @@ describe '[config]', ->
              configs.minify.js.off,
              configs.boot.valid
 
-      config = require '../../../lib/utils/config'
+      config = require '../../../../lib/utils/config'
 
       should.exist config.minify
       config.minify.js.should.be.false
@@ -294,7 +292,7 @@ describe '[config]', ->
              configs.minify.css.off,
              configs.boot.valid
 
-      config = require '../../../lib/utils/config'
+      config = require '../../../../lib/utils/config'
       
       should.exist config.minify
       config.minify.css.should.be.false
@@ -314,7 +312,7 @@ describe '[config]', ->
         data.should.equal err_msg
         done()
 
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
     it 'error should be shown when informed config file is a directory', (done)->
 
@@ -329,7 +327,7 @@ describe '[config]', ->
         data.should.equal err_msg
         done()
 
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'
 
   describe '[option:base]', ->
     it 'error should be shown when informed base dir does not exist', (done)->
@@ -346,4 +344,4 @@ describe '[config]', ->
         data.should.equal error_msgs.shift()
         done() unless error_msgs.length
 
-      require '../../../lib/utils/config'
+      require '../../../../lib/utils/config'

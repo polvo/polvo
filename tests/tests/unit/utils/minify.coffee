@@ -1,9 +1,9 @@
 path = require 'path'
 should = require('chai').should()
 
-minify = require '../../../lib/utils/minify'
+minify = require '../../../../lib/utils/minify'
 
-describe '[minify]', ->
+describe '[unit][utils] minify', ->
 
   it 'js should be minified properly', ->
     raw = """

@@ -5,7 +5,7 @@ polvo = require '../../../lib/polvo'
 fix_path = path.join __dirname, '..', '..', 'fixtures', 'package-systems'
 css_path = path.join fix_path, 'public', 'app.css'
 
-describe '[polvo:package-systems]', ->
+describe '[acceptance] package-systems', ->
   it 'should compile all kinds of requires, showing proper errors', (done)->
     errors = outs = 0
     out_checkers = [

@@ -75,10 +75,6 @@ exports.release = (done) ->
     for js in jss
       pending++
 
-      # resolving right path for --split files
-      if /__split__/.test js
-        js = path.join path.dirname(config.output.js), js
-
       uncompressed = fs.readFileSync js
       fs.writeFileSync js, minify.js uncompressed.toString()
       exports.notify js, after
@@ -251,7 +247,7 @@ build_js_split = (files, notify)->
     filename = path.basename(file.filepath).replace file.compiler.ext, '.js'
     filefolder = path.dirname file.filepath
 
-    httpath = path.join '/__split__', filefolder.replace(base, ''), filename
+    httpath = path.join '__split__', filefolder.replace(base, ''), filename
     js_folder = path.dirname config.output.js.replace config.server.root, ''
     output = path.join path.dirname(config.output.js), httpath
 
@@ -269,7 +265,9 @@ build_js_split = (files, notify)->
       buffer += source_maps_header.replace '~MAP', map64
 
     folder = path.dirname output
-    fsu.mkdir_p folder unless fs.existsSync folder
+    unless fs.existsSync folder
+      fsu.mkdir_p folder
+
     fs.writeFileSync output, buffer
     
     if notify

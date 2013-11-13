@@ -2,9 +2,9 @@ path = require 'path'
 exec = require('child_process').exec
 should = require('chai').should()
 
-fix = path.join __dirname, '..', '..', 'fixtures', 'plugins'
+fix = path.join __dirname, '..', '..', '..', 'fixtures', 'plugins'
 
-describe '[plugins]', ->
+describe '[unit][utils] plugins', ->
   
   afterEach ->
     global.cli_options = global.__nocolor = global.__stdout = null
@@ -14,7 +14,7 @@ describe '[plugins]', ->
 
   it 'should return full list', ->
     global.cli_options = base: fix
-    plugins = require '../../../lib/utils/plugins'
+    plugins = require '../../../../lib/utils/plugins'
     plugins.length.should.equal 6
 
   it 'should return full list under subtree and show not found alert ', ->
@@ -27,6 +27,6 @@ describe '[plugins]', ->
       info = "info dependency 'y' not installed, can't check if its a plugin"
       msg.should.equal info
 
-    plugins = require '../../../lib/utils/plugins'
+    plugins = require '../../../../lib/utils/plugins'
     out.should.equal 1
     plugins.length.should.equal 6

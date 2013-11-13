@@ -1,6 +1,6 @@
 polvo = require '../../../lib/polvo'
 
-describe '[polvo:general]', ->
+describe '[acceptance] version + help', ->
   it 'should show version number `-v`', ->
     errors = outs = 0
 

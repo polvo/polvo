@@ -1,28 +1,25 @@
 path = require 'path'
 
 polvo = require '../../../lib/polvo'
-fix_path = path.join __dirname, '..', '..', 'fixtures', 'error'
+fix_path = path.join __dirname, '..', '..', 'fixtures', 'css-only'
 
-describe '[polvo:error]', ->
-  it 'should alert simple syntax error on file', (done)->
+describe '[acceptance] cssonly', ->
+  it 'should build a css-only project fine', (done)->
     errors = outs = 0
     checkers = [
-      /error src\/app\.coffee/
-      /✓ public\/app\.js/
+      /✓ public\/app\.css/
     ]
 
     options = compile: true, base: fix_path
     stdio = 
       nocolor: true
-      err:(msg) ->
-        errors++
-        checkers.shift().test(msg).should.be.true
+      err:(msg) -> errors++
       out:(msg) ->
         outs++
         checkers.shift().test(msg).should.be.true
 
         checkers.length.should.equal 0
-        errors.should.equal 1
+        errors.should.equal 0
         outs.should.equal 1
         done()
 

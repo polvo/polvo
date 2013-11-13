@@ -1,14 +1,14 @@
 path = require 'path'
 
 polvo = require '../../../lib/polvo'
-fix_path = path.join __dirname, '..', '..', 'fixtures', 'no-js-output'
+fix_path = path.join __dirname, '..', '..', 'fixtures', 'error'
 
-describe '[polvo:nojs]', ->
-  it 'should alert error about js output', (done)->
+describe '[acceptance] error', ->
+  it 'should alert simple syntax error on file', (done)->
     errors = outs = 0
     checkers = [
-      /error JS not saved, you need to set the js output in your config file/
-      /✓ public\/app\.css/
+      /error src\/app\.coffee/
+      /✓ public\/app\.js/
     ]
 
     options = compile: true, base: fix_path
