@@ -1,3 +1,9 @@
+0.5.7 / 2013-11-13
+===================
+ * Fixing --split mode (closes [#28](https://github.com/polvo/polvo/issues/28))
+ * Improving sourcemaps computation
+ * Segmenting and re-structure whole test suite
+
 0.5.6 / 2013-10-28
 ===================
  * Fixing LiveReload for styles
