@@ -2,7 +2,7 @@
 
 [![Stories in Ready](https://badge.waffle.io/polvo/polvo.png)](http://waffle.io/polvo/polvo)
 
-[![Build Status](https://secure.travis-ci.org/polvo/polvo.png)](http://travis-ci.org/polvo/polvo) [![Coverage Status](https://coveralls.io/repos/polvo/polvo/badge.png)](https://coveralls.io/r/polvo/polvo)
+[![Build Status](https://travis-ci.org/polvo/polvo.png?branch=master)](http://travis-ci.org/polvo/polvo) [![Coverage Status](https://coveralls.io/repos/polvo/polvo/badge.png)](https://coveralls.io/r/polvo/polvo)
 
 [![Dependency Status](https://gemnasium.com/polvo/polvo.png)](https://gemnasium.com/polvo/polvo) [![NPM version](https://badge.fury.io/js/polvo.png)](http://badge.fury.io/js/polvo)
 
@@ -147,22 +147,22 @@ Each plugin is an independent repository.
 Click the links to see individual `README` for each one.
 
 ### ★ Scripts
- 1. [Javascript](https://github.com/polvo/polvo-js) (`.js`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-js.png)](http://travis-ci.org/polvo/polvo-js) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-js/badge.png)](https://coveralls.io/r/polvo/polvo-js)
- 1. [CoffeeScript](https://github.com/polvo/polvo-cs) (`.coffee`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-cs.png)](http://travis-ci.org/polvo/polvo-cs) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-cs/badge.png)](https://coveralls.io/r/polvo/polvo-cs)
+ 1. [Javascript](https://github.com/polvo/polvo-js) (`.js`) [![Build Status](https://travis-ci.org/polvo/polvo-js.png?branch=master)](http://travis-ci.org/polvo/polvo-js) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-js/badge.png)](https://coveralls.io/r/polvo/polvo-js)
+ 1. [CoffeeScript](https://github.com/polvo/polvo-cs) (`.coffee`) [![Build Status](https://travis-ci.org/polvo/polvo-cs.png?branch=master)](http://travis-ci.org/polvo/polvo-cs) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-cs/badge.png)](https://coveralls.io/r/polvo/polvo-cs)
     * ✓ Literate Coffeescript (`.litcoffee`, `.coffee.md`)
     * ✓ Source Maps
 
 ### ★ Styles
- 1. [CSS](https://github.com/polvo/polvo-css) (`.css`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-css.png)](http://travis-ci.org/polvo/polvo-css) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-css/badge.png)](https://coveralls.io/r/polvo/polvo-css)
+ 1. [CSS](https://github.com/polvo/polvo-css) (`.css`) [![Build Status](https://travis-ci.org/polvo/polvo-css.png?branch=master)](http://travis-ci.org/polvo/polvo-css) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-css/badge.png)](https://coveralls.io/r/polvo/polvo-css)
      * ✓ `partials` supported
- 1. [Stylus](https://github.com/polvo/polvo-stylus) (`.styl`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-stylus.png)](http://travis-ci.org/polvo/polvo-stylus) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-stylus/badge.png)](https://coveralls.io/r/polvo/polvo-stylus)
+ 1. [Stylus](https://github.com/polvo/polvo-stylus) (`.styl`) [![Build Status](https://travis-ci.org/polvo/polvo-stylus.png?branch=master)](http://travis-ci.org/polvo/polvo-stylus) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-stylus/badge.png)](https://coveralls.io/r/polvo/polvo-stylus)
      * ✓ `nib` available
      * ✓ `partials` supported
 
 ### ★ Templates
- 1. [HTML](https://github.com/polvo/polvo-html) (`.htm`, `.html`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-html.png)](http://travis-ci.org/polvo/polvo-html) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-html/badge.png)](https://coveralls.io/r/polvo/polvo-html)
+ 1. [HTML](https://github.com/polvo/polvo-html) (`.htm`, `.html`) [![Build Status](https://travis-ci.org/polvo/polvo-html.png?branch=master)](http://travis-ci.org/polvo/polvo-html) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-html/badge.png)](https://coveralls.io/r/polvo/polvo-html)
     * ✓ `partials` supported
- 1. [Jade](https://github.com/polvo/polvo-jade) (`.jade`) [![Build Status](https://secure.travis-ci.org/polvo/polvo-jade.png)](http://travis-ci.org/polvo/polvo-jade) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-jade/badge.png)](https://coveralls.io/r/polvo/polvo-jade)
+ 1. [Jade](https://github.com/polvo/polvo-jade) (`.jade`) [![Build Status](https://travis-ci.org/polvo/polvo-jade.png?branch=master)](http://travis-ci.org/polvo/polvo-jade) [![Coverage Status](https://coveralls.io/repos/polvo/polvo-jade/badge.png)](https://coveralls.io/r/polvo/polvo-jade)
     * ✓ `partials` supported
 
 # CLI
