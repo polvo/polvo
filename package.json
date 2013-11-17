@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/serpentem/polvo"
+    "url": "http://github.com/polvo/polvo"
   },
   "bin": {
     "polvo": "./bin/polvo"
