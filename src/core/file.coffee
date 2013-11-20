@@ -50,6 +50,10 @@ module.exports = class File extends MicroEvent
   refresh:->
     @raw = fs.readFileSync @filepath, "utf-8"
     @compile =>
+
+      if @compiler.type is 'script'
+        @parse_conditionals()
+
       @scan_deps()
       @make_aliases()
       @wrap()
@@ -64,6 +68,47 @@ module.exports = class File extends MicroEvent
 
       , (@compiled, @source_map)=>
         done()
+
+  parse_conditionals:()->
+    reg = /\/\*\s*polvo:if([\s\S]*?)\/\*\s*polvo:fi\s*\*\//g;
+    buffer = []
+
+    while (res = reg.exec @compiled)?
+      before = res[0]
+      after = @parse_conditional_block before
+      @compiled = @compiled.replace before, after
+
+  parse_conditional_block:(block)->
+
+    buffer = '' 
+    passed = 0
+    capturing = false
+
+    for line in block.split '\n'
+
+      # if, elif
+      if /polvo:(if|elif)/.test line
+
+        cond = line.match(/(\w+)=(\w+)/)
+        [key, value] = cond.slice 1
+
+        capturing = process.env[key] is value
+        passed++ if capturing
+
+        continue
+
+      # else
+      else if /polvo:else/.test(line)
+        capturing = passed is 0
+        continue
+
+      # fi
+      else if /polvo:fi/.test line
+        return buffer
+
+      # lines
+      else if capturing
+        buffer += line
 
   wrap:->
     if @output is 'css'

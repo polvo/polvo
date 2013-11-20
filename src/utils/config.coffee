@@ -56,6 +56,12 @@ parse_config = ->
 
     if config.output.js?
       config.output.js = path.join dirs.pwd, config.output.js
+
+      reg = /\{(\w+)\}/g
+      while (res = reg.exec config.output.js)?
+        [all,key] = res
+        config.output.js = config.output.js.replace all, process.env[key]
+
       tmp = path.dirname config.output.js
       unless fs.existsSync tmp
         return error 'JS\'s output dir does not exist ~>', dirs.relative tmp
