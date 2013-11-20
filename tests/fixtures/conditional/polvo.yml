@@ -1,0 +1,7 @@
+input:
+  - ./src
+
+output:
+  js: ./lib/app-{ENV}.js
+
+boot: ./src/index
