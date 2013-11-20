@@ -12,7 +12,7 @@ codes =
   browser: "code = 'BROWSER'"
   universal: "code = 'UNIVERSAL'"
 
-describe.only '[acceptance] conditional compilation', ->
+describe '[acceptance] conditional compilation', ->
 
   it 'should compile app with ENV=node', ->
 
