@@ -81,7 +81,13 @@ inexistent urls to `index.html`)*<br/>
    - [alias](#alias)
    - [minify](#minify)
    - [boot](#boot)
- - [Conditional Compilation](#conditional-compilation)
+ - [Conditional Compilation](#conditional-compilation) 
+   - [Example 1 (Browser x NodeJS)](#example-1-browser-x-nodejs)
+   - [Example 2 (Desktop x Mobile)](#example-2-desktop-x-mobile)
+   - [Example 3 (Advanced)](#example-3-advanced)
+   - [Final notes](#final-notes)
+      - [Supported Languages](#supported-languages)
+      - [Output files](#output-files)
  - [License](#license)
 
 <!--
@@ -358,10 +364,20 @@ require( 'src/app/app' );
 Looking forward for greater flexibility when compiling something for multiple
 targets, there's 4 directives available to control conditional compilation:
 
- - `if`
- - `elif`
- - `else`
- - `fi`
+ - `polvo:if`
+ - `polvo:elif`
+ - `polvo:else`
+ - `polvo:fi`
+
+You can use these in any kind of file you have, be it a `template`, a `style` or
+a `script`.
+
+These conditionals are processed **before** files are compiled with each its
+respective pre-processor and also before their output is scanned for
+dependencies.
+
+So just insert these directives in form of a **comment** for the language your
+are using and they will be processed accordingly.
 
 ## Example 1 (Browser x NodeJS)
 
@@ -402,7 +418,7 @@ var request = require('browser-request-library');
 request.do_stuff([...]);
 ````
 
-## Example 2 (Desktop vs Mobile)
+## Example 2 (Desktop x Mobile)
 
 Many people choses between JQuery or Zepto depending on what target, lets check
 how it'd be done easily for having hybrid builds.
@@ -429,7 +445,7 @@ $ ENV=desktop polvo -c
 $ ENV=mobile polvo -c
 ````
 
-## Example 3
+## Example 3 (Advanced)
 
 You can have multiple conditions as well, many `elifs` and also a final `else`
 directive, depending on your needs:
@@ -470,6 +486,18 @@ $ ANIMAL=herbivore polvo -c
 ````
 
 ## Final notes
+
+Some final considerations:
+
+### Supported languages
+
+Remember that every language is supported, you just need to add the explained
+directives in your source file in a form of a comment, so they doesn't affect
+your code.
+
+All of them will be processed.
+
+### Output files
 
 You can use a single `polvo.yml` with multiple targets, by setting your output
 file according the vars you're using for conditional compilation.
