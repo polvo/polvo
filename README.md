@@ -355,7 +355,7 @@ Looking forward for greater flexibility when compiling something for multiple
 targets, there's 4 directives available to control conditional compilation:
 
  - `if`
- - `elseif`
+ - `elif`
  - `else`
  - `fi`
 
