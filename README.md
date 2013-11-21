@@ -382,11 +382,11 @@ are using and they will be processed accordingly.
 ## Example 1 (Browser x NodeJS)
 
 ````coffeescript
-### polvo:if ENV=node ###
+# polvo:if ENV=node
 request = require 'node-request-library'
-### polvo:elif ENV=browser ###
+# polvo:elif ENV=browser
 request = require 'browser-request-library'
-### polvo:fi ###
+# polvo:fi
 
 request.do_stuff [...]
 ````
@@ -409,11 +409,11 @@ $ ENV=browser polvo -c
 ### The same example in plain Javascript:
 
 ````javascript
-/* polvo:if ENV=node */
+// polvo:if ENV=node
 var request = require('node-request-library');
-/* polvo:elif ENV=browser */
+// polvo:elif ENV=browser
 var request = require('browser-request-library');
-/* polvo:fi */
+// polvo:fi
 
 request.do_stuff([...]);
 ````
@@ -424,11 +424,11 @@ Many people choses between JQuery or Zepto depending on what target, lets check
 how it'd be done easily for having hybrid builds.
 
 ````coffeescript
-### polvo:if ENV=desktop ###
+# polvo:if ENV=desktop
 $ = require 'jquery'
-### polvo:elif ENV=mobile ###
+# polvo:elif ENV=mobile
 $ = require 'zepto'
-### polvo:fi ###
+# polvo:fi
 
 $('element').do_something [...]
 ````
@@ -451,15 +451,15 @@ You can have multiple conditions as well, many `elifs` and also a final `else`
 directive, depending on your needs:
 
 ````coffeescript
-### polvo:if ENV=desktop ###
+# polvo:if ENV=desktop
 $ = require 'jquery'
-### polvo:elif ENV=mobile ###
+# polvo:elif ENV=mobile
 $ = require 'zepto'
-### polvo:elif ENV=node ###
+# polvo:elif ENV=node
 $ = require 'cheerio'
-### polvo:else ###
+# polvo:else
 $ = require 'god-help'
-### polvo:fi ###
+# polvo:fi
 
 $('element').do_something [...]
 ````
@@ -470,11 +470,11 @@ However you can use any var you want:
 
 ````coffeescript
 
-### polvo:if ANIMAL=carnivore ###
+# polvo:if ANIMAL=carnivore
 food = require 'meat'
-### polvo:elif ANIMAL=herbivore ###
+# polvo:elif ANIMAL=herbivore
 food = require 'vegetables'
-### polvo:fi ###
+# polvo:fi
 
 [...code here...]
 ````
