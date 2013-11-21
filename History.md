@@ -1,3 +1,7 @@
+0.6.0 / 2013-11-21
+===================
+ * Adding `conditional compilation` feature
+
 0.5.7 / 2013-11-13
 ===================
  * Fixing --split mode (closes [#28](https://github.com/polvo/polvo/issues/28))
