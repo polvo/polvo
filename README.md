@@ -517,6 +517,7 @@ When compiled with `ENV=browser polvo -c`, the `output` js file will be saved as
 
 Or `./lib/app-node.js` when compiled with `ENV=node polvo -c`, and so on.
 
+The same applies for styles.
 
 # License
 
