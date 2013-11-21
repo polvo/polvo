@@ -49,11 +49,9 @@ module.exports = class File extends MicroEvent
 
   refresh:->
     @raw = fs.readFileSync @filepath, "utf-8"
+    @parse_conditionals()
+
     @compile =>
-
-      if @compiler.type is 'script'
-        @parse_conditionals()
-
       @scan_deps()
       @make_aliases()
       @wrap()
@@ -70,13 +68,16 @@ module.exports = class File extends MicroEvent
         done()
 
   parse_conditionals:()->
-    reg = /\/\*\s*polvo:if([\s\S]*?)\/\*\s*polvo:fi\s*\*\//g;
+    reg = /^.+polvo:if([\s\S]+?)polvo:fi.*$/gm;
     buffer = []
+    copy = @raw
 
-    while (res = reg.exec @compiled)?
+    while (res = reg.exec @raw)
       before = res[0]
       after = @parse_conditional_block before
-      @compiled = @compiled.replace before, after
+      copy = copy.replace before, after
+
+    @raw = copy
 
   parse_conditional_block:(block)->
 
