@@ -51,6 +51,7 @@ npm install -g polvo
  * **LiveReload** on every change
  * **Syntax-check** on every change
  * **SourceMaps** support <sup>[[1](#sourcemap)]</sup>
+ * **Conditional-compilation** for flexibility (`if`, `elif`, `else`, `fi`)
  * **Partials** supported for `templates` and `styles`
  * **Simple Embeded Webserver** <sup>[[2](#embeded-webserver)]</sup> powered by
  [Connect](https://github.com/senchalabs/connect)
@@ -80,6 +81,7 @@ inexistent urls to `index.html`)*<br/>
    - [alias](#alias)
    - [minify](#minify)
    - [boot](#boot)
+ - [Conditional Compilation](#conditional-compilation)
  - [License](#license)
 
 <!--
@@ -346,6 +348,126 @@ require( 'src/app/app' );
   * [Demo app](...)
   * [Live preview](...)
 -->
+
+# Conditional compilation
+
+Looking forward for greater flexibility when compiling something for multiple
+targets, there's 4 directives available to control conditional compilation:
+
+ - `if`
+ - `elseif`
+ - `else`
+ - `fi`
+
+## Example 1 (Browser x NodeJS)
+
+````coffeescript
+### polvo:if ENV=node ###
+request = require 'node-request-library'
+### polvo:elif ENV=browser ###
+request = require 'browser-request-library'
+### polvo:fi ###
+
+request.do_stuff [...]
+````
+
+With this code, you can compile the project in a few different ways, saying
+which build do you want, i.e.:
+
+### Targeting NodeJS
+
+```shell
+$ ENV=node polvo -c
+````
+
+### Targeting Browser
+
+```shell
+$ ENV=browser polvo -c
+````
+
+### The same example in plain Javascript:
+
+````javascript
+/* polvo:if ENV=node */
+var request = require('node-request-library');
+/* polvo:elif ENV=browser */
+var request = require('browser-request-library');
+/* polvo:fi */
+
+request.do_stuff([...]);
+````
+
+# Example 2 (Desktop vs Mobile)
+
+Many people choses between JQuery or Zepto depending on what target, lets check
+how it'd be done easily for having hybrid builds.
+
+````coffeescript
+### polvo:if ENV=desktop ###
+$ = require 'jquery'
+### polvo:elif ENV=mobile ###
+$ = require 'zepto'
+### polvo:fi ###
+
+$('element').do_something [...]
+````
+
+### Targeting Desktop
+
+```shell
+$ ENV=desktop polvo -c
+````
+
+### Targeting Mobile
+
+```shell
+$ ENV=mobile polvo -c
+````
+
+# Example 3
+
+You can have multiple conditions as well, many `elifs` and also a final `else`
+directive, depending on your needs:
+
+````coffeescript
+### polvo:if ENV=desktop ###
+$ = require 'jquery'
+### polvo:elif ENV=mobile ###
+$ = require 'zepto'
+### polvo:elif ENV=node ###
+$ = require 'cheerio'
+### polvo:else ###
+$ = require 'god-help'
+### polvo:fi ###
+
+$('element').do_something [...]
+````
+
+
+## Variables naming
+
+In the examples above we used the var `ENV` to get around the conditionals.
+However you can use any var you want:
+
+````coffeescript
+
+### polvo:if ANIMAL=carnivore ###
+food = require 'meat'
+### polvo:elif ANIMAL=herbivore ###
+food = require 'vegetables'
+### polvo:fi ###
+
+[...code here...]
+````
+
+And compile your project using the variables you just declared inside your code:
+```shell
+$ ANIMAL=carnivore polvo -c
+$ ANIMAL=herbivore polvo -c
+````
+
+
 
 # License
 
