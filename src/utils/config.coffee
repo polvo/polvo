@@ -68,6 +68,12 @@ parse_config = ->
 
     if config.output.css?
       config.output.css = path.join dirs.pwd, config.output.css
+
+      reg = /\{(\w+)\}/g
+      while (res = reg.exec config.output.css)?
+        [all,key] = res
+        config.output.css = config.output.css.replace all, process.env[key]
+
       tmp = path.dirname config.output.css
       unless fs.existsSync tmp
         return error 'CSS\'s output dir does not exist ~>', dirs.relative tmp
