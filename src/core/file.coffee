@@ -50,7 +50,6 @@ module.exports = class File extends MicroEvent
   refresh:->
     @raw = fs.readFileSync @filepath, "utf-8"
     @parse_conditionals()
-
     @compile =>
       @scan_deps()
       @make_aliases()
@@ -109,7 +108,7 @@ module.exports = class File extends MicroEvent
 
       # lines
       else if capturing
-        buffer += line
+        buffer += "#{line}\n"
 
   wrap:->
     if @output is 'css'
