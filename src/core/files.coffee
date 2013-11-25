@@ -47,17 +47,11 @@ module.exports = new class Files
 
 
   create_file:(filepath)->
-
     # relative paths means file was not found on disk!
     if (filepath isnt path.resolve filepath)
       # TODO: should possibly computates the probably path to file and watch
       # it for changes, so when the file get there it get properly assembled
       return
-
-    # premature abort in case extension is not recognized
-    supported = false
-    supported or= ext.test filepath for ext in exts
-    return unless supported
 
     if file = _.find @files, {filepath}
       return file
@@ -122,7 +116,6 @@ module.exports = new class Files
     watcher.close() for watcher in @watchers
 
   onfschange:(action, file)=>
-
     {location, type} = file
 
     return if type == "dir" and action == "create"
