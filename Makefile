@@ -24,7 +24,7 @@ watch:
 build:
 	@$(CS) -bmco lib src
 
-test.clear:
+test.clean:
 	@git clean -fdx tests/fixtures
 	@make test.dependencies
 
