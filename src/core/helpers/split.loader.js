@@ -9,7 +9,7 @@
     if(window.attachEvent && document.all)
     {
       s.onreadystatechange = function () {
-        if(this.readyState === "complete")
+        if(/^(complete|loaded)$/m.test(this.readyState))
           if( ++loaded == total) {
             done()
           }
