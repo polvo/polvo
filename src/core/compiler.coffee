@@ -75,7 +75,7 @@ exports.release = (done) ->
     for js in jss
       pending++
 
-      uncompressed = fs.readFileSync js
+      uncompressed = fs.readFileSync path.join js
       fs.writeFileSync js, minify.js uncompressed.toString()
       exports.notify js, after
 
@@ -161,7 +161,16 @@ exports.build_js = (notify) ->
   boot = "require('#{config.boot}');"
 
   if argv.split
-    tmp = split_loader.replace '~SRCS', JSON.stringify(split_paths)
+
+    # make a copy array
+    relative_paths = split_paths.slice 0
+
+    # fix all paths relatively for the boot-loader
+    for p, i in relative_paths
+      base_folder = config?.server?.root or path.dirname config.output.js
+      relative_paths[i] = p.replace base_folder, ''
+
+    tmp = split_loader.replace '~SRCS', JSON.stringify relative_paths
     tmp = tmp.replace '~BOOT', boot
     buffer += tmp
   else
@@ -248,10 +257,9 @@ build_js_split = (files, notify)->
     filefolder = path.dirname file.filepath
 
     httpath = path.join '__split__', filefolder.replace(base, ''), filename
-    js_folder = path.dirname config.output.js.replace config.server.root, ''
     output = path.join path.dirname(config.output.js), httpath
 
-    paths.push path.join js_folder, httpath
+    paths.push output
     buffer = file.wrapped
 
     if file.source_map?
