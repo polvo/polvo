@@ -1,3 +1,10 @@
+0.6.1 / 2013-11-25
+===================
+ * Fixing conditional compilation (adding line breaks)
+ * Fixing relative paths computation for split-mode's script loader
+ * Fixing split-mode's script loader (for IE)
+ * Improving config parser
+
 0.6.0 / 2013-11-21
 ===================
  * Adding `conditional compilation` feature
