@@ -27,20 +27,19 @@ else
 
 parse_config = ->
   # server
-  if argv.server
+  if config.server?
 
-    if config.server?
-
-      config.server.port ?= 3000
-      if config.server.root
-        root = config.server.root = path.join dirs.pwd, config.server.root
-        unless fs.existsSync root
+    config.server.port ?= 3000
+    if config.server.root
+      root = config.server.root = path.join dirs.pwd, config.server.root
+      unless fs.existsSync root 
+        if argv.server
           return error 'Server\'s root dir does not exist ~>', root
-      else
-        return error 'Server\'s root not set in in config file'
+    else if argv.server
+      return error 'Server\'s root not set in in config file'
 
-    else
-      return error 'Server\'s config not set in config file'
+  else if argv.server
+    return error 'Server\'s config not set in config file'
 
   # input
   if config.input? and config.input.length
