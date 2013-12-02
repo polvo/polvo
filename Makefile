@@ -34,7 +34,7 @@ test.dependencies:
 	@cd tests/fixtures/package-systems && component install
 
 
-test:
+test: build
 	@$(MOCHA) --compilers coffee:coffee-script \
 		--ui bdd \
 		--reporter spec \
@@ -42,7 +42,7 @@ test:
 		--timeout 10000 \
 		tests/tests
 
-test.coverage:
+test.coverage: build
 	@$(ISTANBUL) cover $(_MOCHA) -- \
 		--compilers coffee:coffee-script \
 		--ui bdd \
