@@ -89,10 +89,14 @@ module.exports = class File extends MicroEvent
       # if, elif
       if /polvo:(if|elif)/.test line
 
-        cond = line.match(/(\w+)=(\w+)/)
-        [key, value] = cond.slice 1
+        cond = line.match(/(\w+)\s*(\!?=)\s*(\w+)/)
+        [key, mode, value] = cond.slice 1
 
-        capturing = process.env[key] is value
+        if mode is '='
+          capturing = process.env[key] is value
+        else if mode is '!='
+          capturing = process.env[key] isnt value
+
         passed++ if capturing
 
         continue

@@ -82,12 +82,6 @@ inexistent urls to `index.html`)*<br/>
    - [minify](#minify)
    - [boot](#boot)
  - [Conditional Compilation](#conditional-compilation) 
-   - [Example 1 (Browser x NodeJS)](#example-1-browser-x-nodejs)
-   - [Example 2 (Desktop x Mobile)](#example-2-desktop-x-mobile)
-   - [Example 3 (Advanced)](#example-3-advanced)
-   - [Final notes](#final-notes)
-      - [Supported Languages](#supported-languages)
-      - [Output files](#output-files)
  - [License](#license)
 
 <!--
@@ -379,6 +373,18 @@ dependencies.
 So just insert these directives in form of a **comment** for the language your
 are using and they will be processed accordingly.
 
+You can use both equality and inequality operators:
+
+````coffeescript
+# polvo:if ENV = browser
+equality = 'is browser'
+# polvo:fi
+
+# polvo:if ENV != browser
+inequality = 'is not browser'
+# polvo:fi
+````
+
 ## Example 1 (Browser x NodeJS)
 
 ````coffeescript
@@ -415,7 +421,7 @@ var request = require('node-request-library');
 var request = require('browser-request-library');
 // polvo:fi
 
-request.do_stuff([...]);
+request.do_stuff( /* ... */ );
 ````
 
 ## Example 2 (Desktop x Mobile)
