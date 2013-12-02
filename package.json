@@ -1,6 +1,6 @@
 {
   "name": "polvo",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "Anderson Arboleya <anderson@arboleya.me>",
   "description": "Polyvalent cephalopod mollusc. (aka ambitious app assember)",
   "keywords": [
@@ -41,7 +41,7 @@
     "source-map-support": "0.2.x",
     "uglify-js": "2.4.x",
     "js-yaml": "2.1.x",
-    "lodash": "2.3.x",
+    "lodash": "2.4.x",
     "esprima": "1.0.x",
     "clean-css": "2.0.x",
     "polvo-cs": "0.1.x",

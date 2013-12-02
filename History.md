@@ -1,3 +1,7 @@
+0.6.2 / 2013-12-02
+===================
+ * Handling inequality operator in conditional compilation (closes[#29](https://github.com/polvo/polvo/issues/29))
+
 0.6.1 / 2013-11-25
 ===================
  * Fixing conditional compilation (adding line breaks)
