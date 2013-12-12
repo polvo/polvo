@@ -88,6 +88,8 @@ parse_config = ->
         return error "Alias '#{name}' does not exist ~>", location
       else
         config.alias[name] = dirs.relative abs_location
+  else
+    config.alias = {}
 
   # minify
   config.minify = {} unless config.minify?
