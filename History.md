@@ -1,3 +1,7 @@
+0.6.3 / 2013-12-12
+===================
+ * Improving resolution algorithm for components(io)'s components
+
 0.6.2 / 2013-12-02
 ===================
  * Handling inequality operator in conditional compilation (closes[#29](https://github.com/polvo/polvo/issues/29))
