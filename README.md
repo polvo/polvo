@@ -302,7 +302,7 @@ your `node_modules` folder, and `require` calls can be made in global-style
 regardless of which file is requiring it:
 
 ````coffeescript
-Controller = require 'myfraework/lib/controller'
+Controller = require 'myframework/lib/controller'
 ````
 
 Note that:
