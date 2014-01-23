@@ -34,13 +34,13 @@
   },
   "dependencies": {
     "colors": "0.6.x",
-    "connect": "2.11.x",
+    "connect": "2.12.x",
     "fs-util": "0.3.x",
     "optimist": "0.6.x",
     "socket.io": "0.9.x",
     "source-map-support": "0.2.x",
     "uglify-js": "2.4.x",
-    "js-yaml": "2.1.x",
+    "js-yaml": "3.0.x",
     "lodash": "2.4.x",
     "esprima": "1.0.x",
     "clean-css": "2.0.x",
@@ -54,10 +54,10 @@
   },
   "devDependencies": {
     "coffee-script": "1.6.x",
-    "mversion": "0.2.x",
-    "chai": "1.7.x",
-    "mocha": "1.12.x",
-    "istanbul": "0.1.x",
-    "coveralls": "2.2.x"
+    "mversion": "0.3.x",
+    "chai": "1.8.x",
+    "mocha": "1.17.x",
+    "istanbul": "0.2.x",
+    "coveralls": "2.6.x"
   }
 }

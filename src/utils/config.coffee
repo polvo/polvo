@@ -2,7 +2,8 @@ path = require 'path'
 fs = require 'fs'
 util = require 'util'
 
-require 'js-yaml'
+yaml = require 'js-yaml'
+
 dirs = require './dirs'
 {argv} = require '../cli'
 
@@ -10,19 +11,19 @@ dirs = require './dirs'
 
 if dirs.pwd?
   if argv['config-file']?
-    yml = path.join dirs.pwd, argv['config-file']
+    config_path = path.join dirs.pwd, argv['config-file']
   else
-    yml = path.join dirs.pwd, "polvo.yml"
+    config_path = path.join dirs.pwd, "polvo.yml"
 
-if fs.existsSync yml
-  if fs.statSync( yml ).isDirectory()
-    error 'Config file\'s path is a directory  ~>', yml
+if fs.existsSync config_path
+  if fs.statSync( config_path ).isDirectory()
+    error 'Config file\'s path is a directory  ~>', config_path
    # process.exit()
   else
-    config = require(yml) or {}
-    delete require.cache[require.resolve yml]
+    config_contents = fs.readFileSync config_path, 'utf8'
+    config = yaml.safeLoad(config_contents) or {}
 else
-  error 'Config file not found ~>', yml
+  error 'Config file not found ~>', config_path
   # process.exit()
 
 parse_config = ->
