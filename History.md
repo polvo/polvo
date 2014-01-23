@@ -1,3 +1,7 @@
+0.6.4 / 2014-01-23
+===================
+ * Fixing dynamic requires' lookup
+
 0.6.3 / 2013-12-12
 ===================
  * Improving resolution algorithm for components(io)'s components
