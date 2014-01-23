@@ -38,17 +38,14 @@ require.alias = function(path){
 require.resolve = function(path, parent){
   var realpath;
 
-  if(parent){
+  if(parent)
     if(!(realpath = require.mods[parent].aliases[path]))
       realpath = require.alias( path );
-  }
-  else
-    realpath = path;
 
-  if(!require.mods[realpath])
+  if(!require.mods[realpath || path])
       throw new Error('Module not found: ' + path);
 
-  return realpath;
+  return realpath || path;
 }
 
 window.require = require;
