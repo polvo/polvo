@@ -1,3 +1,91 @@
 #!/usr/bin/env node
 
-new (require(require('path').join(__dirname, '..', 'lib', 'polvo')));
+var
+  fs = require('fs'),
+  path = require('path'),
+  polvo = require('../lib'),
+  program = require('commander');
+
+module.exports = program;
+
+program
+  .version(require('../package.json'), '-v, --version')
+  .usage('[command] [options]')
+  .option('-p, --port <number>', 'set webserver port number', 3000)
+  .option('-s, --no-server', 'disables webserver', false)
+  .option('-c, --config <path>', 'set config path, defaults to ./polvo.js', 'polvo.js')
+  .option('-x, --split', 'compile files individually', false)
+  .option('-e, --envs', 'one or more envs to build (space separated)', ['dev']);
+
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ polvo new app polvo/basic-skel');
+  console.log('');
+  console.log('  Command\'s help:');
+  console.log('');
+  console.log('    $ polvo <command> --help');
+  console.log('    $ polvo new --help');
+  console.log('    $ polvo build --help');
+  console.log('');
+});
+
+program
+  .command('search <name>')
+  .description('search skels by the given name')
+  .action(function(name) {
+    polvo.search(name);
+  }).on('--help', function() {
+    console.log('  Examples:');
+    console.log();
+    console.log('    $ polvo new <name> [<gh-user>/<repo-name>@<version>]');
+    console.log('    $ polvo new app polvo/basic-skel');
+    console.log('    $ polvo new app polvo/basic-skel@0.1.0');
+    console.log();
+  });
+
+program
+  .command('new <name> [skel]')
+  .description('initializes new app using the given skel')
+  .action(function(name, skel) {
+    polvo.new(name, skel);
+  }).on('--help', function() {
+    console.log('  Examples:');
+    console.log();
+    console.log('    $ polvo new <name> [<gh-user>/<repo-name>@<version>]');
+    console.log('    $ polvo new app polvo/basic-skel');
+    console.log('    $ polvo new app polvo/basic-skel@0.1.0');
+    console.log();
+  });
+
+
+program
+  .command('build')
+  .description('builds app using the given envs')
+  .action(function() {
+    console.log('building....');
+    polvo.build();
+  }).on('--help', function() {
+    console.log('  Examples:');
+    console.log();
+    console.log('    $ polvo build -e dev');
+    console.log('    $ polvo build -e test');
+    console.log('    $ polvo build -e dev prod');
+  });
+
+program
+  .command('start')
+  .description('start polvo in watch\'n\'build mode')
+  .action(function(env) {
+    console.log('starting...');
+  });
+
+program.parse(process.argv);
+
+if(!program.args.length) {
+  var config = path.join(path.resolve('.'), program.config);
+  if(fs.existsSync(config))
+    require(config);
+  else
+    program.help();
+}

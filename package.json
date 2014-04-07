@@ -33,31 +33,8 @@
     "node": ">= 0.10"
   },
   "dependencies": {
-    "colors": "0.6.x",
-    "connect": "2.12.x",
-    "fs-util": "0.3.x",
-    "optimist": "0.6.x",
-    "socket.io": "0.9.x",
-    "source-map-support": "0.2.x",
-    "uglify-js": "2.4.x",
-    "js-yaml": "3.0.x",
-    "lodash": "2.4.x",
-    "esprima": "1.0.x",
-    "clean-css": "2.0.x",
-    "polvo-cs": "0.1.x",
-    "polvo-js": "0.1.x",
-    "polvo-html": "0.1.x",
-    "polvo-jade": "0.2.x",
-    "polvo-stylus": "0.1.x",
-    "polvo-css": "0.1.x",
-    "humanize": "0.0.x"
+    "commander": "~2.2.0",
+    "debug": "~0.8.0"
   },
-  "devDependencies": {
-    "coffee-script": "1.6.x",
-    "mversion": "0.3.x",
-    "chai": "1.8.x",
-    "mocha": "1.17.x",
-    "istanbul": "0.2.x",
-    "coveralls": "2.6.x"
-  }
+  "devDependencies": {}
 }
