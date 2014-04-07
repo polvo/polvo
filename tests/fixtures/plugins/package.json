@@ -1,7 +1,0 @@
-{
-  "name": "polvo-fixture-plugins",
-  "main": "index",
-  "dependencies": {
-    "a": "1.0.0"
-  }
-}

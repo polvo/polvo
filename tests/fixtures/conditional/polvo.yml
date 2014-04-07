@@ -1,8 +1,0 @@
-input:
-  - ./src
-
-output:
-  js: ./lib/app-{ENV}.js
-  css: ./lib/app-{ENV}.css
-
-boot: ./src/index

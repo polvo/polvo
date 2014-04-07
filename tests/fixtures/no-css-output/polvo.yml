@@ -1,7 +1,0 @@
-input:
-  - src
-
-output:
-  js: public/app.js
-
-boot: src/app

@@ -1,6 +1,0 @@
-{
-  "name": "polvo-bower-deps",
-  "dependencies": {
-    "stringify-object": "*"
-  }
-}

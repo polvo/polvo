@@ -1,1 +1,0 @@
-exports.module = 'local-mod-folder'
