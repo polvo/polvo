@@ -15,7 +15,7 @@
     "html",
     "css"
   ],
-  "main": "./lib/polvo",
+  "main": "./lib",
   "scripts": {
     "test": "make test"
   },
@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "commander": "~2.2.0",
-    "debug": "~0.8.0"
+    "debug": "~0.8.0",
+    "lodash": "~2.4.1"
   },
   "devDependencies": {}
 }
