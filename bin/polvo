@@ -39,7 +39,7 @@ program
   .command('search <tag1> [tag..N]')
   .description('search skeletons by tags (and name)')
   .action(function (name) {
-    app().search(name);
+    commands.search(name);
   }).on('--help', function() {
     console.log('  Examples:');
     console.log();
@@ -52,7 +52,7 @@ program
   .command('new <name> [skel]')
   .description('initializes new app using the given skel')
   .action(function (name, skel) {
-    app().new(name, skel);
+    commands.new(name, skel);
   }).on('--help', function() {
     console.log('  Examples:');
     console.log();
