@@ -21,17 +21,17 @@ test:
 		--timeout 10000 \
 		test
 
-# test.coverage:
-# 	@$(ISTANBUL) \
-# 		cover $(_MOCHA) -- \
-# 		--ui bdd \
-# 		--reporter spec \
-# 		--recursive \
-# 		--timeout 10000 \
-# 		test
+test.coverage:
+	@$(ISTANBUL) \
+		cover $(_MOCHA) -- \
+		--ui bdd \
+		--reporter spec \
+		--recursive \
+		--timeout 10000 \
+		test
 
-# test.coverage.preview: test.coverage
-# 	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080
+test.coverage.preview: test.coverage
+	@cd coverage/lcov-report && python -m SimpleHTTPServer 8080
 
 # test.coverage.coveralls: test.coverage
 # 	@sed -i.bak \
