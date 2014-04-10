@@ -10,6 +10,7 @@ describe('[core/env]', function(){
 
   it('proper configs', function(){
 
+    // setup final configuration to test against
     var config = {
       dev: {
         input: [path.join(__dirname, '../../lib')],
@@ -32,6 +33,7 @@ describe('[core/env]', function(){
     config.test.server.port = 3002;
 
 
+    // instantiate polvo using current dir as project path
     var app = polvo(__dirname);
 
     app.env('dev prod')
