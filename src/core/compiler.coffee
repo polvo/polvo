@@ -230,12 +230,15 @@ exports.notify = ( filepath, done )->
 
 
 get_split_base_dir = (files)->
+
   buffer = []
   tokens = {}
 
   for file in files
     for part in file.filepath.split path.sep
-      continue if tokens[part]
+      # - commenting line not being touched by tests
+      # -- uncomment in case of any problem with --slit mode
+      # continue if tokens[part]
 
       start = buffer.concat(part).join path.sep
       all = true
