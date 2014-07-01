@@ -1,3 +1,7 @@
+0.6.5 / 2014-07-01
+===================
+ * Handling folders with names ending as '.js'
+
 0.6.4 / 2014-01-23
 ===================
  * Fixing dynamic requires' lookup
