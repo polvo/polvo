@@ -75,7 +75,8 @@ resolve_file = ( filepath )->
     tmp =  filepath
     tmp = tmp.replace ext, ''
     tmp += ext
-    return tmp if fs.existsSync tmp
+    if fs.existsSync(tmp) && !fs.lstatSync(tmp).isDirectory()
+      return tmp
   return null
 
 
