@@ -73,7 +73,8 @@ resolve_id = (kind, manifest, filepath, id)->
 resolve_file = ( filepath )->
   for ext in exts
     tmp =  filepath
-    tmp = tmp.replace ext, ''
+    regexp = new RegExp "\.#{ext}$"
+    tmp = tmp.replace regexp, ""
     tmp += ext
     if fs.existsSync(tmp) && !fs.lstatSync(tmp).isDirectory()
       return tmp
