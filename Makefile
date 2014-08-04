@@ -15,6 +15,7 @@ POLVO=bin/polvo
 
 setup:
 	@npm link
+	@make test.install.dependencies
 
 
 
@@ -26,15 +27,15 @@ build:
 
 test.clean:
 	@git clean -fdx tests/fixtures
-	@make test.dependencies
+	@make test.install.dependencies
 
-test.dependencies:
+test.install.dependencies:
 	@cd tests/fixtures/package-systems && npm install
 	@cd tests/fixtures/package-systems && bower install
 	@cd tests/fixtures/package-systems && component install
 
 
-test: build
+test: build 
 	@$(MOCHA) --compilers coffee:coffee-script \
 		--ui bdd \
 		--reporter spec \
