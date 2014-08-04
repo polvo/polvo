@@ -57,24 +57,24 @@ describe '[acceptance] release', ->
   it 'should release and serve app without any surprises', (done)->
 
     errors = outs = 0
-    checkers = [
-      /✓ public\/app\.js.+/
-      /✓ public\/app\.css.+/
-      /♫  http\:\/\/localhost:8080/
-    ]
+    checkers = ///
+      (
+        public/app.js
+        |public/app.css
+        |http://localhost:8080
+      ).*
+    ///
 
     options = release: true, server: true, base: basic
     stdio = 
       nocolor: true
       err:(msg) -> errors++
       out:(msg) ->
-        outs++
-        checkers.shift().test(msg).should.be.true
-        if checkers.length is 0
+        checkers.test(msg).should.be.true
+        if ++outs is 3
           new setTimeout ->
             server.close()
             errors.should.equal 0
-            outs.should.equal 3
             done()
           , 500
 
