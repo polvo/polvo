@@ -10,7 +10,8 @@ COVERALLS=node_modules/coveralls/bin/coveralls.js
 
 
 POLVO=bin/polvo
-
+BOWER=node_modules/.bin/bower
+COMPONENT=node_modules/.bin/component
 
 
 setup:
@@ -31,8 +32,8 @@ test.clean:
 
 test.install.dependencies:
 	@cd tests/fixtures/package-systems && npm install
-	@cd tests/fixtures/package-systems && bower install
-	@cd tests/fixtures/package-systems && component install
+	@cd tests/fixtures/package-systems && ../../../$(BOWER) install
+	@cd tests/fixtures/package-systems && ../../../$(COMPONENT) install
 
 
 test: build 
