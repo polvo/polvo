@@ -3,11 +3,7 @@ language: node_js
 
 node_js: "0.10"
 
-before_script:
-  - npm install -g component bower
-  - cd tests/fixtures/package-systems && npm install && cd -
-  - cd tests/fixtures/package-systems && component install && cd -
-  - cd tests/fixtures/package-systems && bower install && cd -
+before_script: make test.install.dependencies
 
 script: make test.coverage.coveralls
 
